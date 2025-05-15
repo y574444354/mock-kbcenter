@@ -1,0 +1,43 @@
+# 排除.git目录
+.git/
+
+# 排除开发工具目录
+.vscode/
+.idea/
+
+# 排除依赖目录
+vendor/
+node_modules/
+
+# 排除日志文件
+logs/
+*.log
+
+# 排除测试文件
+*_test.go
+*.test
+
+# 排除本地配置文件
+.env
+config/config.local.*
+
+# 排除构建输出
+bin/
+go-webserver
+worker
+
+# 排除临时文件
+tmp/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# 排除文档生成文件
+swagger/docs.go
+swagger/swagger.json
+swagger/swagger.yaml
+
+# 排除Docker相关文件
+docker-compose.*
+dockerfile.*

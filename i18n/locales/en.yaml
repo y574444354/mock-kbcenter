@@ -1,0 +1,294 @@
+# 英文翻译文件
+welcome:
+  message: "Welcome to Go WebServer"
+  description: "A scalable web server built with Go"
+
+common:
+  success: "Success"
+  failed: "Failed"
+  error: "Error"
+  notFound: "Not Found"
+  unauthorized: "Unauthorized"
+  forbidden: "Forbidden"
+  badRequest: "Bad Request"
+  serverError: "Server Error"
+  timeout: "Request Timeout"
+  validation: "Validation Error"
+
+i18n:
+  locale:
+    missing: "Missing locale parameter"
+    set:
+      success: "Locale set successfully"
+  load:
+    failed: "Failed to load language files"
+    file:
+      failed: "Failed to load language file"
+      success: "Language file loaded successfully"
+  init:
+    success: "Internationalization support initialized successfully"
+  translate:
+    failed: "Translation failed"
+  
+  # Database related
+  db:
+    init:
+      success: "Database initialization completed successfully"
+      failed: "Failed to initialize database"
+    migrate:
+      success: "Database migration completed successfully"
+      failed: "Database migration failed"
+      start: "Starting database migration..."
+    seed:
+      start: "Starting to seed initial data..."
+    admin:
+      exists: "Admin user already exists, skipping creation"
+      created: "Admin user created successfully"
+  
+  # Configuration related
+  config:
+    load:
+      failed: "Failed to load configuration"
+  
+  # Logger related
+  logger:
+    init:
+      failed: "Failed to initialize logger"
+  
+  # Redis related
+  redis:
+    connect:
+      success: "Redis connected successfully"
+      failed: "Failed to initialize Redis"
+  
+  # HTTP client related
+  httpclient:
+    init:
+      success: "HTTP client initialized successfully"
+      failed: "Failed to initialize HTTP client"
+    service:
+      registered: "Service registered"
+  
+  # Asynq related
+  asynq:
+    client:
+      init:
+        failed: "Failed to initialize Asynq client"
+    server:
+      init:
+        failed: "Failed to initialize Asynq server"
+      start:
+        failed: "Failed to start async task processor"
+  
+  # Worker process related
+  worker:
+    process:
+      start: "Worker process started"
+      stop: "Worker process stopped"
+  
+  # Service related
+  service:
+    usage: "Please specify service to run:"
+    web: "  web     - Run web service"
+    worker: "  worker  - Run worker service"
+    unknown: "Unknown service type"
+  
+  # Server related
+  server:
+    start:
+      success: "Server started"
+      failed: "Failed to start server"
+
+  # Database logging
+  db:
+    connection:
+      info: "Database connection info"
+    type: "Database type"
+
+  # HTTP client logging
+  httpclient:
+    log:
+      request: "HTTP request"
+      request_body: "HTTP request body"
+      response: "HTTP response"
+      response_body: "HTTP response body"
+
+  # Middleware related
+  middleware:
+    recovery:
+      broken_pipe: "Broken pipe detected"
+      recovered: "Recovered from panic"
+      internal_error: "Internal server error: %v"
+
+  # HTTP client detailed messages
+  httpclient:
+    proxy:
+      parse_failed: "Failed to parse proxy URL"
+    cert:
+      load_failed: "Failed to load client certificate"
+    ca:
+      read_failed: "Failed to read CA certificate"
+    request:
+      serialize_failed: "Failed to serialize request body"
+      create_failed: "Failed to create HTTP request"
+    middleware:
+      process_failed: "Middleware failed to process request"
+    retry:
+      reader_unsupported: "Cannot retry with io.Reader type request body"
+      request_failed: "Failed to create HTTP request during retry"
+      middleware_failed: "Middleware failed to process request during retry"
+    attempt: "HTTP request retry"
+    response:
+      read_failed: "HTTP request failed: status code %d, failed to read response body"
+      failed: "HTTP request failed: status code %d, response body: %s"
+    json:
+      parse_failed: "Failed to parse JSON response"
+
+  # Database related messages
+  db:
+    unsupported_type: "Unsupported database type: %s"
+    connection:
+      failed: "Failed to connect to database"
+      get_failed: "Failed to get database connection"
+    not_initialized: "Database not initialized"
+  
+  # HTTP service related
+  httpclient:
+    service:
+      not_initialized: "HTTP service not initialized"
+      config_not_found: "Service config not found: %s"
+    shutdown:
+      starting: "Shutting down server..."
+      forced: "Server forced to shutdown"
+      success: "Server shutdown gracefully"
+  
+  # Windows service related
+  service:
+    run:
+      failed: "Service failed to run"
+    start:
+      success: "Service started"
+    stop:
+      starting: "Service stopping"
+      success: "Service %s stopped successfully"
+    control:
+      unexpected: "Unexpected control request received"
+    install:
+      success: "Service installed successfully"
+    uninstall:
+      success: "Service uninstalled successfully"
+    description: "A web server based on Gin"
+    flag:
+      description: "Control service: install, uninstall, start, stop"
+    session:
+      check: "Unable to determine if running as a Windows service"
+    command:
+      invalid: "Invalid service command"
+      execute: "Failed to execute service command"
+    path:
+      executable: "Failed to get executable path"
+    dir:
+      change: "Failed to change working directory"
+    app:
+      start: "Application started"
+    exists: "Service already exists"
+    eventlog:
+      install: "Failed to install event log"
+      remove: "Failed to remove event log"
+    query:
+      status: "Failed to query service status"
+    stop:
+      failed: "Failed to stop service"
+    wait:
+      timeout: "Timeout waiting for service to stop"
+    delete:
+      failed: "Failed to delete service"
+    install:
+      success: "Service %s installed successfully"
+    uninstall:
+      success: "Service %s uninstalled successfully"
+    start:
+      success: "Service %s started successfully"
+    not_found: "Service %s not found"
+  
+  # User related
+  user:
+    exists: "User already exists"
+    not_found: "User not found"
+    disabled: "User is disabled"
+    password:
+      incorrect: "Incorrect password"
+      empty: "Password cannot be empty"
+    register:
+      params_empty: "Username, email and password cannot be empty"
+
+log:
+  http:
+    request: "HTTP Request: {{.method}} {{.path}}"
+    response: "HTTP Response: {{.status}} {{.path}}"
+  
+external:
+  service:
+    get:
+      failed: "Failed to get example service"
+  user:
+    id:
+      empty: "User ID cannot be empty"
+    profile:
+      get:
+        failed: "Failed to get user profile"
+      update:
+        failed: "Failed to update user profile"
+      invalid: "Invalid user profile"
+    search:
+      failed: "Failed to search users"
+  search:
+    query:
+      empty: "Search query cannot be empty"
+
+user:
+  login:
+    success: "Login successful"
+    failed: "Login failed"
+    invalidCredentials: "Invalid username or password"
+  register:
+    success: "Registration successful"
+    failed: "Registration failed"
+    userExists: "User already exists"
+  logout:
+    success: "Logout successful"
+  profile:
+    notFound: "User profile not found"
+    updateSuccess: "Profile updated successfully"
+    updateFailed: "Failed to update profile"
+    invalid_params: "Invalid user parameters"
+    not_found: "User not found"
+  register:
+    invalid_params: "Invalid registration parameters"
+    failed: "User registration failed"
+  login:
+    invalid_params: "Invalid login parameters"
+    failed: "User login failed"
+  info:
+    get:
+      failed: "Failed to get user information"
+    update:
+      failed: "Failed to update user information"
+      invalid_params: "Invalid update parameters"
+  password:
+    invalid_params: "Invalid password parameters"
+    change:
+      failed: "Failed to change password"
+  list:
+    failed: "Failed to get user list"
+  delete:
+    failed: "Failed to delete user"
+
+pagination:
+  prev: "Previous"
+  next: "Next"
+  first: "First"
+  last: "Last"
+  page: "Page {{.Page}} of {{.Total}}"
+  itemsPerPage: "Items per page"
+  showing: "Showing {{.From}} to {{.To}} of {{.Total}} entries"

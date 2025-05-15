@@ -1,0 +1,46 @@
+# 编译生成的文件
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+go-webserver
+
+
+# 依赖目录
+/vendor/
+
+# IDE和编辑器文件
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# 日志文件
+/logs/
+*.log
+
+# 环境变量文件
+.env
+
+# 临时文件
+/tmp/
+.DS_Store
+
+# 自动生成的Swagger文档
+/swagger/docs.go
+/swagger/swagger.json
+/swagger/swagger.yaml
+
+# 二进制文件
+/bin/
+
+# 配置文件（可能包含敏感信息）
+# 注意：通常我们会保留示例配置文件，但排除包含实际凭据的配置文件
+/config/config.local.yaml
+
+# 缓存文件
+.cache/
