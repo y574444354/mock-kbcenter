@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-	"github.com/zgsm/go-webserver/i18n"
+	"github.com/zgsm/review-manager/i18n"
 )
 
 var (

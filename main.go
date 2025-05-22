@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"os"
 
-	web "github.com/zgsm/go-webserver/cmd/web"
-	worker "github.com/zgsm/go-webserver/cmd/worker"
-	"github.com/zgsm/go-webserver/i18n"
-	"github.com/zgsm/go-webserver/pkg/logger"
+	web "github.com/zgsm/review-manager/cmd/web"
+	worker "github.com/zgsm/review-manager/cmd/worker"
+	"github.com/zgsm/review-manager/i18n"
+	"github.com/zgsm/review-manager/pkg/logger"
 )
 
 func main() {

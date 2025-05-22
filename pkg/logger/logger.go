@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 
 	"github.com/hibiken/asynq"
-	"github.com/zgsm/go-webserver/config"
+	"github.com/zgsm/review-manager/config"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"

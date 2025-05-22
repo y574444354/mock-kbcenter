@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/zgsm/go-webserver/config"
-	"github.com/zgsm/go-webserver/i18n"
-	"github.com/zgsm/go-webserver/pkg/logger"
+	"github.com/zgsm/review-manager/config"
+	"github.com/zgsm/review-manager/i18n"
+	"github.com/zgsm/review-manager/pkg/logger"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"

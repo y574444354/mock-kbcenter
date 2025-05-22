@@ -20,7 +20,7 @@ RUN go env -w GO111MODULE=on && go env -w GOPROXY=${GOPROXY} && go env -w GOSUMD
 COPY . .
 
 # 构建应用
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o go-webserver .
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o review-manager .
 
 # 使用轻量级的alpine镜像
 FROM alpine:latest
@@ -42,7 +42,7 @@ RUN adduser -D -g '' appuser
 RUN mkdir -p /app/logs /app/config /app/i18n/locales
 
 # 复制二进制文件
-COPY --from=builder /app/go-webserver /app/
+COPY --from=builder /app/review-manager /app/
 # 复制配置文件
 COPY --from=builder /app/config/config.yaml /app/config/
 # 复制国际化文件
@@ -63,4 +63,4 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD wget -q -O- http://localhost:8080/health || exit 1
 
 # 启动应用
-CMD ["./go-webserver"]
+CMD ["./review-manager"]

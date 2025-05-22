@@ -6,7 +6,7 @@ import (
 	"fmt"
 
 	"github.com/hibiken/asynq"
-	"github.com/zgsm/go-webserver/pkg/logger"
+	"github.com/zgsm/review-manager/pkg/logger"
 )
 
 // ImageResizePayload 图片处理任务负载

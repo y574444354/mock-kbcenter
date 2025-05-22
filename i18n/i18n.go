@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/nicksnyder/go-i18n/v2/i18n"
-	"github.com/zgsm/go-webserver/config"
+	"github.com/zgsm/review-manager/config"
 	"golang.org/x/text/language"
 	"gopkg.in/yaml.v3"
 )

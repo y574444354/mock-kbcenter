@@ -6,9 +6,9 @@ import (
 	"time"
 
 	"github.com/go-redis/redis/v8"
-	"github.com/zgsm/go-webserver/config"
-	"github.com/zgsm/go-webserver/i18n"
-	"github.com/zgsm/go-webserver/pkg/logger"
+	"github.com/zgsm/review-manager/config"
+	"github.com/zgsm/review-manager/i18n"
+	"github.com/zgsm/review-manager/pkg/logger"
 )
 
 var (

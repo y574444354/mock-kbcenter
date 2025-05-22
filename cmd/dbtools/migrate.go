@@ -5,11 +5,11 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-	"github.com/zgsm/go-webserver/config"
-	"github.com/zgsm/go-webserver/i18n"
-	"github.com/zgsm/go-webserver/internal/model"
-	"github.com/zgsm/go-webserver/pkg/db"
-	"github.com/zgsm/go-webserver/pkg/logger"
+	"github.com/zgsm/review-manager/config"
+	"github.com/zgsm/review-manager/i18n"
+	"github.com/zgsm/review-manager/internal/model"
+	"github.com/zgsm/review-manager/pkg/db"
+	"github.com/zgsm/review-manager/pkg/logger"
 )
 
 var migrateCmd = &cobra.Command{

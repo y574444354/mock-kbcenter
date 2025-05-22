@@ -4,10 +4,10 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/zgsm/go-webserver/api"
-	"github.com/zgsm/go-webserver/internal/model"
-	"github.com/zgsm/go-webserver/internal/service"
-	"github.com/zgsm/go-webserver/pkg/i18nlogger"
+	"github.com/zgsm/review-manager/api"
+	"github.com/zgsm/review-manager/internal/model"
+	"github.com/zgsm/review-manager/internal/service"
+	"github.com/zgsm/review-manager/pkg/i18nlogger"
 )
 
 // UserHandler 用户处理器

@@ -19,15 +19,11 @@ func RegisterRoutes(router *gin.RouterGroup) {
 		userGroup.DELETE("/:id", userHandler.DeleteUser)
 	}
 
-	// 外部服务相关路由
-	externalHandler := NewExternalServiceHandler()
-	externalGroup := router.Group("/external")
-	{
-		externalGroup.GET("/users/:user_id/profile", externalHandler.GetUserProfile)
-		externalGroup.PUT("/users/:user_id/profile", externalHandler.UpdateUserProfile)
-		externalGroup.GET("/users/search", externalHandler.SearchUsers)
-	}
-
 	// 可以添加其他API路由
 	// 例如：商品、订单、支付等
+	reviewTaskHandler := NewReviewTaskHandler()
+	reviewTaskGroup := router.Group("/review-tasks")
+	{
+		reviewTaskGroup.POST("/", reviewTaskHandler.Create)
+	}
 }

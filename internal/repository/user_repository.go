@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 
-	"github.com/zgsm/go-webserver/internal/model"
-	"github.com/zgsm/go-webserver/pkg/db"
+	"github.com/zgsm/review-manager/internal/model"
+	"github.com/zgsm/review-manager/pkg/db"
 	"gorm.io/gorm"
 )
 

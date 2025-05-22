@@ -6,10 +6,10 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/zgsm/go-webserver/internal/model"
-	"github.com/zgsm/go-webserver/internal/repository"
-	"github.com/zgsm/go-webserver/pkg/logger"
-	// "github.com/dosun/go-webserver/pkg/utils"
+	"github.com/zgsm/review-manager/internal/model"
+	"github.com/zgsm/review-manager/internal/repository"
+	"github.com/zgsm/review-manager/pkg/logger"
+	// "github.com/dosun/review-manager/pkg/utils"
 	"golang.org/x/crypto/bcrypt"
 )
 
