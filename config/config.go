@@ -3,6 +3,7 @@ package config
 import (
 	"os"
 	"path/filepath"
+	"reflect"
 	"runtime"
 	"sync"
 
@@ -114,6 +115,35 @@ var (
 	once   sync.Once
 )
 
+// mergeConfig 递归合并配置，target 是目标配置，source 是源配置
+func mergeConfig(target, source interface{}) {
+	targetVal := reflect.ValueOf(target).Elem()
+	sourceVal := reflect.ValueOf(source).Elem()
+
+	for i := 0; i < sourceVal.NumField(); i++ {
+		sourceField := sourceVal.Field(i)
+		if !sourceField.IsZero() {
+			targetField := targetVal.Field(i)
+			switch targetField.Kind() {
+			case reflect.Struct:
+				// 递归处理嵌套结构体
+				mergeConfig(targetField.Addr().Interface(), sourceField.Addr().Interface())
+			case reflect.Map:
+				// 合并 map 类型字段
+				if targetField.IsNil() {
+					targetField.Set(reflect.MakeMap(targetField.Type()))
+				}
+				for _, key := range sourceField.MapKeys() {
+					targetField.SetMapIndex(key, sourceField.MapIndex(key))
+				}
+			default:
+				// 直接赋值基本类型字段
+				targetField.Set(sourceField)
+			}
+		}
+	}
+}
+
 // LoadConfigWithDefault 加载默认配置文件，并尝试用本地配置覆盖
 func LoadConfigWithDefault() error {
 	var err error
@@ -121,7 +151,6 @@ func LoadConfigWithDefault() error {
 		config = &Config{}
 
 		// 读取默认配置文件
-		// 获取配置文件的绝对路径
 		_, filename, _, _ := runtime.Caller(0)
 		basePath := filepath.Dir(filename)
 		defaultPath := filepath.Join(basePath, "config.yaml")
@@ -141,11 +170,10 @@ func LoadConfigWithDefault() error {
 		localPath := filepath.Join(basePath, "config.local.yaml")
 		localData, readLocalErr := os.ReadFile(localPath)
 		if readLocalErr == nil {
-			// 本地配置文件存在，解析并覆盖默认配置
+			// 本地配置文件存在，解析并合并到默认配置
 			localConfig := &Config{}
 			if unmarshalErr := yaml.Unmarshal(localData, localConfig); unmarshalErr == nil {
-				// 这里可以实现更复杂的合并逻辑，目前简单替换整个配置
-				config = localConfig
+				mergeConfig(config, localConfig)
 			}
 		}
 

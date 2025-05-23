@@ -3,11 +3,6 @@ server:
   port: 8080
   mode: debug  # debug, release, test
 
-# 问题管理服务配置
-issueManager:
-  # review issue 回调
-  callback: http://issue-manager/callback
-
 # 数据库配置
 database:
   type: postgres  # mysql, postgres, sqlite
@@ -76,23 +71,11 @@ http_client:
       base_url: "http://task-manager"
       timeout: 10  # 覆盖默认超时时间
       max_retries: 2  # 覆盖默认重试次数
-      auth_type: "bearer"  # 认证类型：none, basic, bearer, custom
-      token: "your_token_here"  # Bearer认证Token
-      headers:  # 服务特定请求头，与默认请求头合并
-        X-API-Key: "your_api_key_here"
-    tbCenter:   # 上下文服务
+    issueManager:  # 任务管理服务
+      base_url: "http://issue-manager"
+      timeout: 10  # 覆盖默认超时时间
+      max_retries: 2  # 覆盖默认重试次数
+    kbCenter:   # 上下文服务
       base_url: "http://kb-center"
       timeout: 10  # 覆盖默认超时时间
       max_retries: 2  # 覆盖默认重试次数
-      auth_type: "bearer"  # 认证类型：none, basic, bearer, custom
-      token: "your_token_here"  # Bearer认证Token
-      headers:  # 服务特定请求头，与默认请求头合并
-        X-API-Key: "your_api_key_here"
-    tagStorage:
-      base_url: "http://tag-storage"
-      timeout: 10  # 覆盖默认超时时间
-      max_retries: 2  # 覆盖默认重试次数
-      auth_type: "bearer"  # 认证类型：none, basic, bearer, custom
-      token: "your_token_here"  # Bearer认证Token
-      headers:  # 服务特定请求头，与默认请求头合并
-        X-API-Key: "your_api_key_here"
