@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/zgsm/go-webserver/config"
-	"github.com/zgsm/go-webserver/i18n"
-	"github.com/zgsm/go-webserver/pkg/httpclient"
+	"github.com/zgsm/review-manager/config"
+	"github.com/zgsm/review-manager/i18n"
+	"github.com/zgsm/review-manager/pkg/httpclient"
 )
 
 // Service 定义
@@ -15,24 +15,20 @@ type Service struct {
 }
 
 type HttpServices struct {
-	Example ExampleService
+	IssueManager IssueManagerService
 }
 
 var serverManager *HttpServices
 
 // InitHTTPClient 初始化HTTP客户端
 func InitHTTPClient() error {
-	exampleServiceConfig, err := GetServiceConfig("example")
-	if err != nil {
-		return err
-	}
-	exampleService, err := NewExampleService(exampleServiceConfig)
+	issueManagerService, err := NewIssueManagerService()
 	if err != nil {
 		return err
 	}
 
 	serverManager = &HttpServices{
-		Example: *exampleService,
+		IssueManager: *issueManagerService,
 		// 添加其他服务
 	}
 

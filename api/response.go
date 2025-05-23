@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/zgsm/go-webserver/i18n"
+	"github.com/zgsm/review-manager/i18n"
 )
 
 // Response API响应结构
@@ -45,6 +45,13 @@ func Fail(c *gin.Context, code int, messageID string) {
 	c.JSON(code, Response{
 		Code:    code,
 		Message: message,
+	})
+}
+
+func Error(c *gin.Context, code int, err error) {
+	c.JSON(code, Response{
+		Code:    code,
+		Message: err.Error(),
 	})
 }
 

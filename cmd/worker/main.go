@@ -1,24 +1,22 @@
 package worker
 
 import (
+	"log"
 	"os"
 	"os/signal"
 	"syscall"
 
-	"github.com/zgsm/go-webserver/config"
-	"github.com/zgsm/go-webserver/i18n"
-	"github.com/zgsm/go-webserver/pkg/asynq"
-	"github.com/zgsm/go-webserver/pkg/logger"
-	"github.com/zgsm/go-webserver/tasks"
+	"github.com/zgsm/review-manager/config"
+	"github.com/zgsm/review-manager/i18n"
+	"github.com/zgsm/review-manager/pkg/asynq"
+	"github.com/zgsm/review-manager/pkg/logger"
+	"github.com/zgsm/review-manager/tasks"
 )
 
-func Run() {
-	// 初始化配置
-	cfg := config.GetConfig()
-
+func Run(cfg *config.Config) {
 	// 初始化日志
 	if err := logger.InitLogger(cfg.Asynq.Log); err != nil {
-		logger.Error(i18n.Translate("asynq.server.init.failed", "", nil), "error", err)
+		log.Fatalln(i18n.Translate("asynq.server.init.failed", "", nil), "error", err)
 		os.Exit(1)
 	}
 	defer logger.Sync()
@@ -31,8 +29,7 @@ func Run() {
 
 	// 注册任务处理器
 	mux := asynq.NewServeMux()
-	mux.HandleFunc(tasks.TypeEmailDelivery, tasks.HandleEmailDeliveryTask)
-	mux.HandleFunc(tasks.TypeImageResize, tasks.HandleImageResizeTask)
+	mux.HandleFunc(tasks.TypeRunReviewTask, tasks.HandleRunReviewTask)
 
 	// 启动worker
 	logger.Info(i18n.Translate("worker.process.start", "", nil), "pid", os.Getpid())

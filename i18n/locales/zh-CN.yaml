@@ -1,334 +1,59 @@
-# 中文翻译文件
-welcome:
-  message: "欢迎使用Go WebServer"
-  description: "一个使用Go构建的可扩展Web服务器"
-
-common:
-  success: "成功"
-  failed: "失败"
-  error: "错误"
-  notFound: "未找到"
-  unauthorized: "未授权"
-  forbidden: "禁止访问"
-  badRequest: "请求错误"
-  serverError: "服务器错误"
-  timeout: "请求超时"
-  validation: "验证错误"
-
-i18n:
-  locale:
-    missing: "缺少语言参数"
-    set:
-      success: "语言设置成功"
-  load:
-    failed: "加载语言文件失败"
-    file:
-      failed: "加载语言文件失败"
-      success: "加载语言文件成功"
-  init:
-    success: "国际化支持初始化成功"
-  translate:
-    failed: "翻译失败"
-  
-  # 数据库相关
-  db:
-    init:
-      short: "初始化数据库"
-      long: "初始化数据库，创建表结构并添加初始数据"
-      success: "数据库初始化成功完成"
-      failed: "初始化数据库失败"
-    admin:
-      system: "系统管理员"
-    migrate:
-      success: "数据库迁移成功完成"
-      failed: "数据库迁移失败"
-      start: "开始执行数据库迁移..."
-    seed:
-      start: "开始添加初始数据..."
-    admin:
-      exists: "管理员用户已存在，跳过创建"
-      created: "管理员用户创建成功"
-    connection:
-      init: "初始化数据库连接"
-      success: "数据库连接成功"
-    model:
-      register: "注册所有需要迁移的模型"
-    check:
-      admin_exists: "检查管理员用户是否已存在"
-    skip:
-      admin_exists: "如果已存在管理员用户，则跳过"
-    hash:
-      generate: "生成密码哈希"
-    save:
-      db: "保存到数据库"
-    profile:
-      create: "创建管理员资料"
-  
-  # 配置相关
-  config:
-    load:
-      success: "加载配置成功"
-      failed: "加载配置失败"
-  
-  # 日志相关
-  logger:
-    init:
-      success: "初始化日志成功"
-      failed: "初始化日志失败"
-  
-  # Redis相关
-  redis:
-    connect:
-      success: "Redis连接成功"
-      failed: "初始化Redis失败"
-  
-  # HTTP客户端相关
-  httpclient:
-    init:
-      success: "HTTP客户端初始化成功"
-      failed: "初始化HTTP客户端失败"
-    service:
-      registered: "已注册服务"
-      not_initialized: "HTTP服务未初始化"
-      config_not_found: "未找到服务配置: %s"
-   
-  # 服务器相关
-  server:
-    start:
-      success: "服务器启动"
-      failed: "服务器启动失败"
-    shutdown:
-      starting: "正在关闭服务器..."
-      forced: "服务器强制关闭"
-
-  # 数据库日志
-  db:
-    connection:
-      info: "数据库连接信息"
-    type: "数据库类型"
-
-  # HTTP客户端日志
-  httpclient:
-    log:
-      request: "HTTP请求"
-      request_body: "HTTP请求体"
-      response: "HTTP响应"
-      response_body: "HTTP响应体"
-
-  # 中间件相关
-  middleware:
-    recovery:
-      broken_pipe: "检测到连接断开"
-      recovered: "恢复自panic"
-      internal_error: "服务器内部错误: %v"
-
-  # HTTP客户端详细消息
-  httpclient:
-    proxy:
-      parse_failed: "解析代理URL失败"
-    cert:
-      load_failed: "加载客户端证书失败"
-    ca:
-      read_failed: "读取CA证书失败"
-    request:
-      serialize_failed: "序列化请求体失败"
-      create_failed: "创建HTTP请求失败"
-    middleware:
-      process_failed: "中间件处理请求失败"
-    retry:
-      reader_unsupported: "无法重试io.Reader类型的请求体"
-      request_failed: "重试时创建HTTP请求失败"
-      middleware_failed: "重试时中间件处理请求失败"
-    attempt: "HTTP请求重试"
-    response:
-      read_failed: "HTTP请求失败: 状态码 %d, 无法读取响应体"
-      failed: "HTTP请求失败: 状态码 %d, 响应体: %s"
-    json:
-      parse_failed: "解析JSON响应失败"
-
-  # 数据库相关消息
-  db:
-    unsupported_type: "不支持的数据库类型: %s"
-    connection:
-      failed: "连接数据库失败"
-      get_failed: "获取数据库连接失败"
-    not_initialized: "数据库未初始化"
-      success: "服务器已优雅关闭"
-  
-  # Windows服务相关
-  service:
-    run:
-      failed: "服务运行失败"
-    start:
-      success: "服务已启动"
-    stop:
-      starting: "服务正在停止"
-      success: "服务 %s 停止成功"
-    control:
-      unexpected: "收到意外的控制请求"
-    install:
-      success: "服务安装成功"
-    uninstall:
-      success: "服务卸载成功"
-    description: "基于Gin的Web服务器"
-    session:
-      check: "无法确定是否为交互式会话"
-    command:
-      invalid: "无效的服务命令"
-      execute: "执行服务命令失败"
-    flag:
-      description: "控制服务: install, uninstall, start, stop"
-    path:
-      executable: "获取可执行文件路径失败"
-    dir:
-      change: "切换工作目录失败"
-    app:
-      start: "应用程序已启动"
-    exists: "服务已存在"
-    eventlog:
-      install: "安装事件日志失败"
-    query:
-      status: "查询服务状态失败"
-    stop:
-      failed: "停止服务失败"
-    wait:
-      timeout: "等待服务停止超时"
-    delete:
-      failed: "删除服务失败"
-    eventlog:
-      remove: "删除事件日志失败"
-    install:
-      success: "服务 %s 安装成功"
-    uninstall:
-      success: "服务 %s 卸载成功"
-    start:
-      success: "服务 %s 启动成功"
-    stop:
-      success: "服务 %s 停止成功"
-    not_found: "服务 %s 不存在"
-  
-  # 用户相关
-  user:
-    exists: "用户已存在"
-    not_found: "用户不存在"
-    disabled: "用户已被禁用"
-    password:
-      incorrect: "密码错误"
-      empty: "密码不能为空"
-      old_new_empty: "旧密码和新密码不能为空"
-      old_incorrect: "旧密码错误"
-    register:
-      params_empty: "用户名、邮箱和密码不能为空"
-    id:
-      invalid: "无效的用户ID"
-    encrypt:
-      failed: "密码加密失败"
-    create:
-      failed: "创建用户失败"
-
-log:
-  http:
-    request: "HTTP请求：{{.method}} {{.path}}"
-    response: "HTTP响应：{{.status}} {{.path}}"
-  
-external:
-  service:
-    get:
-      failed: "获取示例服务失败"
-  user:
-    id:
-      empty: "用户ID不能为空"
-    profile:
-      get:
-        failed: "获取用户资料失败"
-      update:
-        failed: "更新用户资料失败"
-      invalid: "无效的用户资料"
-    search:
-      failed: "搜索用户失败"
-  search:
-    query:
-      empty: "搜索关键词不能为空"
-
-user:
-  login:
-    success: "登录成功"
-    failed: "登录失败"
-    invalidCredentials: "用户名或密码无效"
-  register:
-    success: "注册成功"
-    failed: "注册失败"
-    userExists: "用户已存在"
-  logout:
-    success: "退出登录成功"
-  profile:
-    notFound: "未找到用户资料"
-    updateSuccess: "资料更新成功"
-    updateFailed: "资料更新失败"
-    invalid_params: "无效的用户参数"
-    not_found: "用户不存在"
-  register:
-    invalid_params: "无效的注册参数"
-    failed: "用户注册失败"
-  login:
-    invalid_params: "无效的登录参数"
-    failed: "用户登录失败"
-  info:
-    get:
-      failed: "获取用户信息失败"
-    update:
-      failed: "更新用户信息失败"
-      invalid_params: "无效的更新参数"
-  password:
-    invalid_params: "无效的密码参数"
-    change:
-      failed: "修改密码失败"
-  list:
-    failed: "获取用户列表失败"
-  delete:
-    failed: "删除用户失败"
-
-pagination:
-  prev: "上一页"
-  next: "下一页"
-  first: "首页"
-  last: "末页"
-  page: "第 {{.Page}} 页，共 {{.Total}} 页"
-  itemsPerPage: "每页显示"
-  showing: "显示 {{.From}} 到 {{.To}}，共 {{.Total}} 条"
-
-# Asynq相关
-asynq:
-  client:
-    init:
-      failed: "Asynq客户端初始化失败"
-  server:
-    init:
-      failed: "Asynq服务器初始化失败"
-    start:
-      failed: "异步任务处理器启动失败"
-
-# Worker进程相关
-worker:
-  process:
-    start: "Worker进程启动"
-    stop: "Worker进程停止"
-
-# 服务相关
-service:
-  usage: "请指定要运行的服务:"
-  web: "  web     - 运行Web服务"
-  worker: "  worker  - 运行Worker服务"
-  unknown: "未知的服务类型"
-    init:
-      failed: "Asynq服务器初始化失败"
-    start:
-      failed: "异步任务处理器启动失败"
-
-# 新增翻译条目
-dbtools:
-  description: "数据库工具，用于执行数据库迁移和初始化操作"
-  migrate:
-    description: "执行数据库迁移，创建或更新数据库表结构"
-  service:
-    description: "基于Gin的Web服务器"
+asynq.client.init.failed: "Asynq客户端初始化失败"
+asynq.server.init.failed: "Asynq服务器初始化失败"
+asynq.server.init.success: "Asynq服务器初始化成功"
+asynq.server.start.failed: "异步任务处理器启动失败"
+common.badRequest: "请求错误"
+common.forbidden: "禁止访问"
+common.notFound: "未找到"
+common.serverError: "服务器错误"
+common.success: "成功"
+common.invalidParameter: "参数错误"
+common.unauthorized: "未授权"
+config.load.failed: "加载配置失败"
+db.connection.failed: "连接数据库失败"
+db.connection.init: "初始化数据库连接"
+db.not_initialized: "数据库未初始化"
+db.unsupported_type: "不支持的数据库类型: {{.type}}"
+httpclient.ca.read_failed: "读取CA证书失败"
+httpclient.cert.load_failed: "加载客户端证书失败"
+httpclient.init.failed: "初始化HTTP客户端失败"
+httpclient.json.parse_failed: "解析JSON响应失败"
+httpclient.log.request: "HTTP请求"
+httpclient.log.request_body: "HTTP请求体"
+httpclient.log.response: "HTTP响应"
+httpclient.log.response_body: "HTTP响应体"
+httpclient.middleware.process_failed: "中间件处理请求失败"
+httpclient.proxy.parse_failed: "解析代理URL失败"
+httpclient.request.create_failed: "创建HTTP请求失败"
+httpclient.request.serialize_failed: "序列化请求体失败"
+httpclient.response.failed: "HTTP请求失败: 状态码 {{.code}}, 响应体: {{.body}}"
+httpclient.response.read_failed: "HTTP请求失败: 状态码 {{.code}}, 无法读取响应体"
+httpclient.retry.middleware_failed: "重试时中间件处理请求失败"
+httpclient.retry.reader_unsupported: "无法重试io.Reader类型的请求体"
+httpclient.retry.request_failed: "重试时创建HTTP请求失败"
+httpclient.service.config_not_found: "未找到服务配置: {{.service}}"
+httpclient.service.not_initialized: "HTTP服务未初始化"
+i18n.init.success: "语言初始化成功，默认语言: {{.locale}}"
+i18n.locale.missing: "缺少语言参数"
+i18n.locale.set.success: "语言设置成功"
+log.http.request: "HTTP请求：{{.method}} {{.path}}"
+logger.init.failed: "初始化日志失败"
+middleware.recovery.broken_pipe: "检测到连接断开"
+middleware.recovery.internal_error: "服务器内部错误: %v"
+middleware.recovery.recovered: "恢复自panic"
+redis.connect.failed: "初始化Redis失败"
+redis.connect.success: "Redis连接成功"
+review_task.empty_targets: "targets 为空"
+review_task.invalid_target_type: "无效的 target type"
+review_task.invalid_file_path: "无效的 file_path"
+review_task.invalid_line_range: "无效的 line range"
+server.shutdown.forced: "服务器强制关闭"
+server.shutdown.starting: "正在关闭服务器..."
+server.start.failed: "服务器启动失败"
+server.start.success: "服务器启动"
+service.unknown: "未知的服务类型"
+service.usage: "请指定要运行的服务:"
+service.web: "  web     - 运行Web服务"
+service.worker: "  worker  - 运行Worker服务"
+worker.process.start: "Worker进程启动"
+worker.process.stop: "Worker进程停止"

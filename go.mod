@@ -1,4 +1,4 @@
-module github.com/zgsm/go-webserver
+module github.com/zgsm/review-manager
 
 go 1.24
 

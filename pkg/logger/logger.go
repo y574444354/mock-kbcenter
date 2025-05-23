@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 
 	"github.com/hibiken/asynq"
-	"github.com/zgsm/go-webserver/config"
+	"github.com/zgsm/review-manager/config"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
@@ -81,7 +81,10 @@ func InitLogger(cfg config.Log) error {
 			MaxAge:     cfg.MaxAge,
 			Compress:   cfg.Compress,
 		}
-		writeSyncer = zapcore.AddSync(lumberJackLogger)
+		writeSyncer = zapcore.NewMultiWriteSyncer(
+			zapcore.AddSync(lumberJackLogger),
+			zapcore.AddSync(os.Stdout),
+		)
 	} else {
 		writeSyncer = zapcore.AddSync(os.Stdout)
 	}

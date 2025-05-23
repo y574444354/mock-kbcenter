@@ -15,8 +15,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/zgsm/go-webserver/i18n"
-	"github.com/zgsm/go-webserver/pkg/logger"
+	"github.com/zgsm/review-manager/i18n"
+	"github.com/zgsm/review-manager/pkg/logger"
 )
 
 // Client HTTP客户端

@@ -62,16 +62,20 @@ http_client:
   enable_request_log: true  # 是否启用请求日志
   enable_response_log: true  # 是否启用响应日志
   headers:  # 默认请求头
-    User-Agent: "Go-WebServer/1.0"
+    User-Agent: "review-manager/1.0"
     Accept: "application/json"
   proxy_url: ""  # 代理URL，为空则不使用代理
   insecure_skip_verify: false  # 是否跳过TLS证书验证
   services:  # 依赖服务配置
-    example:  # 示例服务
-      base_url: "https://api.example.com"
+    taskManager:  # 任务管理服务
+      base_url: "http://task-manager"
       timeout: 10  # 覆盖默认超时时间
       max_retries: 2  # 覆盖默认重试次数
-      auth_type: "bearer"  # 认证类型：none, basic, bearer, custom
-      token: "your_token_here"  # Bearer认证Token
-      headers:  # 服务特定请求头，与默认请求头合并
-        X-API-Key: "your_api_key_here"
+    issueManager:  # 任务管理服务
+      base_url: "http://issue-manager"
+      timeout: 10  # 覆盖默认超时时间
+      max_retries: 2  # 覆盖默认重试次数
+    kbCenter:   # 上下文服务
+      base_url: "http://kb-center"
+      timeout: 10  # 覆盖默认超时时间
+      max_retries: 2  # 覆盖默认重试次数

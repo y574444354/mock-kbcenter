@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/nicksnyder/go-i18n/v2/i18n"
-	"github.com/zgsm/go-webserver/config"
+	"github.com/zgsm/review-manager/config"
 	"golang.org/x/text/language"
 	"gopkg.in/yaml.v3"
 )
@@ -20,19 +20,33 @@ var (
 
 // InitI18n 初始化国际化支持
 func InitI18n(cfg config.Config) error {
+	// 记录传入的配置值
+	log.Printf("i18n.init.config: default_locale=%q, bundle_path=%q",
+		cfg.I18n.DefaultLocale, cfg.I18n.BundlePath)
+
+	// 验证语言标签
+	if cfg.I18n.DefaultLocale == "" {
+		return fmt.Errorf("i18n.init.failed: default locale is empty")
+	}
+
+	// 尝试解析语言标签
+	lang, err := language.Parse(cfg.I18n.DefaultLocale)
+	if err != nil {
+		return fmt.Errorf("i18n.init.failed: invalid locale tag %q: %w", cfg.I18n.DefaultLocale, err)
+	}
+
 	// 创建bundle
-	bundle = i18n.NewBundle(language.MustParse(cfg.I18n.DefaultLocale))
+	bundle = i18n.NewBundle(lang)
 	bundle.RegisterUnmarshalFunc("yaml", yaml.Unmarshal)
 
 	defaultLocal = cfg.I18n.DefaultLocale
 
 	// 加载语言文件
-	err := loadMessageFiles(cfg.I18n.BundlePath)
-	if err != nil {
+	if err := loadMessageFiles(cfg.I18n.BundlePath); err != nil {
 		return fmt.Errorf("i18n.load.failed: %w", err)
 	}
 
-	log.Printf("i18n.init.success: default_locale=%s", defaultLocal)
+	log.Println(Translate("i18n.init.success", defaultLocal, map[string]interface{}{"locale": defaultLocal}))
 	return nil
 }
 
@@ -68,6 +82,11 @@ func loadMessageFiles(dir string) error {
 
 // Translate 翻译消息
 func Translate(messageID string, locale string, templateData map[string]interface{}) string {
+	if bundle == nil {
+		log.Printf("i18n.translate.failed: bundle not initialized, messageID=%s", messageID)
+		return messageID
+	}
+
 	if locale == "" {
 		locale = defaultLocal
 	}

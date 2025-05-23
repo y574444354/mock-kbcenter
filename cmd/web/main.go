@@ -3,6 +3,7 @@ package web
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -10,33 +11,27 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	v1 "github.com/zgsm/go-webserver/api/v1"
-	"github.com/zgsm/go-webserver/config"
-	"github.com/zgsm/go-webserver/i18n"
-	"github.com/zgsm/go-webserver/internal/middleware"
-	"github.com/zgsm/go-webserver/pkg/asynq"
-	"github.com/zgsm/go-webserver/pkg/db"
-	"github.com/zgsm/go-webserver/pkg/logger"
-	"github.com/zgsm/go-webserver/pkg/redis"
-	"github.com/zgsm/go-webserver/pkg/thirdPlatform"
+	v1 "github.com/zgsm/review-manager/api/v1"
+	"github.com/zgsm/review-manager/config"
+	"github.com/zgsm/review-manager/i18n"
+	"github.com/zgsm/review-manager/internal/middleware"
+	"github.com/zgsm/review-manager/pkg/asynq"
+	"github.com/zgsm/review-manager/pkg/db"
+	"github.com/zgsm/review-manager/pkg/logger"
+	"github.com/zgsm/review-manager/pkg/redis"
+	"github.com/zgsm/review-manager/pkg/thirdPlatform"
 
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	_ "github.com/zgsm/go-webserver/swagger"
+	_ "github.com/zgsm/review-manager/swagger"
 )
 
-func Run() {
+func Run(cfg *config.Config) {
 	locale := i18n.GetDefaultLocale()
-
-	// 加载配置
-	if err := config.LoadConfigWithDefault(); err != nil {
-		logger.Fatal(i18n.Translate("config.load.failed", locale, nil), "error", err)
-	}
-	cfg := config.GetConfig()
 
 	// 初始化日志
 	if err := logger.InitLogger(cfg.Log); err != nil {
-		logger.Fatal(i18n.Translate("logger.init.failed", locale, nil), "error", err)
+		log.Fatalln(i18n.Translate("logger.init.failed", locale, nil), "error", err)
 	}
 	defer logger.Sync()
 
@@ -48,7 +43,7 @@ func Run() {
 	}
 
 	// 初始化数据库
-	if err := db.InitDB(*cfg); err != nil {
+	if err := db.InitDB(cfg.Database); err != nil {
 		logger.Error(i18n.Translate("db.connection.init", locale, nil), "error", err)
 		os.Exit(1)
 	}

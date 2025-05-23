@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/zgsm/go-webserver/pkg/i18nlogger"
+	"github.com/zgsm/review-manager/pkg/i18nlogger"
 )
 
 // Logger 日志中间件

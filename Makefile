@@ -9,7 +9,7 @@ endif
 -include .env
 
 # 变量定义（.env文件中的变量会覆盖这些默认值）
-APP_NAME ?= go-webserver
+APP_NAME ?= review-manager
 MAIN_FILE := main.go
 DOCKER_IMAGE ?= $(APP_NAME):latest
 DOCKER_CONTAINER := $(APP_NAME)
@@ -125,7 +125,7 @@ swagger:
 .PHONY: db-migrate
 db-migrate:
 	@echo "执行数据库迁移..."
-	@go run cmd/dbtools/main.go cmd/dbtools/migrate.go cmd/dbtools/init.go migrate
+	@go run cmd/dbtools/*.go migrate
 	@echo "数据库迁移完成"
 
 .PHONY: db-init
