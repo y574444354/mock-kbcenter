@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 
 	"github.com/hibiken/asynq"
+	"github.com/zgsm/review-manager/pkg/logger"
 )
 
 type RunReviewTaskPayload struct {
@@ -26,6 +27,7 @@ func HandleRunReviewTask(ctx context.Context, t *asynq.Task) error {
 	}
 
 	// 开始执行 review 任务
+	logger.Info("RunReviewTask", "payload", payload)
 
 	return nil
 }

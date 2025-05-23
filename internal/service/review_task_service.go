@@ -70,13 +70,13 @@ func (s *reviewTaskService) Run(clientID, workspace string, targets []types.Targ
 	// 创建异步任务
 	task, err := tasks.NewRunReviewTaskPayload(tasks.RunReviewTaskPayload{
 		ReviewTaskID: reviewTaskID,
-	}, tasks.QueueRunReviewTask)
+	}, tasks.QueueCritical)
 	if err != nil {
 		return "", err
 	}
 
 	// 将任务加入队列并获取任务ID
-	taskID, err := asynq.EnqueueTask(task, tasks.QueueRunReviewTask)
+	taskID, err := asynq.EnqueueTask(task, tasks.QueueCritical)
 	if err != nil {
 		return "", err
 	}

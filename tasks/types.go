@@ -5,5 +5,6 @@ const (
 	TypeRunReviewTask = "review:run"
 
 	// 任务队列常量
-	QueueRunReviewTask = "queue:review"
+	QueueDefault  = "default"
+	QueueCritical = "critical"
 )
