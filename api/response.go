@@ -48,6 +48,13 @@ func Fail(c *gin.Context, code int, messageID string) {
 	})
 }
 
+func Error(c *gin.Context, code int, err error) {
+	c.JSON(code, Response{
+		Code:    code,
+		Message: err.Error(),
+	})
+}
+
 // BadRequest 400错误响应
 func BadRequest(c *gin.Context, messageID string) {
 	if messageID == "" {
