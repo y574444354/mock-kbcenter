@@ -1,6 +1,7 @@
 package worker
 
 import (
+	"log"
 	"os"
 	"os/signal"
 	"syscall"
@@ -12,13 +13,10 @@ import (
 	"github.com/zgsm/review-manager/tasks"
 )
 
-func Run() {
-	// 初始化配置
-	cfg := config.GetConfig()
-
+func Run(cfg *config.Config) {
 	// 初始化日志
 	if err := logger.InitLogger(cfg.Asynq.Log); err != nil {
-		logger.Error(i18n.Translate("asynq.server.init.failed", "", nil), "error", err)
+		log.Fatalln(i18n.Translate("asynq.server.init.failed", "", nil), "error", err)
 		os.Exit(1)
 	}
 	defer logger.Sync()

@@ -6,7 +6,6 @@ import (
 
 	"github.com/zgsm/review-manager/config"
 	"github.com/zgsm/review-manager/i18n"
-	"github.com/zgsm/review-manager/pkg/logger"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
@@ -19,37 +18,35 @@ var (
 )
 
 // InitDB 初始化数据库连接
-func InitDB(cfg config.Config) error {
+func InitDB(cfg config.Database) error {
 	var err error
 	var dialector gorm.Dialector
 
-	switch cfg.Database.Type {
+	switch cfg.Type {
 	case "mysql":
 		dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=%s",
-			cfg.Database.User,
-			cfg.Database.Password,
-			cfg.Database.Host,
-			cfg.Database.Port,
-			cfg.Database.DBName,
-			cfg.Database.TimeZone)
+			cfg.User,
+			cfg.Password,
+			cfg.Host,
+			cfg.Port,
+			cfg.DBName,
+			cfg.TimeZone)
 		dialector = mysql.Open(dsn)
 	case "postgres":
 		dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=%s TimeZone=%s",
-			cfg.Database.Host,
-			cfg.Database.User,
-			cfg.Database.Password,
-			cfg.Database.DBName,
-			cfg.Database.Port,
-			cfg.Database.SSLMode,
-			cfg.Database.TimeZone)
-		logger.Info(i18n.Translate("db.connection.info", "", nil), "dsn", dsn)
+			cfg.Host,
+			cfg.User,
+			cfg.Password,
+			cfg.DBName,
+			cfg.Port,
+			cfg.SSLMode,
+			cfg.TimeZone)
 		dialector = postgres.Open(dsn)
 	case "sqlite":
-		dialector = sqlite.Open(cfg.Database.DBName)
+		dialector = sqlite.Open(cfg.DBName)
 	default:
-		return fmt.Errorf("%s", i18n.Translate("db.unsupported_type", "", map[string]interface{}{"type": cfg.Database.Type}))
+		return fmt.Errorf("%s", i18n.Translate("db.unsupported_type", "", map[string]interface{}{"type": cfg.Type}))
 	}
-	logger.Info(i18n.Translate("db.type", "", nil), "type", cfg.Database.Type)
 
 	// 配置GORM
 	gormConfig := &gorm.Config{
@@ -68,7 +65,7 @@ func InitDB(cfg config.Config) error {
 	// 配置连接池
 	sqlDB, err := DB.DB()
 	if err != nil {
-		return fmt.Errorf("%s: %w", i18n.Translate("db.connection.get_failed", "", nil), err)
+		return fmt.Errorf("%s: %w", i18n.Translate("db.connection.failed", "", nil), err)
 	}
 
 	// 设置最大空闲连接数
@@ -77,8 +74,6 @@ func InitDB(cfg config.Config) error {
 	sqlDB.SetMaxOpenConns(100)
 	// 设置连接最大生命周期
 	sqlDB.SetConnMaxLifetime(time.Hour)
-
-	logger.Info(i18n.Translate("db.init.success", "", nil), "type", cfg.Database.Type)
 	return nil
 }
 

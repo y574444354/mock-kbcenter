@@ -3,14 +3,26 @@ package main
 import (
 	"fmt"
 	"os"
+	"log"
 
 	web "github.com/zgsm/review-manager/cmd/web"
 	worker "github.com/zgsm/review-manager/cmd/worker"
+	"github.com/zgsm/review-manager/config"
 	"github.com/zgsm/review-manager/i18n"
-	"github.com/zgsm/review-manager/pkg/logger"
 )
 
 func main() {
+	// 加载配置
+	if err := config.LoadConfigWithDefault(); err != nil {
+		log.Fatalln("config.load.failed: %w", err)
+	}
+	// 初始化配置
+	cfg := config.GetConfig()
+
+	if err := i18n.InitI18n(*cfg); err != nil {
+		fmt.Println("i18n.init.failed: %w", err)
+	}
+
 	if len(os.Args) < 2 {
 		fmt.Println(i18n.Translate("service.usage", "", nil))
 		fmt.Println(i18n.Translate("service.web", "", nil))
@@ -20,11 +32,11 @@ func main() {
 
 	switch os.Args[1] {
 	case "web":
-		web.Run()
+		web.Run(cfg)
 	case "worker":
-		worker.Run()
+		worker.Run(cfg)
 	default:
-		logger.Error(i18n.Translate("service.unknown", "", nil), "service", os.Args[1])
+		log.Fatalln(i18n.Translate("service.unknown", "", nil), "service", os.Args[1])
 		os.Exit(1)
 	}
 }

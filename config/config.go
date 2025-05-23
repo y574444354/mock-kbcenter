@@ -20,6 +20,17 @@ type Log struct {
 	Compress   bool   `yaml:"compress"`
 }
 
+type Database struct {
+	Type     string `yaml:"type"` // mysql, postgres, sqlite
+	Host     string `yaml:"host"`
+	Port     int    `yaml:"port"`
+	User     string `yaml:"user"`
+	Password string `yaml:"password"`
+	DBName   string `yaml:"dbname"`
+	SSLMode  string `yaml:"sslmode"`
+	TimeZone string `yaml:"timezone"`
+}
+
 // Config 应用配置结构
 type Config struct {
 	Server struct {
@@ -27,16 +38,7 @@ type Config struct {
 		Mode string `yaml:"mode"` // debug, release, test
 	} `yaml:"server"`
 
-	Database struct {
-		Type     string `yaml:"type"` // mysql, postgres, sqlite
-		Host     string `yaml:"host"`
-		Port     int    `yaml:"port"`
-		User     string `yaml:"user"`
-		Password string `yaml:"password"`
-		DBName   string `yaml:"dbname"`
-		SSLMode  string `yaml:"sslmode"`
-		TimeZone string `yaml:"timezone"`
-	} `yaml:"database"`
+	Database Database `yaml:"database"`
 
 	Redis struct {
 		Host     string `yaml:"host"`

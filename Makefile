@@ -125,7 +125,7 @@ swagger:
 .PHONY: db-migrate
 db-migrate:
 	@echo "执行数据库迁移..."
-	@go run cmd/dbtools/main.go cmd/dbtools/migrate.go cmd/dbtools/init.go migrate
+	@go run cmd/dbtools/*.go migrate
 	@echo "数据库迁移完成"
 
 .PHONY: db-init

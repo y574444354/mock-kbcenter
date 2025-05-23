@@ -39,8 +39,11 @@ func Close() error {
 	return nil
 }
 
-// EnqueueTask 入队任务
-func EnqueueTask(task *asynq.Task, queue string) (string, error) {
+// EnqueueTaskFunc 定义入队任务的函数类型
+type EnqueueTaskFunc func(task *asynq.Task, queue string) (string, error)
+
+// EnqueueTask 入队任务函数变量
+var EnqueueTask EnqueueTaskFunc = func(task *asynq.Task, queue string) (string, error) {
 	info, err := client.Enqueue(task, asynq.Queue(queue))
 	if err != nil {
 		return "", err
