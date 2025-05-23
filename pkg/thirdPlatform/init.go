@@ -15,24 +15,20 @@ type Service struct {
 }
 
 type HttpServices struct {
-	Example ExampleService
+	IssueManager IssueManagerService
 }
 
 var serverManager *HttpServices
 
 // InitHTTPClient 初始化HTTP客户端
 func InitHTTPClient() error {
-	exampleServiceConfig, err := GetServiceConfig("example")
-	if err != nil {
-		return err
-	}
-	exampleService, err := NewExampleService(exampleServiceConfig)
+	issueManagerService, err := NewIssueManagerService()
 	if err != nil {
 		return err
 	}
 
 	serverManager = &HttpServices{
-		Example: *exampleService,
+		IssueManager: *issueManagerService,
 		// 添加其他服务
 	}
 
