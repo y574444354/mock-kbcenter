@@ -40,8 +40,7 @@ var migrateCmd = &cobra.Command{
 		// 注册所有需要迁移的模型
 		logger.Info(i18n.Translate("db.model.register", "", nil))
 		if err := db.AutoMigrate(
-			&model.User{},
-			&model.UserProfile{},
+			&model.ReviewTask{},
 			// 在这里添加其他模型
 		); err != nil {
 			logger.Error(i18n.Translate("db.migrate.failed", "", nil), "error", err)
