@@ -3,7 +3,9 @@ package v1
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/zgsm/review-manager/api"
+	"github.com/zgsm/review-manager/internal/model"
 	"github.com/zgsm/review-manager/internal/service"
+	"github.com/zgsm/review-manager/pkg/types"
 )
 
 type ReviewTaskHandler struct {
@@ -16,6 +18,57 @@ func NewReviewTaskHandler() *ReviewTaskHandler {
 	}
 }
 
+type CreateReviewTaskRequest struct {
+	ClientID  string         `json:"client_id" binding:"required"`
+	Workspace string         `json:"workspace" binding:"required"`
+	Targets   []model.Target `json:"targets" binding:"required"`
+}
+
+type CreateReviewTaskResponse struct {
+	ReviewTaskID string `json:"review_task_id"`
+}
+
 func (h *ReviewTaskHandler) Create(c *gin.Context) {
-	api.Success(c, nil)
+	var req CreateReviewTaskRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		api.BadRequest(c, "common.invalidParameter")
+		return
+	}
+
+	taskID, err := h.reviewTaskService.Run(req.ClientID, req.Workspace, req.Targets)
+	if err != nil {
+		api.ServerError(c, "common.serverError")
+		return
+	}
+
+	api.Success(c, CreateReviewTaskResponse{
+		ReviewTaskID: taskID,
+	})
+}
+
+type IssueIncrementReviewTaskRequest struct {
+	ClientId string `form:"client_id" binding:"required"`
+	Offset   int    `form:"offset" binding:"required,min=0"`
+}
+
+type IssueIncrementReviewTaskResponse struct {
+	types.IssueIncrementReviewTaskResult
+}
+
+func (h *ReviewTaskHandler) IssueIncrement(c *gin.Context) {
+	reviewTaskID := c.Param("review_task_id")
+
+	var req IssueIncrementReviewTaskRequest
+	if err := c.ShouldBindQuery(&req); err != nil {
+		api.BadRequest(c, "common.invalidParameter")
+		return
+	}
+
+	result, err := h.reviewTaskService.IssueIncrement(reviewTaskID, req.ClientId, req.Offset)
+	if err != nil {
+		api.ServerError(c, "common.serverError")
+		return
+	}
+
+	api.Success(c, result)
 }

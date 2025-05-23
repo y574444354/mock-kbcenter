@@ -22,8 +22,9 @@ func RegisterRoutes(router *gin.RouterGroup) {
 	// 可以添加其他API路由
 	// 例如：商品、订单、支付等
 	reviewTaskHandler := NewReviewTaskHandler()
-	reviewTaskGroup := router.Group("/review-tasks")
+	reviewTaskGroup := router.Group("/review_tasks")
 	{
 		reviewTaskGroup.POST("/", reviewTaskHandler.Create)
+		reviewTaskGroup.GET("/:review_task_id/issues/increment", reviewTaskHandler.IssueIncrement)
 	}
 }

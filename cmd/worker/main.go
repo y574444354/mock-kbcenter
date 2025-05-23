@@ -31,8 +31,7 @@ func Run() {
 
 	// 注册任务处理器
 	mux := asynq.NewServeMux()
-	mux.HandleFunc(tasks.TypeEmailDelivery, tasks.HandleEmailDeliveryTask)
-	mux.HandleFunc(tasks.TypeImageResize, tasks.HandleImageResizeTask)
+	mux.HandleFunc(tasks.TypeRunReviewTask, tasks.HandleRunReviewTask)
 
 	// 启动worker
 	logger.Info(i18n.Translate("worker.process.start", "", nil), "pid", os.Getpid())

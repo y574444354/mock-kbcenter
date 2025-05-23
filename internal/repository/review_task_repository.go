@@ -10,6 +10,8 @@ import (
 
 type ReviewTaskRepository interface {
 	Create(ctx context.Context, reviewTask *model.ReviewTask) error
+	Update(ctx context.Context, reviewTask *model.ReviewTask) error
+	GetProgress(ctx context.Context, reviewTaskID, clientID string) (float64, error)
 }
 
 type reviewTaskRepository struct {
@@ -22,6 +24,19 @@ func NewReviewTaskRepository() ReviewTaskRepository {
 	}
 }
 
-func (r *reviewTaskRepository) Create(ctx context.Context, reviewTask *model.ReviewTask) (error) {
+func (r *reviewTaskRepository) Create(ctx context.Context, reviewTask *model.ReviewTask) error {
 	return r.db.WithContext(ctx).Create(reviewTask).Error
+}
+
+func (r *reviewTaskRepository) Update(ctx context.Context, reviewTask *model.ReviewTask) error {
+	return r.db.WithContext(ctx).Model(reviewTask).Updates(reviewTask).Error
+}
+
+func (r *reviewTaskRepository) GetProgress(ctx context.Context, reviewTaskID, clientID string) (float64, error) {
+	var reviewTask model.ReviewTask
+	err := r.db.WithContext(ctx).Where("id = ? AND client_id = ?", reviewTaskID, clientID).First(&reviewTask).Error
+	if err != nil {
+		return 0, err
+	}
+	return float64(reviewTask.FinishedCount / reviewTask.TotalCount), nil
 }
