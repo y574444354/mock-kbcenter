@@ -81,7 +81,10 @@ func InitLogger(cfg config.Log) error {
 			MaxAge:     cfg.MaxAge,
 			Compress:   cfg.Compress,
 		}
-		writeSyncer = zapcore.AddSync(lumberJackLogger)
+		writeSyncer = zapcore.NewMultiWriteSyncer(
+			zapcore.AddSync(lumberJackLogger),
+			zapcore.AddSync(os.Stdout),
+		)
 	} else {
 		writeSyncer = zapcore.AddSync(os.Stdout)
 	}
