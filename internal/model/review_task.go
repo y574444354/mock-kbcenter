@@ -2,13 +2,11 @@ package model
 
 import (
 	"time"
+
+	"github.com/zgsm/review-manager/pkg/types"
 )
 
-type Target struct {
-	Type      string `json:"type"`                                  // file | folder | code
-	FilePath  string `json:"file_path"`                             // 文件路径
-	LineRange []int  `json:"line_range,omitempty" gorm:"type:json"` // 可选的行范围 [start, end]
-}
+
 
 type ReviewTask struct {
 	ID            string    `json:"id" gorm:"primaryKey"`
@@ -19,7 +17,7 @@ type ReviewTask struct {
 	TotalCount    int       `json:"total_count" gorm:"default:0"`        // 子任务总数量
 	FinishedCount int       `json:"finished_count" gorm:"default:0"`     // 子任务已完成数量
 	RunTaskID     string    `json:"run_task_id" gorm:"type:varchar(50)"` // 异步任务ID
-	Targets       []Target  `json:"targets" gorm:"type:json"`            // 目标列表
+	Targets       []types.Target  `json:"targets" gorm:"type:json"`            // 目标列表
 	CreatedAt     time.Time `json:"created_at"`
 	UpdatedAt     time.Time `json:"updated_at"`
 }

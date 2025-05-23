@@ -1,9 +1,10 @@
 package v1
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/zgsm/review-manager/api"
-	"github.com/zgsm/review-manager/internal/model"
 	"github.com/zgsm/review-manager/internal/service"
 	"github.com/zgsm/review-manager/pkg/types"
 )
@@ -21,7 +22,7 @@ func NewReviewTaskHandler() *ReviewTaskHandler {
 type CreateReviewTaskRequest struct {
 	ClientID  string         `json:"client_id" binding:"required"`
 	Workspace string         `json:"workspace" binding:"required"`
-	Targets   []model.Target `json:"targets" binding:"required"`
+	Targets   []types.Target `json:"targets" binding:"required"`
 }
 
 type CreateReviewTaskResponse struct {
@@ -37,7 +38,7 @@ func (h *ReviewTaskHandler) Create(c *gin.Context) {
 
 	taskID, err := h.reviewTaskService.Run(req.ClientID, req.Workspace, req.Targets)
 	if err != nil {
-		api.ServerError(c, "common.serverError")
+		api.Error(c, http.StatusInternalServerError, err)
 		return
 	}
 
@@ -66,7 +67,7 @@ func (h *ReviewTaskHandler) IssueIncrement(c *gin.Context) {
 
 	result, err := h.reviewTaskService.IssueIncrement(reviewTaskID, req.ClientId, req.Offset)
 	if err != nil {
-		api.ServerError(c, "common.serverError")
+		api.Error(c, http.StatusInternalServerError, err)
 		return
 	}
 

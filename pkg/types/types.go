@@ -1,5 +1,11 @@
 package types
 
+import (
+	"fmt"
+
+	"github.com/zgsm/review-manager/i18n"
+)
+
 // Issue 表示代码审查发现的问题
 type Issue struct {
 	IssueID    string   `json:"issue_id"`
@@ -24,4 +30,26 @@ type IssueIncrementReviewTaskResult struct {
 	Total      int     `json:"total"`
 	NextOffset int     `json:"next_offset"`
 	Issues     []Issue `json:"issues"`
+}
+
+type Target struct {
+	Type      string `json:"type"` // file | folder | code
+	FilePath  string `json:"file_path"` // 文件路径
+	LineRange []int  `json:"line_range,omitempty"` // 可选的行范围 [start, end]
+}
+
+func (t *Target) Validate() error {
+	// 验证type
+	if t.Type != "file" && t.Type != "folder" && t.Type != "code" {
+		return fmt.Errorf("%s", i18n.Translate("review_task.invalid_target_type", "", nil))
+	}
+	// 验证file_path
+	if t.FilePath == "" && t.Type != "folder" {
+		return fmt.Errorf("%s", i18n.Translate("review_task.invalid_file_path", "", nil))
+	}
+	// 验证line_range
+	if len(t.LineRange) == 2 && t.LineRange[0] > t.LineRange[1] {
+		return fmt.Errorf("%s", i18n.Translate("review_task.invalid_line_range", "", nil))
+	}
+	return nil
 }

@@ -2,9 +2,12 @@ package service
 
 import (
 	"context"
+	"fmt"
 
+	"github.com/zgsm/review-manager/i18n"
 	"github.com/zgsm/review-manager/pkg/asynq"
 	"github.com/zgsm/review-manager/pkg/idgen"
+	"github.com/zgsm/review-manager/pkg/logger"
 	"github.com/zgsm/review-manager/pkg/types"
 	"github.com/zgsm/review-manager/tasks"
 
@@ -13,8 +16,8 @@ import (
 )
 
 type ReviewTaskService interface {
-	Create(clientID, workspace string, targets []model.Target) (string, error)
-	Run(clientID, workspace string, targets []model.Target) (string, error)
+	Create(clientID, workspace string, targets []types.Target) (string, error)
+	Run(clientID, workspace string, targets []types.Target) (string, error)
 	IssueIncrement(reviewTaskID, clientID string, offset int) (*types.IssueIncrementReviewTaskResult, error)
 }
 
@@ -28,7 +31,7 @@ func NewReviewTaskService() ReviewTaskService {
 	}
 }
 
-func (s *reviewTaskService) Create(clientID, workspace string, targets []model.Target) (string, error) {
+func (s *reviewTaskService) Create(clientID, workspace string, targets []types.Target) (string, error) {
 	reviewTask := &model.ReviewTask{
 		ID:        idgen.GenerateString(), // 使用雪花算法生成ID
 		Status:    0,
@@ -44,7 +47,20 @@ func (s *reviewTaskService) Create(clientID, workspace string, targets []model.T
 	return reviewTask.ID, nil
 }
 
-func (s *reviewTaskService) Run(clientID, workspace string, targets []model.Target) (string, error) {
+func (s *reviewTaskService) Run(clientID, workspace string, targets []types.Target) (string, error) {
+	if len(targets) == 0 {
+		return "", fmt.Errorf("%s", i18n.Translate("review_task.empty_targets", "", nil))
+	}
+
+	// 验证每个target
+	for _, target := range targets {
+		if err := target.Validate(); err != nil {
+			return "", err
+		}
+	}
+
+	logger.Info(fmt.Sprintf("review task targets: %v", targets))
+
 	// 创建reviewTask
 	reviewTaskID, err := s.Create(clientID, workspace, targets)
 	if err != nil {
