@@ -6,7 +6,7 @@
 *.dylib
 *.test
 *.out
-review-manager
+go-webserver
 
 
 # 依赖目录

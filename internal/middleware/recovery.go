@@ -10,8 +10,8 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/zgsm/review-manager/i18n"
-	"github.com/zgsm/review-manager/pkg/logger"
+	"github.com/zgsm/go-webserver/i18n"
+	"github.com/zgsm/go-webserver/pkg/logger"
 )
 
 // Recovery 从panic中恢复的中间件

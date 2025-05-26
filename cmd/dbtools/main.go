@@ -6,8 +6,8 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-	"github.com/zgsm/review-manager/config"
-	"github.com/zgsm/review-manager/i18n"
+	"github.com/zgsm/go-webserver/config"
+	"github.com/zgsm/go-webserver/i18n"
 )
 
 var (

@@ -7,7 +7,7 @@
 package thirdPlatform
 
 import (
-    "github.com/zgsm/review-manager/pkg/httpclient"
+    "github.com/zgsm/go-webserver/pkg/httpclient"
 )
 
 // MyPlatformUser 用户数据结构

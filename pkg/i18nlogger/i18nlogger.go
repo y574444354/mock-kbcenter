@@ -2,8 +2,8 @@ package i18nlogger
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/zgsm/review-manager/i18n"
-	"github.com/zgsm/review-manager/pkg/logger"
+	"github.com/zgsm/go-webserver/i18n"
+	"github.com/zgsm/go-webserver/pkg/logger"
 )
 
 // Debug 记录国际化的调试级别日志

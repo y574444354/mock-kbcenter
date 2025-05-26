@@ -23,7 +23,7 @@ config/config.local.*
 
 # 排除构建输出
 bin/
-review-manager
+go-webserver
 worker
 
 # 排除临时文件

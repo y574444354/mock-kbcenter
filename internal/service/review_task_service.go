@@ -4,15 +4,15 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/zgsm/review-manager/i18n"
-	"github.com/zgsm/review-manager/pkg/asynq"
-	"github.com/zgsm/review-manager/pkg/idgen"
-	"github.com/zgsm/review-manager/pkg/logger"
-	"github.com/zgsm/review-manager/pkg/types"
-	"github.com/zgsm/review-manager/tasks"
+	"github.com/zgsm/go-webserver/i18n"
+	"github.com/zgsm/go-webserver/pkg/asynq"
+	"github.com/zgsm/go-webserver/pkg/idgen"
+	"github.com/zgsm/go-webserver/pkg/logger"
+	"github.com/zgsm/go-webserver/pkg/types"
+	"github.com/zgsm/go-webserver/tasks"
 
-	"github.com/zgsm/review-manager/internal/model"
-	"github.com/zgsm/review-manager/internal/repository"
+	"github.com/zgsm/go-webserver/internal/model"
+	"github.com/zgsm/go-webserver/internal/repository"
 )
 
 type ReviewTaskService interface {

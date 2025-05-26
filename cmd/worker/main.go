@@ -6,11 +6,11 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/zgsm/review-manager/config"
-	"github.com/zgsm/review-manager/i18n"
-	"github.com/zgsm/review-manager/pkg/asynq"
-	"github.com/zgsm/review-manager/pkg/logger"
-	"github.com/zgsm/review-manager/tasks"
+	"github.com/zgsm/go-webserver/config"
+	"github.com/zgsm/go-webserver/i18n"
+	"github.com/zgsm/go-webserver/pkg/asynq"
+	"github.com/zgsm/go-webserver/pkg/logger"
+	"github.com/zgsm/go-webserver/tasks"
 )
 
 func Run(cfg *config.Config) {

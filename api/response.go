@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/zgsm/review-manager/i18n"
+	"github.com/zgsm/go-webserver/i18n"
 )
 
 // Response API响应结构

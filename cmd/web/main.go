@@ -11,19 +11,19 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	v1 "github.com/zgsm/review-manager/api/v1"
-	"github.com/zgsm/review-manager/config"
-	"github.com/zgsm/review-manager/i18n"
-	"github.com/zgsm/review-manager/internal/middleware"
-	"github.com/zgsm/review-manager/pkg/asynq"
-	"github.com/zgsm/review-manager/pkg/db"
-	"github.com/zgsm/review-manager/pkg/logger"
-	"github.com/zgsm/review-manager/pkg/redis"
-	"github.com/zgsm/review-manager/pkg/thirdPlatform"
+	v1 "github.com/zgsm/go-webserver/api/v1"
+	"github.com/zgsm/go-webserver/config"
+	"github.com/zgsm/go-webserver/i18n"
+	"github.com/zgsm/go-webserver/internal/middleware"
+	"github.com/zgsm/go-webserver/pkg/asynq"
+	"github.com/zgsm/go-webserver/pkg/db"
+	"github.com/zgsm/go-webserver/pkg/logger"
+	"github.com/zgsm/go-webserver/pkg/redis"
+	"github.com/zgsm/go-webserver/pkg/thirdPlatform"
 
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	_ "github.com/zgsm/review-manager/swagger"
+	_ "github.com/zgsm/go-webserver/swagger"
 )
 
 func Run(cfg *config.Config) {

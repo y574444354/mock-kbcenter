@@ -4,9 +4,9 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/zgsm/review-manager/api"
-	"github.com/zgsm/review-manager/internal/service"
-	"github.com/zgsm/review-manager/pkg/types"
+	"github.com/zgsm/go-webserver/api"
+	"github.com/zgsm/go-webserver/internal/service"
+	"github.com/zgsm/go-webserver/pkg/types"
 )
 
 type ReviewTaskHandler struct {

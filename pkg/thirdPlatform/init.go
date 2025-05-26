@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/zgsm/review-manager/config"
-	"github.com/zgsm/review-manager/i18n"
-	"github.com/zgsm/review-manager/pkg/httpclient"
+	"github.com/zgsm/go-webserver/config"
+	"github.com/zgsm/go-webserver/i18n"
+	"github.com/zgsm/go-webserver/pkg/httpclient"
 )
 
 // Service 定义

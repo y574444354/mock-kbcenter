@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/zgsm/review-manager/pkg/httpclient"
-	"github.com/zgsm/review-manager/pkg/logger"
+	"github.com/zgsm/go-webserver/pkg/httpclient"
+	"github.com/zgsm/go-webserver/pkg/logger"
 )
 
 // ExampleUserProfile 用户资料

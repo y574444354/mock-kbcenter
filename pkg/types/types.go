@@ -3,7 +3,7 @@ package types
 import (
 	"fmt"
 
-	"github.com/zgsm/review-manager/i18n"
+	"github.com/zgsm/go-webserver/i18n"
 )
 
 // Issue 表示代码审查发现的问题
@@ -33,8 +33,8 @@ type IssueIncrementReviewTaskResult struct {
 }
 
 type Target struct {
-	Type      string `json:"type"` // file | folder | code
-	FilePath  string `json:"file_path"` // 文件路径
+	Type      string `json:"type"`                 // file | folder | code
+	FilePath  string `json:"file_path"`            // 文件路径
 	LineRange []int  `json:"line_range,omitempty"` // 可选的行范围 [start, end]
 }
 

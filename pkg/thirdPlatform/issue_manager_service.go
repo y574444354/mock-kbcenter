@@ -1,7 +1,7 @@
 package thirdPlatform
 
 import (
-	"github.com/zgsm/review-manager/pkg/httpclient"
+	"github.com/zgsm/go-webserver/pkg/httpclient"
 )
 
 var TypeIssueManager = "issueManager"

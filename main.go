@@ -5,10 +5,10 @@ import (
 	"os"
 	"log"
 
-	web "github.com/zgsm/review-manager/cmd/web"
-	worker "github.com/zgsm/review-manager/cmd/worker"
-	"github.com/zgsm/review-manager/config"
-	"github.com/zgsm/review-manager/i18n"
+	web "github.com/zgsm/go-webserver/cmd/web"
+	worker "github.com/zgsm/go-webserver/cmd/worker"
+	"github.com/zgsm/go-webserver/config"
+	"github.com/zgsm/go-webserver/i18n"
 )
 
 func main() {

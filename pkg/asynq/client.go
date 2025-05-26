@@ -4,9 +4,9 @@ import (
 	"fmt"
 
 	"github.com/hibiken/asynq"
-	"github.com/zgsm/review-manager/config"
-	"github.com/zgsm/review-manager/i18n"
-	"github.com/zgsm/review-manager/pkg/logger"
+	"github.com/zgsm/go-webserver/config"
+	"github.com/zgsm/go-webserver/i18n"
+	"github.com/zgsm/go-webserver/pkg/logger"
 )
 
 var client *asynq.Client

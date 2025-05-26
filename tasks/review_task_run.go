@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 
 	"github.com/hibiken/asynq"
-	"github.com/zgsm/review-manager/pkg/logger"
+	"github.com/zgsm/go-webserver/pkg/logger"
 )
 
 type RunReviewTaskPayload struct {
