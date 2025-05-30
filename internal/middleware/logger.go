@@ -30,7 +30,7 @@ func Logger() gin.HandlerFunc {
 		// 客户端IP
 		clientIP := c.ClientIP()
 		// 错误信息
-		errorMessage := c.Errors.ByType(gin.ErrorTypePrivate).String()
+		errorMessage := c.Errors.String()
 
 		// 如果有查询参数，添加到路径
 		if raw != "" {
