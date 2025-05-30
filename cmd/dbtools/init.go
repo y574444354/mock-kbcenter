@@ -6,7 +6,8 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/zgsm/mock-kbcenter/config"
-	"github.com/zgsm/mock-kbcenter/internal/model"
+
+	// "github.com/zgsm/mock-kbcenter/internal/model"
 	"github.com/zgsm/mock-kbcenter/pkg/db"
 )
 
@@ -29,8 +30,7 @@ var initCmd = &cobra.Command{
 		// 注册所有需要迁移的模型
 		log.Println("Migrating database...")
 		if err := db.AutoMigrate(
-			&model.ReviewTask{},
-			// 在这里添加其他模型
+		// 在这里添加其他模型
 		); err != nil {
 			log.Fatalf("Failed to migrate database: %v", err)
 			os.Exit(1)

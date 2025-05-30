@@ -15,18 +15,14 @@ import (
 	"github.com/zgsm/mock-kbcenter/config"
 	"github.com/zgsm/mock-kbcenter/i18n"
 	"github.com/zgsm/mock-kbcenter/internal/middleware"
-	"github.com/zgsm/mock-kbcenter/pkg/asynq"
-	"github.com/zgsm/mock-kbcenter/pkg/db"
 	"github.com/zgsm/mock-kbcenter/pkg/logger"
-	"github.com/zgsm/mock-kbcenter/pkg/redis"
-	"github.com/zgsm/mock-kbcenter/pkg/thirdPlatform"
 
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	_ "github.com/zgsm/mock-kbcenter/swagger"
 )
 
-func Run(cfg *config.Config) {
+func Run(cfg *config.Config, workDir string) {
 	locale := i18n.GetDefaultLocale()
 
 	// 初始化日志
@@ -42,30 +38,30 @@ func Run(cfg *config.Config) {
 		gin.SetMode(gin.TestMode)
 	}
 
-	// 初始化数据库
-	if err := db.InitDB(cfg.Database); err != nil {
-		logger.Error(i18n.Translate("db.connection.init", locale, nil), "error", err)
-		os.Exit(1)
-	}
+	// // 初始化数据库
+	// if err := db.InitDB(cfg.Database); err != nil {
+	// 	logger.Error(i18n.Translate("db.connection.init", locale, nil), "error", err)
+	// 	os.Exit(1)
+	// }
 
-	// 初始化Redis
-	if err := redis.InitRedis(*cfg); err != nil {
-		logger.Error(i18n.Translate("redis.connect.failed", locale, nil), "error", err)
-		os.Exit(1)
-	}
+	// // 初始化Redis
+	// if err := redis.InitRedis(*cfg); err != nil {
+	// 	logger.Error(i18n.Translate("redis.connect.failed", locale, nil), "error", err)
+	// 	os.Exit(1)
+	// }
 
-	// 初始化HTTP客户端
-	if err := thirdPlatform.InitHTTPClient(); err != nil {
-		logger.Error(i18n.Translate("httpclient.init.failed", locale, nil), "error", err)
-		os.Exit(1)
-	}
+	// // 初始化HTTP客户端
+	// if err := thirdPlatform.InitHTTPClient(); err != nil {
+	// 	logger.Error(i18n.Translate("httpclient.init.failed", locale, nil), "error", err)
+	// 	os.Exit(1)
+	// }
 
-	// 初始化Asynq客户端
-	if err := asynq.InitClient(*cfg); err != nil {
-		logger.Error(i18n.Translate("asynq.client.init.failed", locale, nil), "error", err)
-		os.Exit(1)
-	}
-	defer asynq.Close()
+	// // 初始化Asynq客户端
+	// if err := asynq.InitClient(*cfg); err != nil {
+	// 	logger.Error(i18n.Translate("asynq.client.init.failed", locale, nil), "error", err)
+	// 	os.Exit(1)
+	// }
+	// defer asynq.Close()
 
 	// 创建Gin引擎
 	r := gin.New()
@@ -88,7 +84,7 @@ func Run(cfg *config.Config) {
 
 	// 注册API路由
 	apiV1 := r.Group("/api/v1")
-	v1.RegisterRoutes(apiV1)
+	v1.RegisterRoutes(apiV1, workDir)
 
 	// 启动服务器
 	srv := &http.Server{

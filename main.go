@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"os"
 	"log"
+	"os"
 
 	web "github.com/zgsm/mock-kbcenter/cmd/web"
 	worker "github.com/zgsm/mock-kbcenter/cmd/worker"
@@ -30,9 +30,21 @@ func main() {
 		os.Exit(1)
 	}
 
+	workDir := ""
+	if len(os.Args) > 2 {
+		workDir = os.Args[2]
+	}
+	if workDir == "" {
+		var err error
+		workDir, err = os.Getwd()
+		if err != nil {
+			log.Fatalln(i18n.Translate("kbcenter.getwd_failed", "", map[string]interface{}{"error": err.Error()}))
+		}
+	}
+
 	switch os.Args[1] {
 	case "web":
-		web.Run(cfg)
+		web.Run(cfg, workDir)
 	case "worker":
 		worker.Run(cfg)
 	default:
