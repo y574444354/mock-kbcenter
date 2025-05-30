@@ -216,7 +216,10 @@ func (c *Client) Request(ctx context.Context, method, path string, body interfac
 		}
 
 		retries++
-		logger.Info(i18n.Translate("httpclient.retry.attempt", "", nil), "attempt", retries, "max", c.config.MaxRetries)
+		logger.Info(i18n.Translate("httpclient.retry.attempt", "", map[string]interface{}{
+			"attempt": retries,
+			"max":     c.config.MaxRetries,
+		}))
 		time.Sleep(c.config.RetryDelay)
 
 		// 重新创建请求体

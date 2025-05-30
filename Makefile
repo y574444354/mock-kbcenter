@@ -47,6 +47,7 @@ help:
 	@echo "make swagger       - 生成Swagger文档"
 	@echo "make db-migrate    - 执行数据库迁移"
 	@echo "make db-init       - 初始化数据库"
+	@echo "make redis-clear   - 清除Redis缓存"
 	@echo "make docker-build  - 构建Docker镜像"
 	@echo "make docker-run    - 运行Docker容器"
 	@echo "make docker-stop   - 停止Docker容器"
@@ -167,3 +168,10 @@ docker-clean: docker-stop
 	@echo "清理Docker资源..."
 	@docker rmi $(DOCKER_IMAGE) || true
 	@echo "Docker资源清理完成"
+
+# Redis相关命令
+.PHONY: redis-clear
+redis-clear:
+	@echo "清除Redis缓存..."
+	@go run cmd/redistools/*.go
+	@echo "Redis缓存清除完成"

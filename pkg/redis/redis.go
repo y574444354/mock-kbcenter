@@ -47,6 +47,16 @@ func GetClient() *redis.Client {
 	return client
 }
 
+// TryLock 尝试获取分布式锁
+func TryLock(key string, expiration time.Duration) (bool, error) {
+	return client.SetNX(ctx, key, 1, expiration).Result()
+}
+
+// Unlock 释放分布式锁
+func Unlock(key string) error {
+	return client.Del(ctx, key).Err()
+}
+
 // Close 关闭Redis连接
 func Close() error {
 	if client != nil {
@@ -109,4 +119,13 @@ func HGetAll(key string) (map[string]string, error) {
 // HDel 删除哈希表字段
 func HDel(key string, fields ...string) error {
 	return client.HDel(ctx, key, fields...).Err()
+}
+
+// FlushDB 清空当前数据库
+func FlushDB() error {
+	if err := client.FlushDB(ctx).Err(); err != nil {
+		return fmt.Errorf(i18n.Translate("redis.flushdb.failed", "", nil)+": %w", err)
+	}
+	logger.Info(i18n.Translate("redis.flushdb.success", "", nil))
+	return nil
 }

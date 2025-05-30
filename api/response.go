@@ -49,6 +49,7 @@ func Fail(c *gin.Context, code int, messageID string) {
 }
 
 func Error(c *gin.Context, code int, err error) {
+	c.Errors = append(c.Errors, &gin.Error{Err: err})
 	c.JSON(code, Response{
 		Code:    code,
 		Message: err.Error(),

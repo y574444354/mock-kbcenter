@@ -1,6 +1,7 @@
 package asynq
 
 import (
+	"context"
 	"fmt"
 	"time"
 
@@ -9,6 +10,18 @@ import (
 	"github.com/zgsm/go-webserver/i18n"
 	"github.com/zgsm/go-webserver/pkg/logger"
 )
+
+type errorHandler struct {
+	logger asynq.Logger
+}
+
+func (h *errorHandler) HandleError(ctx context.Context, task *asynq.Task, err error) {
+	h.logger.Error("asynq task error",
+		"task", task.Type(),
+		"error", err,
+		"message", i18n.Translate("asynq.server.error.handler", "", nil),
+	)
+}
 
 var (
 	server *asynq.Server
@@ -39,6 +52,9 @@ func InitServer(cfg config.Config) error {
 				return time.Duration(cfg.Asynq.RetryDelay) * time.Second
 			},
 			Logger: logger.GetAsynqLogger(),
+			ErrorHandler: &errorHandler{
+				logger: logger.GetAsynqLogger(),
+			},
 		},
 	)
 

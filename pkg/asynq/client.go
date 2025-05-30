@@ -1,6 +1,7 @@
 package asynq
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/hibiken/asynq"
@@ -44,9 +45,20 @@ type EnqueueTaskFunc func(task *asynq.Task, queue string) (string, error)
 
 // EnqueueTask 入队任务函数变量
 var EnqueueTask EnqueueTaskFunc = func(task *asynq.Task, queue string) (string, error) {
+	if client == nil {
+		logger.Error(i18n.Translate("asynq.client.nil", "", nil))
+		return "", errors.New(i18n.Translate("asynq.client.nil", "", nil))
+	}
 	info, err := client.Enqueue(task, asynq.Queue(queue))
 	if err != nil {
-		return "", err
+		logger.Error(i18n.Translate("asynq.enqueue.failed", "", map[string]interface{}{
+			"queue": queue,
+			"error": err.Error(),
+		}))
+		return "", fmt.Errorf("%s", i18n.Translate("asynq.enqueue.failed", "", map[string]interface{}{
+			"queue": queue,
+			"error": err.Error(),
+		}))
 	}
 	return info.ID, nil
 }
