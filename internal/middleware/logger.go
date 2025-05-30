@@ -4,7 +4,8 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/zgsm/go-webserver/pkg/i18nlogger"
+	"github.com/zgsm/go-webserver/i18n"
+	"github.com/zgsm/go-webserver/pkg/logger"
 )
 
 // Logger 日志中间件
@@ -36,14 +37,11 @@ func Logger() gin.HandlerFunc {
 			path = path + "?" + raw
 		}
 
-		// 获取语言设置
-		locale := i18nlogger.GetLocaleFromContext(c)
-
 		// 记录日志
-		i18nlogger.Info("log.http.request", locale, map[string]interface{}{
+		logger.Info(i18n.Translate("log.http.request", "", map[string]interface{}{
 			"method": method,
 			"path":   path,
-		},
+		}),
 			"status", statusCode,
 			"method", method,
 			"path", path,
