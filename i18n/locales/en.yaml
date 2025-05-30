@@ -38,6 +38,7 @@ httpclient.retry.reader_unsupported: "Cannot retry with io.Reader type request b
 httpclient.retry.request_failed: "Failed to create HTTP request during retry"
 httpclient.service.config_not_found: "Service config not found: {{.service}}"
 httpclient.service.not_initialized: "HTTP service not initialized"
+httpclient.retry.attempt: "HTTP request retrying ({{.attempt}}/{{.max}})"
 i18n.init.success: "I18n init success, default locale: {{.locale}}"
 i18n.locale.missing: "Missing locale parameter"
 i18n.locale.set.success: "Locale set successfully"

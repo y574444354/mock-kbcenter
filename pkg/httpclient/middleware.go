@@ -112,7 +112,8 @@ func (m *LogMiddleware) ProcessResponse(resp *http.Response, err error) (*http.R
 	// 记录响应信息
 	logger.Info(i18n.Translate("httpclient.log.response", "", nil),
 		"status", resp.Status,
-		"headers", resp.Header,
+		"url", resp.Request.URL.String(),
+		// "headers", resp.Header,
 	)
 
 	// 如果响应体不为空，记录响应体

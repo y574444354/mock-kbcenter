@@ -221,7 +221,7 @@ func (c *Client) Request(ctx context.Context, method, path string, body interfac
 		}
 
 		retries++
-		logger.Info(i18n.Translate("httpclient.retry.attempt", "", map[string]interface{}{
+		logger.Debug(i18n.Translate("httpclient.retry.attempt", "", map[string]interface{}{
 			"attempt": retries,
 			"max":     c.config.MaxRetries,
 		}))
