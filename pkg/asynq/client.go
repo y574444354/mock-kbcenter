@@ -41,15 +41,22 @@ func Close() error {
 }
 
 // EnqueueTaskFunc 定义入队任务的函数类型
-type EnqueueTaskFunc func(task *asynq.Task, queue string) (string, error)
+type EnqueueTaskFunc func(task *asynq.Task, queue string, retryCount ...int) (string, error)
 
 // EnqueueTask 入队任务函数变量
-var EnqueueTask EnqueueTaskFunc = func(task *asynq.Task, queue string) (string, error) {
+var EnqueueTask EnqueueTaskFunc = func(task *asynq.Task, queue string, retryCount ...int) (string, error) {
 	if client == nil {
 		logger.Error(i18n.Translate("asynq.client.nil", "", nil))
 		return "", errors.New(i18n.Translate("asynq.client.nil", "", nil))
 	}
-	info, err := client.Enqueue(task, asynq.Queue(queue))
+
+	// 获取重试次数，如果未传入则使用配置中的默认值
+	count := config.GetConfig().Asynq.RetryCount
+	if len(retryCount) > 0 {
+		count = retryCount[0]
+	}
+
+	info, err := client.Enqueue(task, asynq.Queue(queue), asynq.MaxRetry(count))
 	if err != nil {
 		logger.Error(i18n.Translate("asynq.enqueue.failed", "", map[string]interface{}{
 			"queue": queue,
