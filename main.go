@@ -5,10 +5,10 @@ import (
 	"os"
 	"log"
 
-	web "github.com/zgsm/go-webserver/cmd/web"
-	worker "github.com/zgsm/go-webserver/cmd/worker"
-	"github.com/zgsm/go-webserver/config"
-	"github.com/zgsm/go-webserver/i18n"
+	web "github.com/zgsm/mock-kbcenter/cmd/web"
+	worker "github.com/zgsm/mock-kbcenter/cmd/worker"
+	"github.com/zgsm/mock-kbcenter/config"
+	"github.com/zgsm/mock-kbcenter/i18n"
 )
 
 func main() {

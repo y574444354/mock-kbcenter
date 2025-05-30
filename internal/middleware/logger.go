@@ -4,8 +4,8 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/zgsm/go-webserver/i18n"
-	"github.com/zgsm/go-webserver/pkg/logger"
+	"github.com/zgsm/mock-kbcenter/i18n"
+	"github.com/zgsm/mock-kbcenter/pkg/logger"
 )
 
 // Logger 日志中间件

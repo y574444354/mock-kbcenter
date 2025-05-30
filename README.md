@@ -67,8 +67,8 @@
 1. 克隆仓库
 
 ```bash
-git clone https://github.com/yourusername/go-webserver.git
-cd go-webserver
+git clone https://github.com/yourusername/mock-kbcenter.git
+cd mock-kbcenter
 ```
 
 2. 安装依赖
@@ -111,7 +111,7 @@ make run-worker
 make docker-build-worker
 
 # 运行 worker 容器
-docker run -d --name go-webserver-worker go-webserver-worker
+docker run -d --name mock-kbcenter-worker mock-kbcenter-worker
 ```
 
 ### 使用Docker
@@ -119,13 +119,13 @@ docker run -d --name go-webserver-worker go-webserver-worker
 1. 构建Docker镜像
 
 ```bash
-docker build -t go-webserver .
+docker build -t mock-kbcenter .
 ```
 
 2. 运行容器
 
 ```bash
-docker run -p 8080:8080 go-webserver
+docker run -p 8080:8080 mock-kbcenter
 ```
 
 ### 作为Windows服务运行

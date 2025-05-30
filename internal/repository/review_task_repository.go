@@ -3,8 +3,8 @@ package repository
 import (
 	"context"
 
-	"github.com/zgsm/go-webserver/internal/model"
-	"github.com/zgsm/go-webserver/pkg/db"
+	"github.com/zgsm/mock-kbcenter/internal/model"
+	"github.com/zgsm/mock-kbcenter/pkg/db"
 	"gorm.io/gorm"
 )
 

@@ -3,7 +3,7 @@ package model
 import (
 	"time"
 
-	"github.com/zgsm/go-webserver/pkg/types"
+	"github.com/zgsm/mock-kbcenter/pkg/types"
 )
 
 type ReviewTask struct {

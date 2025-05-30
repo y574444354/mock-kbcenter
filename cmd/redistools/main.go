@@ -6,10 +6,10 @@ import (
 	"log"
 	"os"
 
-	"github.com/zgsm/go-webserver/config"
-	"github.com/zgsm/go-webserver/i18n"
-	"github.com/zgsm/go-webserver/pkg/logger"
-	"github.com/zgsm/go-webserver/pkg/redis"
+	"github.com/zgsm/mock-kbcenter/config"
+	"github.com/zgsm/mock-kbcenter/i18n"
+	"github.com/zgsm/mock-kbcenter/pkg/logger"
+	"github.com/zgsm/mock-kbcenter/pkg/redis"
 )
 
 func main() {

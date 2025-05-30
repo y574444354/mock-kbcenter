@@ -6,7 +6,7 @@
 *.dylib
 *.test
 *.out
-go-webserver
+mock-kbcenter
 
 
 # 依赖目录

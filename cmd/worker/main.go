@@ -6,14 +6,14 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/zgsm/go-webserver/config"
-	"github.com/zgsm/go-webserver/i18n"
-	"github.com/zgsm/go-webserver/pkg/asynq"
-	"github.com/zgsm/go-webserver/pkg/db"
-	"github.com/zgsm/go-webserver/pkg/logger"
-	"github.com/zgsm/go-webserver/pkg/redis"
-	"github.com/zgsm/go-webserver/pkg/thirdPlatform"
-	"github.com/zgsm/go-webserver/tasks"
+	"github.com/zgsm/mock-kbcenter/config"
+	"github.com/zgsm/mock-kbcenter/i18n"
+	"github.com/zgsm/mock-kbcenter/pkg/asynq"
+	"github.com/zgsm/mock-kbcenter/pkg/db"
+	"github.com/zgsm/mock-kbcenter/pkg/logger"
+	"github.com/zgsm/mock-kbcenter/pkg/redis"
+	"github.com/zgsm/mock-kbcenter/pkg/thirdPlatform"
+	"github.com/zgsm/mock-kbcenter/tasks"
 )
 
 func Run(cfg *config.Config) {

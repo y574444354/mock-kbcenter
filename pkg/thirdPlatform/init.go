@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/zgsm/go-webserver/config"
-	"github.com/zgsm/go-webserver/i18n"
-	"github.com/zgsm/go-webserver/pkg/httpclient"
+	"github.com/zgsm/mock-kbcenter/config"
+	"github.com/zgsm/mock-kbcenter/i18n"
+	"github.com/zgsm/mock-kbcenter/pkg/httpclient"
 )
 
 // Service 定义

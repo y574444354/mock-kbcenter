@@ -3,7 +3,7 @@ package types
 import (
 	"fmt"
 
-	"github.com/zgsm/go-webserver/i18n"
+	"github.com/zgsm/mock-kbcenter/i18n"
 )
 
 // Issue 表示代码审查发现的问题

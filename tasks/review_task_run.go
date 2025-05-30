@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 
 	"github.com/hibiken/asynq"
-	"github.com/zgsm/go-webserver/pkg/logger"
+	"github.com/zgsm/mock-kbcenter/pkg/logger"
 )
 
 type RunReviewTaskPayload struct {

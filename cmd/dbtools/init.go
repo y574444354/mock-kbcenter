@@ -5,9 +5,9 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-	"github.com/zgsm/go-webserver/config"
-	"github.com/zgsm/go-webserver/internal/model"
-	"github.com/zgsm/go-webserver/pkg/db"
+	"github.com/zgsm/mock-kbcenter/config"
+	"github.com/zgsm/mock-kbcenter/internal/model"
+	"github.com/zgsm/mock-kbcenter/pkg/db"
 )
 
 var initCmd = &cobra.Command{

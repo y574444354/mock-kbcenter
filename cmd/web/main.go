@@ -11,19 +11,19 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	v1 "github.com/zgsm/go-webserver/api/v1"
-	"github.com/zgsm/go-webserver/config"
-	"github.com/zgsm/go-webserver/i18n"
-	"github.com/zgsm/go-webserver/internal/middleware"
-	"github.com/zgsm/go-webserver/pkg/asynq"
-	"github.com/zgsm/go-webserver/pkg/db"
-	"github.com/zgsm/go-webserver/pkg/logger"
-	"github.com/zgsm/go-webserver/pkg/redis"
-	"github.com/zgsm/go-webserver/pkg/thirdPlatform"
+	v1 "github.com/zgsm/mock-kbcenter/api/v1"
+	"github.com/zgsm/mock-kbcenter/config"
+	"github.com/zgsm/mock-kbcenter/i18n"
+	"github.com/zgsm/mock-kbcenter/internal/middleware"
+	"github.com/zgsm/mock-kbcenter/pkg/asynq"
+	"github.com/zgsm/mock-kbcenter/pkg/db"
+	"github.com/zgsm/mock-kbcenter/pkg/logger"
+	"github.com/zgsm/mock-kbcenter/pkg/redis"
+	"github.com/zgsm/mock-kbcenter/pkg/thirdPlatform"
 
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	_ "github.com/zgsm/go-webserver/swagger"
+	_ "github.com/zgsm/mock-kbcenter/swagger"
 )
 
 func Run(cfg *config.Config) {

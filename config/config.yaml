@@ -62,7 +62,7 @@ http_client:
   enable_request_log: true  # 是否启用请求日志
   enable_response_log: true  # 是否启用响应日志
   headers:  # 默认请求头
-    User-Agent: "go-webserver/1.0"
+    User-Agent: "mock-kbcenter/1.0"
     Accept: "application/json"
   proxy_url: ""  # 代理URL，为空则不使用代理
   insecure_skip_verify: false  # 是否跳过TLS证书验证

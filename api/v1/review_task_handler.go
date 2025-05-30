@@ -4,9 +4,9 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/zgsm/go-webserver/api"
-	"github.com/zgsm/go-webserver/internal/service"
-	"github.com/zgsm/go-webserver/pkg/types"
+	"github.com/zgsm/mock-kbcenter/api"
+	"github.com/zgsm/mock-kbcenter/internal/service"
+	"github.com/zgsm/mock-kbcenter/pkg/types"
 )
 
 type ReviewTaskHandler struct {

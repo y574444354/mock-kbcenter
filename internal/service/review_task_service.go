@@ -4,15 +4,15 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/zgsm/go-webserver/i18n"
-	"github.com/zgsm/go-webserver/pkg/asynq"
-	"github.com/zgsm/go-webserver/pkg/idgen"
-	"github.com/zgsm/go-webserver/pkg/logger"
-	"github.com/zgsm/go-webserver/pkg/types"
-	"github.com/zgsm/go-webserver/tasks"
+	"github.com/zgsm/mock-kbcenter/i18n"
+	"github.com/zgsm/mock-kbcenter/pkg/asynq"
+	"github.com/zgsm/mock-kbcenter/pkg/idgen"
+	"github.com/zgsm/mock-kbcenter/pkg/logger"
+	"github.com/zgsm/mock-kbcenter/pkg/types"
+	"github.com/zgsm/mock-kbcenter/tasks"
 
-	"github.com/zgsm/go-webserver/internal/model"
-	"github.com/zgsm/go-webserver/internal/repository"
+	"github.com/zgsm/mock-kbcenter/internal/model"
+	"github.com/zgsm/mock-kbcenter/internal/repository"
 )
 
 type ReviewTaskService interface {

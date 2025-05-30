@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/zgsm/go-webserver/i18n"
-	"github.com/zgsm/go-webserver/pkg/logger"
+	"github.com/zgsm/mock-kbcenter/i18n"
+	"github.com/zgsm/mock-kbcenter/pkg/logger"
 )
 
 // Middleware 定义HTTP客户端中间件接口

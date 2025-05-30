@@ -9,7 +9,7 @@ endif
 -include .env
 
 # 变量定义（.env文件中的变量会覆盖这些默认值）
-APP_NAME ?= go-webserver
+APP_NAME ?= mock-kbcenter
 MAIN_FILE := main.go
 DOCKER_IMAGE ?= $(APP_NAME):latest
 DOCKER_CONTAINER := $(APP_NAME)
