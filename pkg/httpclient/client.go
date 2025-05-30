@@ -100,6 +100,11 @@ func NewClient(config *HttpServiceConfig) (*Client, error) {
 		Headers: config.Headers,
 	})
 
+	// 添加状态码校验中间件
+	client.AddMiddleware(&StatusCodeMiddleware{
+		ValidStatusCodes: config.ValidStatusCodes,
+	})
+
 	// 添加认证中间件
 	if config.AuthType != "none" {
 		client.AddMiddleware(&AuthMiddleware{

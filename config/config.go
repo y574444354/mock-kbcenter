@@ -108,6 +108,8 @@ type ServiceConfig struct {
 	AuthHeader string `yaml:"auth_header"`
 	// 请求头，与默认请求头合并
 	Headers map[string]string `yaml:"headers"`
+	// 有效的状态码列表，为空则使用默认规则(2xx)
+	ValidStatusCodes []int `yaml:"valid_status_codes"`
 }
 
 var (

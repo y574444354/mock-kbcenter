@@ -38,6 +38,9 @@ type HttpServiceConfig struct {
 	// 日志设置
 	EnableRequestLog  bool `yaml:"enable_request_log"`
 	EnableResponseLog bool `yaml:"enable_response_log"`
+
+	// 有效的状态码列表，为空则使用默认规则(2xx)
+	ValidStatusCodes []int `yaml:"valid_status_codes"`
 }
 
 // DefaultHttpServiceConfig 返回默认配置
@@ -50,5 +53,6 @@ func DefaultHttpServiceConfig() *HttpServiceConfig {
 		Headers:           make(map[string]string),
 		EnableRequestLog:  true,
 		EnableResponseLog: true,
+		ValidStatusCodes:  []int{},
 	}
 }

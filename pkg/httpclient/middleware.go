@@ -18,6 +18,58 @@ type Middleware interface {
 	ProcessResponse(*http.Response, error) (*http.Response, error)
 }
 
+// StatusCodeMiddleware 状态码校验中间件
+type StatusCodeMiddleware struct {
+	// ValidStatusCodes 允许的状态码范围，如nil则使用默认规则
+	ValidStatusCodes []int
+}
+
+// ProcessRequest 处理请求
+func (m *StatusCodeMiddleware) ProcessRequest(req *http.Request) error {
+	// 状态码中间件不处理请求
+	return nil
+}
+
+// ProcessResponse 校验状态码
+func (m *StatusCodeMiddleware) ProcessResponse(resp *http.Response, err error) (*http.Response, error) {
+	if err != nil {
+		return resp, err
+	}
+
+	// 如果没有指定有效状态码，使用默认规则（2xx为有效状态码）
+	if len(m.ValidStatusCodes) == 0 {
+		if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+			return nil, &StatusError{
+				StatusCode: resp.StatusCode,
+				Message:    i18n.Translate("httpclient.error.invalid_status_code", "", map[string]interface{}{"status": resp.StatusCode}),
+			}
+		}
+		return resp, nil
+	}
+
+	// 检查状态码是否在允许的范围内
+	for _, code := range m.ValidStatusCodes {
+		if resp.StatusCode == code {
+			return resp, nil
+		}
+	}
+
+	return nil, &StatusError{
+		StatusCode: resp.StatusCode,
+		Message:    i18n.Translate("httpclient.error.invalid_status_code", "", map[string]interface{}{"status": resp.StatusCode}),
+	}
+}
+
+// StatusError 状态码错误
+type StatusError struct {
+	StatusCode int
+	Message    string
+}
+
+func (e *StatusError) Error() string {
+	return e.Message
+}
+
 // LogMiddleware 日志中间件
 type LogMiddleware struct {
 	EnableRequestLog  bool
