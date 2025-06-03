@@ -57,6 +57,11 @@ func (s *KBCenterMockService) buildDirectoryTree(basePath, relativePath string, 
 	}
 
 	for _, entry := range entries {
+		// 忽略以"."开头的文件和目录
+		if entry.Name()[0] == '.' {
+			continue
+		}
+
 		entryPath := filepath.Join(basePath, entry.Name())
 		entryRelativePath := filepath.Join(relativePath, entry.Name())
 
@@ -86,14 +91,10 @@ func (s *KBCenterMockService) GetDirectoryTree(ctx context.Context, clientId, pr
 	}
 
 	var result struct {
-		Code    int    `json:"code"`
-		Message string `json:"message"`
-		Data    struct {
-			CodebaseId    string        `json:"codebaseId"`
-			Name          string        `json:"name"`
-			RootPath      string        `json:"rootPath"`
-			DirectoryTree DirectoryNode `json:"directoryTree"`
-		} `json:"data"`
+		CodebaseId    string        `json:"codebaseId"`
+		Name          string        `json:"name"`
+		RootPath      string        `json:"rootPath"`
+		DirectoryTree DirectoryNode `json:"directoryTree"`
 	}
 
 	rootNode, err := s.buildDirectoryTree(basePath, subDir, depth, 0, includeFiles)
@@ -101,12 +102,10 @@ func (s *KBCenterMockService) GetDirectoryTree(ctx context.Context, clientId, pr
 		return nil, err
 	}
 
-	result.Code = 0
-	result.Message = "success"
-	result.Data.CodebaseId = clientId
-	result.Data.Name = projectPath
-	result.Data.RootPath = basePath
-	result.Data.DirectoryTree = rootNode
+	result.CodebaseId = clientId
+	result.Name = projectPath
+	result.RootPath = basePath
+	result.DirectoryTree = rootNode
 
 	return &result, nil
 }

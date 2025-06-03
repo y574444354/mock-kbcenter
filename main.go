@@ -6,7 +6,7 @@ import (
 	"os"
 
 	web "github.com/zgsm/mock-kbcenter/cmd/web"
-	worker "github.com/zgsm/mock-kbcenter/cmd/worker"
+	// worker "github.com/zgsm/mock-kbcenter/cmd/worker"
 	"github.com/zgsm/mock-kbcenter/config"
 	"github.com/zgsm/mock-kbcenter/i18n"
 )
@@ -45,8 +45,8 @@ func main() {
 	switch os.Args[1] {
 	case "web":
 		web.Run(cfg, workDir)
-	case "worker":
-		worker.Run(cfg)
+	// case "worker":
+	// 	worker.Run(cfg)
 	default:
 		log.Fatalln(i18n.Translate("service.unknown", "", nil), "service", os.Args[1])
 		os.Exit(1)
