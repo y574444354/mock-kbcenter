@@ -39,11 +39,23 @@ func (m *StatusCodeMiddleware) ProcessResponse(resp *http.Response, err error) (
 	// 如果没有指定有效状态码，使用默认规则（2xx为有效状态码）
 	if len(m.ValidStatusCodes) == 0 {
 		if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+			// 读取响应体内容
+			var bodyContent string
+			if resp.Body != nil {
+				bodyBytes, err := io.ReadAll(resp.Body)
+				if err == nil {
+					bodyContent = string(bodyBytes)
+					// 重置响应体，以便后续处理
+					resp.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
+				}
+			}
+
 			return nil, &StatusError{
 				StatusCode: resp.StatusCode,
 				Message: i18n.Translate("httpclient.error.invalid_status_code", "", map[string]interface{}{
 					"status": resp.StatusCode,
 					"url":    resp.Request.URL.String(),
+					"body":   bodyContent,
 				}),
 			}
 		}
@@ -57,11 +69,23 @@ func (m *StatusCodeMiddleware) ProcessResponse(resp *http.Response, err error) (
 		}
 	}
 
+	// 读取响应体内容
+	var bodyContent string
+	if resp.Body != nil {
+		bodyBytes, err := io.ReadAll(resp.Body)
+		if err == nil {
+			bodyContent = string(bodyBytes)
+			// 重置响应体，以便后续处理
+			resp.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
+		}
+	}
+
 	return nil, &StatusError{
 		StatusCode: resp.StatusCode,
 		Message: i18n.Translate("httpclient.error.invalid_status_code", "", map[string]interface{}{
 			"status": resp.StatusCode,
 			"url":    resp.Request.URL.String(),
+			"body":   bodyContent,
 		}),
 	}
 }
