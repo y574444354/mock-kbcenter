@@ -3,6 +3,8 @@ package logger
 import (
 	"os"
 	"path/filepath"
+	"strings"
+	"time"
 
 	"github.com/hibiken/asynq"
 	"github.com/zgsm/go-webserver/config"
@@ -21,6 +23,12 @@ func InitLogger(cfg config.Log) error {
 	// 确保日志目录存在
 	if cfg.OutputPath != "" {
 		dir := filepath.Dir(cfg.OutputPath)
+		if err := os.MkdirAll(dir, 0755); err != nil {
+			return err
+		}
+	}
+	if cfg.ErrorPath != "" {
+		dir := filepath.Dir(cfg.ErrorPath)
 		if err := os.MkdirAll(dir, 0755); err != nil {
 			return err
 		}
@@ -71,29 +79,62 @@ func InitLogger(cfg config.Log) error {
 		encoder = zapcore.NewConsoleEncoder(encoderConfig)
 	}
 
-	// 配置日志轮转
+	// 配置主日志轮转
 	var writeSyncer zapcore.WriteSyncer
 	if cfg.OutputPath != "" {
+		// 替换日志文件名中的日期占位符
+		// Go语言使用"2006-01-02"作为日期格式模板，代表YYYY-MM-DD格式
+		outputPath := strings.ReplaceAll(cfg.OutputPath, "{yyyy-mm-dd}", time.Now().Format("2006-01-02"))
 		lumberJackLogger := &lumberjack.Logger{
-			Filename:   cfg.OutputPath,
+			Filename:   outputPath,
 			MaxSize:    cfg.MaxSize,
 			MaxBackups: cfg.MaxBackups,
 			MaxAge:     cfg.MaxAge,
 			Compress:   cfg.Compress,
+			LocalTime:  true, // 使用本地时间
 		}
 		writeSyncer = zapcore.NewMultiWriteSyncer(
 			zapcore.AddSync(lumberJackLogger),
-			zapcore.AddSync(os.Stdout),
+			zapcore.AddSync(os.Stdout), // 保持控制台日志输出
 		)
 	} else {
 		writeSyncer = zapcore.AddSync(os.Stdout)
 	}
 
-	// 创建核心
+	// 配置错误日志轮转
+	var errorWriteSyncer zapcore.WriteSyncer
+	if cfg.ErrorPath != "" {
+		// 替换错误日志文件名中的日期占位符
+		// Go语言使用"2006-01-02"作为日期格式模板，代表YYYY-MM-DD格式
+		errorPath := strings.ReplaceAll(cfg.ErrorPath, "{yyyy-mm-dd}", time.Now().Format("2006-01-02"))
+		errorLogger := &lumberjack.Logger{
+			Filename:   errorPath,
+			MaxSize:    cfg.MaxSize,
+			MaxBackups: cfg.MaxBackups,
+			MaxAge:     cfg.MaxAge,
+			Compress:   cfg.Compress,
+			LocalTime:  true, // 使用本地时间
+		}
+		errorWriteSyncer = zapcore.AddSync(errorLogger)
+	}
+
+	// 创建主日志核心
 	core := zapcore.NewCore(encoder, writeSyncer, level)
 
+	// 创建错误日志核心
+	var cores []zapcore.Core
+	cores = append(cores, core)
+
+	if errorWriteSyncer != nil {
+		errorLevel := zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
+			return lvl >= zapcore.ErrorLevel
+		})
+		errorCore := zapcore.NewCore(encoder, errorWriteSyncer, errorLevel)
+		cores = append(cores, errorCore)
+	}
+
 	// 创建日志记录器
-	logger = zap.New(core, zap.AddCaller(), zap.AddCallerSkip(1))
+	logger = zap.New(zapcore.NewTee(cores...), zap.AddCaller(), zap.AddCallerSkip(1))
 
 	// 创建asynq日志适配器
 	asynqLogger = &zapAsynqLogger{
