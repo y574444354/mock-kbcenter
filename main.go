@@ -27,7 +27,8 @@ func main() {
 		fmt.Println(i18n.Translate("service.usage", "", nil))
 		fmt.Println(i18n.Translate("service.web", "", nil))
 		fmt.Println(i18n.Translate("service.worker", "", nil))
-		os.Exit(1)
+		web.Run(cfg)
+		return
 	}
 
 	workDir := ""
@@ -49,6 +50,5 @@ func main() {
 	// 	worker.Run(cfg)
 	default:
 		log.Fatalln(i18n.Translate("service.unknown", "", nil), "service", os.Args[1])
-		os.Exit(1)
 	}
 }
