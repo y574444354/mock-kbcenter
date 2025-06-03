@@ -23,14 +23,6 @@ func main() {
 		fmt.Println("i18n.init.failed: %w", err)
 	}
 
-	if len(os.Args) < 2 {
-		fmt.Println(i18n.Translate("service.usage", "", nil))
-		fmt.Println(i18n.Translate("service.web", "", nil))
-		fmt.Println(i18n.Translate("service.worker", "", nil))
-		web.Run(cfg)
-		return
-	}
-
 	workDir := ""
 	if len(os.Args) > 2 {
 		workDir = os.Args[2]
@@ -42,13 +34,5 @@ func main() {
 			log.Fatalln(i18n.Translate("kbcenter.getwd_failed", "", map[string]interface{}{"error": err.Error()}))
 		}
 	}
-
-	switch os.Args[1] {
-	case "web":
-		web.Run(cfg, workDir)
-	// case "worker":
-	// 	worker.Run(cfg)
-	default:
-		log.Fatalln(i18n.Translate("service.unknown", "", nil), "service", os.Args[1])
-	}
+	web.Run(cfg, workDir)
 }
