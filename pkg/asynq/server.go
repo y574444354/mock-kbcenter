@@ -16,8 +16,12 @@ type errorHandler struct {
 }
 
 func (h *errorHandler) HandleError(ctx context.Context, task *asynq.Task, err error) {
+	taskID := ""
+	if task.ResultWriter() != nil {
+		taskID = task.ResultWriter().TaskID()
+	}
 	h.logger.Error(i18n.Translate("asynq.server.error.handler", "", map[string]interface{}{
-		"taskID":   task.ResultWriter().TaskID(),
+		"taskID":   taskID,
 		"taskType": task.Type(),
 		"error":    err.Error(),
 	}))
