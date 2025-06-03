@@ -68,4 +68,6 @@ worker.process.stop: "Worker process stopped"
 
 # custom
 kbcenter.file_not_found: "File not found: {{.path}}"
+kbcenter.getwd_failed: "Failed to get working directory: {{.error}}"
+kbcenter.workdir: "Working directory: {{.workdir}}"
 

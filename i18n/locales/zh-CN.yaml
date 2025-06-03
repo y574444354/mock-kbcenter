@@ -68,4 +68,6 @@ worker.process.stop: "Worker进程停止"
 
 # custom
 kbcenter.file_not_found: "文件未找到: {{.path}}"
+kbcenter.getwd_failed: "获取工作目录失败: {{.error}}"
+kbcenter.workdir: "工作目录: {{.workdir}}"
 

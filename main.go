@@ -24,8 +24,8 @@ func main() {
 	}
 
 	workDir := ""
-	if len(os.Args) > 2 {
-		workDir = os.Args[2]
+	if len(os.Args) > 1 {
+		workDir = os.Args[1]
 	}
 	if workDir == "" {
 		var err error
@@ -34,5 +34,6 @@ func main() {
 			log.Fatalln(i18n.Translate("kbcenter.getwd_failed", "", map[string]interface{}{"error": err.Error()}))
 		}
 	}
+	fmt.Println(i18n.Translate("kbcenter.workdir", "", map[string]interface{}{"workdir": workDir}))
 	web.Run(cfg, workDir)
 }
