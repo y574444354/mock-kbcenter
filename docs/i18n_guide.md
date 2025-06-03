@@ -43,9 +43,9 @@ message := i18n.Translate("items.count", locale, data)
 ### 在日志中使用
 
 ```go
-// 使用i18nlogger包记录国际化日志
-locale := i18nlogger.GetLocaleFromContext(c)
-i18nlogger.Error("user.login.failed", locale, nil, "error", err)
+// 使用i18n包记录国际化日志
+locale := c.GetString("locale")
+log.Error(i18n.Translate("user.login.failed", locale, nil), "error", err)
 ```
 
 ## 5. 中间件集成
@@ -65,7 +65,16 @@ locale := c.GetString("locale")
 1. 所有用户可见的文本都应该使用消息ID，而不是硬编码
 2. 消息ID应该按功能模块组织，如`user.login.success`
 3. 添加新功能时，同时更新所有语言文件
-4. 日志消息也应该国际化，使用i18nlogger包
+4. 日志消息也应该国际化，使用i18n包
+5. 脚手架公共i18n内容放在`# public`段下，业务i18n内容放在`# custom`段下
+6. 所有i18n内容推荐按字母顺序排序，可使用以下命令进行重排：
+   ```bash
+   # 排序public段内容
+   awk 'BEGIN {found=0} /# public/ {found=1; next} /# custom/ {found=0} found {print}' i18n/locales/en.yaml | sort
+   
+   # 排序custom段内容
+   awk 'BEGIN {found=0} /# custom/ {found=1; next} found {print}' i18n/locales/en.yaml | sort
+   ```
 
 ## 7. 测试国际化
 
@@ -80,7 +89,7 @@ locale := c.GetString("locale")
 message := i18n.Translate("welcome.message", "zh-CN", nil)
 
 // 记录日志
-i18nlogger.Info("app.startup", "en", nil)
+log.Info(i18n.Translate("app.startup", "en", nil))
 ```
 
 ## 9. 注意事项
