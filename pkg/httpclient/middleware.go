@@ -41,7 +41,10 @@ func (m *StatusCodeMiddleware) ProcessResponse(resp *http.Response, err error) (
 		if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 			return nil, &StatusError{
 				StatusCode: resp.StatusCode,
-				Message:    i18n.Translate("httpclient.error.invalid_status_code", "", map[string]interface{}{"status": resp.StatusCode}),
+				Message: i18n.Translate("httpclient.error.invalid_status_code", "", map[string]interface{}{
+					"status": resp.StatusCode,
+					"url":    resp.Request.URL.String(),
+				}),
 			}
 		}
 		return resp, nil
@@ -56,7 +59,10 @@ func (m *StatusCodeMiddleware) ProcessResponse(resp *http.Response, err error) (
 
 	return nil, &StatusError{
 		StatusCode: resp.StatusCode,
-		Message:    i18n.Translate("httpclient.error.invalid_status_code", "", map[string]interface{}{"status": resp.StatusCode}),
+		Message: i18n.Translate("httpclient.error.invalid_status_code", "", map[string]interface{}{
+			"status": resp.StatusCode,
+			"url":    resp.Request.URL.String(),
+		}),
 	}
 }
 
@@ -83,7 +89,7 @@ func (m *LogMiddleware) ProcessRequest(req *http.Request) error {
 	}
 
 	// 记录请求信息
-	logger.Info(i18n.Translate("httpclient.log.request", "", nil),
+	logger.Debug(i18n.Translate("httpclient.log.request", "", nil),
 		"method", req.Method,
 		"url", req.URL.String(),
 		"headers", req.Header,
@@ -109,8 +115,14 @@ func (m *LogMiddleware) ProcessResponse(resp *http.Response, err error) (*http.R
 		return resp, err
 	}
 
+	// 根据状态码选择日志级别
+	logFunc := logger.Debug
+	if resp.StatusCode >= 400 {
+		logFunc = logger.Warn
+	}
+
 	// 记录响应信息
-	logger.Info(i18n.Translate("httpclient.log.response", "", nil),
+	logFunc(i18n.Translate("httpclient.log.response", "", nil),
 		"status", resp.Status,
 		"url", resp.Request.URL.String(),
 		// "headers", resp.Header,
