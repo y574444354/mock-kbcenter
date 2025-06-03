@@ -15,7 +15,8 @@ type Log struct {
 	Level      string `yaml:"level"`  // debug, info, warn, error, dpanic, panic, fatal
 	Format     string `yaml:"format"` // json, console
 	OutputPath string `yaml:"output_path"`
-	MaxSize    int    `yaml:"max_size"` // MB
+	ErrorPath  string `yaml:"error_path"` // 错误日志单独存储路径
+	MaxSize    int    `yaml:"max_size"`   // MB
 	MaxBackups int    `yaml:"max_backups"`
 	MaxAge     int    `yaml:"max_age"` // days
 	Compress   bool   `yaml:"compress"`
