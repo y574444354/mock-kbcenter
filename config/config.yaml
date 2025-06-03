@@ -33,7 +33,8 @@ asynq:
   log:
     level: info
     format: json
-    output_path: ./logs/asynq.log
+    output_path: ./logs/asynq-{yyyy-mm-dd}.log
+    error_path: ./logs/asynq-error-{yyyy-mm-dd}.log
     max_size: 100
     max_backups: 10
     max_age: 30
