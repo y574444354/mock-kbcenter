@@ -6,9 +6,10 @@ import (
 
 	"github.com/zgsm/go-webserver/config"
 	"github.com/zgsm/go-webserver/i18n"
-	"gorm.io/driver/mysql"
+
+	// "gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
-	"gorm.io/driver/sqlite"
+	// "gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
 )
@@ -23,15 +24,15 @@ func InitDB(cfg config.Database) error {
 	var dialector gorm.Dialector
 
 	switch cfg.Type {
-	case "mysql":
-		dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=%s",
-			cfg.User,
-			cfg.Password,
-			cfg.Host,
-			cfg.Port,
-			cfg.DBName,
-			cfg.TimeZone)
-		dialector = mysql.Open(dsn)
+	// case "mysql":
+	// 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=%s",
+	// 		cfg.User,
+	// 		cfg.Password,
+	// 		cfg.Host,
+	// 		cfg.Port,
+	// 		cfg.DBName,
+	// 		cfg.TimeZone)
+	// 	dialector = mysql.Open(dsn)
 	case "postgres":
 		dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=%s TimeZone=%s",
 			cfg.Host,
@@ -42,8 +43,8 @@ func InitDB(cfg config.Database) error {
 			cfg.SSLMode,
 			cfg.TimeZone)
 		dialector = postgres.Open(dsn)
-	case "sqlite":
-		dialector = sqlite.Open(cfg.DBName)
+	// case "sqlite":
+	// 	dialector = sqlite.Open(cfg.DBName)
 	default:
 		return fmt.Errorf("%s", i18n.Translate("db.unsupported_type", "", map[string]interface{}{"type": cfg.Type}))
 	}
