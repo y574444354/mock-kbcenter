@@ -2,13 +2,13 @@ FROM golang:1.24-alpine AS builder
 
 # 定义构建参数
 ARG GOPROXY=https://goproxy.cn,direct
-ARG ALPINE_MIRROR=mirrors.aliyun.com
+ARG ALPINE_MIRROR=https://mirrors.aliyun.com
 
 # 设置工作目录
 WORKDIR /app
 
 # 安装依赖
-RUN sed -i "s#dl-cdn.alpinelinux.org#${ALPINE_MIRROR}#g" /etc/apk/repositories && \
+RUN sed -i "s#https://dl-cdn.alpinelinux.org#${ALPINE_MIRROR}#g" /etc/apk/repositories && \
    apk update && apk add --no-cache gcc musl-dev
 
 # 复制go.mod和go.sum
@@ -29,7 +29,7 @@ FROM alpine:latest
 ARG ALPINE_MIRROR=mirrors.aliyun.com
 
 # 安装必要的运行时依赖
-RUN sed -i "s#dl-cdn.alpinelinux.org#${ALPINE_MIRROR}#g" /etc/apk/repositories && \
+RUN sed -i "s#https://dl-cdn.alpinelinux.org#${ALPINE_MIRROR}#g" /etc/apk/repositories && \
     apk --no-cache add ca-certificates tzdata
 
 # 设置时区

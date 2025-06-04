@@ -18,7 +18,7 @@ GOPATH := $(shell go env GOPATH)
 # 默认GOPROXY设置（可通过.env文件或命令行参数覆盖）
 GOPROXY ?= https://goproxy.cn,direct
 # 默认Alpine镜像源设置
-ALPINE_MIRROR ?= mirrors.aliyun.com
+ALPINE_MIRROR ?= https://mirrors.aliyun.com
 
 # 默认目标
 .PHONY: all
@@ -37,7 +37,6 @@ env:
 help:
 	@echo "Go Web服务器项目管理命令："
 	@echo "make build         - 构建主应用程序"
-	@echo "make build-worker  - 构建worker进程"
 	@echo "make run           - 运行主应用程序"
 	@echo "make run-worker    - 运行worker进程"
 	@echo "make test          - 执行测试"
@@ -49,9 +48,6 @@ help:
 	@echo "make db-init       - 初始化数据库"
 	@echo "make redis-clear   - 清除Redis缓存"
 	@echo "make docker-build  - 构建Docker镜像"
-	@echo "make docker-run    - 运行Docker容器"
-	@echo "make docker-stop   - 停止Docker容器"
-	@echo "make docker-clean  - 清理Docker资源"
 	@echo "make env           - 显示当前环境变量设置"
 
 # 构建主应用程序
@@ -60,13 +56,6 @@ build:
 	@echo "构建主应用程序..."
 	@go build -o $(APP_NAME) $(MAIN_FILE)
 	@echo "主应用程序构建完成: $(APP_NAME)"
-
-# 构建worker进程
-.PHONY: build-worker
-build-worker:
-	@echo "构建worker进程..."
-	@go build -o worker cmd/worker/main.go
-	@echo "worker进程构建完成: worker"
 
 # 运行主应用程序
 .PHONY: run
@@ -143,31 +132,6 @@ docker-build:
 	@echo "使用ALPINE_MIRROR: $(ALPINE_MIRROR)"
 	@docker build --build-arg GOPROXY=$(GOPROXY) --build-arg ALPINE_MIRROR=$(ALPINE_MIRROR) -t $(DOCKER_IMAGE) -f docker/Dockerfile .
 	@echo "Docker镜像构建完成: $(DOCKER_IMAGE)"
-
-.PHONY: docker-build-worker
-docker-build-worker:
-	@echo "构建worker Docker镜像..."
-	@docker build --build-arg GOPROXY=$(GOPROXY) --build-arg ALPINE_MIRROR=$(ALPINE_MIRROR) -t $(DOCKER_IMAGE)-worker -f docker/Dockerfile.worker .
-	@echo "worker Docker镜像构建完成: $(DOCKER_IMAGE)-worker"
-
-.PHONY: docker-run
-docker-run:
-	@echo "运行Docker容器..."
-	@docker run -d --name $(DOCKER_CONTAINER) -p 8080:8080 $(DOCKER_IMAGE)
-	@echo "Docker容器已启动: $(DOCKER_CONTAINER)"
-
-.PHONY: docker-stop
-docker-stop:
-	@echo "停止Docker容器..."
-	@docker stop $(DOCKER_CONTAINER) || true
-	@docker rm $(DOCKER_CONTAINER) || true
-	@echo "Docker容器已停止并删除"
-
-.PHONY: docker-clean
-docker-clean: docker-stop
-	@echo "清理Docker资源..."
-	@docker rmi $(DOCKER_IMAGE) || true
-	@echo "Docker资源清理完成"
 
 # Redis相关命令
 .PHONY: redis-clear
