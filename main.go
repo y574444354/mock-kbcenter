@@ -1,9 +1,24 @@
 package main
 
+// @title Go WebServer API
+// @version 1.0
+// @description 这是Go WebServer的API文档
+// @termsOfService http://swagger.io/terms/
+
+// @contact.name API支持
+// @contact.url http://www.example.com/support
+// @contact.email support@example.com
+
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host localhost:8080
+// @BasePath /api/v1
+
 import (
 	"fmt"
-	"os"
 	"log"
+	"os"
 
 	web "github.com/zgsm/go-webserver/cmd/web"
 	worker "github.com/zgsm/go-webserver/cmd/worker"
