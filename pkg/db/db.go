@@ -6,6 +6,7 @@ import (
 
 	"github.com/zgsm/go-webserver/config"
 	"github.com/zgsm/go-webserver/i18n"
+	"github.com/zgsm/go-webserver/pkg/logger"
 
 	// "gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
@@ -20,6 +21,11 @@ var (
 
 // InitDB 初始化数据库连接
 func InitDB(cfg config.Database) error {
+	logger.Info(fmt.Sprintf("%v", cfg.Enabled))
+	if !cfg.Enabled {
+		return nil
+	}
+
 	var err error
 	var dialector gorm.Dialector
 
@@ -80,6 +86,9 @@ func InitDB(cfg config.Database) error {
 
 // GetDB 获取数据库连接
 func GetDB() *gorm.DB {
+	if DB == nil {
+		panic("database is not initialized or disabled")
+	}
 	return DB
 }
 
@@ -100,7 +109,7 @@ func CloseDB() error {
 // AutoMigrate 自动迁移模型
 func AutoMigrate(models ...interface{}) error {
 	if DB == nil {
-		return fmt.Errorf("%s", i18n.Translate("db.not_initialized", "", nil))
+		return fmt.Errorf("%s", i18n.Translate("db.not_initialized_or_disabled", "", nil))
 	}
 
 	return DB.AutoMigrate(models...)

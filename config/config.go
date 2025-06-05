@@ -31,6 +31,7 @@ type Database struct {
 	DBName   string `yaml:"dbname"`
 	SSLMode  string `yaml:"sslmode"`
 	TimeZone string `yaml:"timezone"`
+	Enabled  bool   `yaml:"enabled"` // 是否启用数据库
 }
 
 // Config 应用配置结构
@@ -47,6 +48,7 @@ type Config struct {
 		Port     int    `yaml:"port"`
 		Password string `yaml:"password"`
 		DB       int    `yaml:"db"`
+		Enabled  bool   `yaml:"enabled"` // 是否启用Redis
 	} `yaml:"redis"`
 
 	// 异步任务队列配置
@@ -196,6 +198,8 @@ func GetConfig() *Config {
 		// 设置默认值
 		config.Server.Port = 8080
 		config.Server.Mode = "debug"
+		config.Database.Enabled = true
+		config.Redis.Enabled = true
 	}
 	return config
 }

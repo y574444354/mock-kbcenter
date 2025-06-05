@@ -18,6 +18,9 @@ var (
 
 // InitRedis 初始化Redis连接
 func InitRedis(cfg config.Config) error {
+	if !cfg.Redis.Enabled {
+		return nil
+	}
 	client = redis.NewClient(&redis.Options{
 		Addr:     fmt.Sprintf("%s:%d", cfg.Redis.Host, cfg.Redis.Port),
 		Password: cfg.Redis.Password,
@@ -44,16 +47,25 @@ func InitRedis(cfg config.Config) error {
 
 // GetClient 获取Redis客户端
 func GetClient() *redis.Client {
+	if client == nil {
+		panic("redis is not initialized or disabled")
+	}
 	return client
 }
 
 // TryLock 尝试获取分布式锁
 func TryLock(key string, expiration time.Duration) (bool, error) {
+	if client == nil {
+		return false, fmt.Errorf("%s", i18n.Translate("redis.not_initialized_or_disabled", "", nil))
+	}
 	return client.SetNX(ctx, key, 1, expiration).Result()
 }
 
 // Unlock 释放分布式锁
 func Unlock(key string) error {
+	if client == nil {
+		return fmt.Errorf("%s", i18n.Translate("redis.not_initialized_or_disabled", "", nil))
+	}
 	return client.Del(ctx, key).Err()
 }
 
@@ -67,62 +79,98 @@ func Close() error {
 
 // Set 设置键值对
 func Set(key string, value interface{}, expiration time.Duration) error {
+	if client == nil {
+		return fmt.Errorf("%s", i18n.Translate("redis.not_initialized_or_disabled", "", nil))
+	}
 	return client.Set(ctx, key, value, expiration).Err()
 }
 
 // Get 获取值
 func Get(key string) (string, error) {
+	if client == nil {
+		return "", fmt.Errorf("%s", i18n.Translate("redis.not_initialized_or_disabled", "", nil))
+	}
 	return client.Get(ctx, key).Result()
 }
 
 // Del 删除键
 func Del(keys ...string) error {
+	if client == nil {
+		return fmt.Errorf("%s", i18n.Translate("redis.not_initialized_or_disabled", "", nil))
+	}
 	return client.Del(ctx, keys...).Err()
 }
 
 // Exists 检查键是否存在
 func Exists(keys ...string) (bool, error) {
+	if client == nil {
+		return false, fmt.Errorf("%s", i18n.Translate("redis.not_initialized_or_disabled", "", nil))
+	}
 	result, err := client.Exists(ctx, keys...).Result()
 	return result > 0, err
 }
 
 // Expire 设置过期时间
 func Expire(key string, expiration time.Duration) error {
+	if client == nil {
+		return fmt.Errorf("%s", i18n.Translate("redis.not_initialized_or_disabled", "", nil))
+	}
 	return client.Expire(ctx, key, expiration).Err()
 }
 
 // TTL 获取剩余过期时间
 func TTL(key string) (time.Duration, error) {
+	if client == nil {
+		return 0, fmt.Errorf("%s", i18n.Translate("redis.not_initialized_or_disabled", "", nil))
+	}
 	return client.TTL(ctx, key).Result()
 }
 
 // Incr 自增
 func Incr(key string) (int64, error) {
+	if client == nil {
+		return 0, fmt.Errorf("%s", i18n.Translate("redis.not_initialized_or_disabled", "", nil))
+	}
 	return client.Incr(ctx, key).Result()
 }
 
 // HSet 设置哈希表字段值
 func HSet(key string, field string, value interface{}) error {
+	if client == nil {
+		return fmt.Errorf("%s", i18n.Translate("redis.not_initialized_or_disabled", "", nil))
+	}
 	return client.HSet(ctx, key, field, value).Err()
 }
 
 // HGet 获取哈希表字段值
 func HGet(key, field string) (string, error) {
+	if client == nil {
+		return "", fmt.Errorf("%s", i18n.Translate("redis.not_initialized_or_disabled", "", nil))
+	}
 	return client.HGet(ctx, key, field).Result()
 }
 
 // HGetAll 获取哈希表所有字段和值
 func HGetAll(key string) (map[string]string, error) {
+	if client == nil {
+		return nil, fmt.Errorf("%s", i18n.Translate("redis.not_initialized_or_disabled", "", nil))
+	}
 	return client.HGetAll(ctx, key).Result()
 }
 
 // HDel 删除哈希表字段
 func HDel(key string, fields ...string) error {
+	if client == nil {
+		return fmt.Errorf("%s", i18n.Translate("redis.not_initialized_or_disabled", "", nil))
+	}
 	return client.HDel(ctx, key, fields...).Err()
 }
 
 // FlushDB 清空当前数据库
 func FlushDB() error {
+	if client == nil {
+		return fmt.Errorf("%s", i18n.Translate("redis.not_initialized_or_disabled", "", nil))
+	}
 	if err := client.FlushDB(ctx).Err(); err != nil {
 		return fmt.Errorf(i18n.Translate("redis.flushdb.failed", "", nil)+": %w", err)
 	}

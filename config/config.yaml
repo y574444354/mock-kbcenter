@@ -1,7 +1,7 @@
 # 服务器配置
 server:
   port: 8080
-  mode: debug  # debug, release, test
+  mode: release  # debug, release, test
 
 # 数据库配置
 database:
@@ -13,6 +13,7 @@ database:
   dbname: go_webserver
   sslmode: disable
   timezone: Asia/Shanghai
+  enabled: true  # 是否启用数据库
 
 # Redis配置
 redis:
@@ -20,6 +21,7 @@ redis:
   port: 6379
   password: ""
   db: 0
+  enabled: false  # 是否启用Redis
 
 # 异步任务队列配置
 asynq:
