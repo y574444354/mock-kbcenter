@@ -6,7 +6,6 @@ import (
 
 	"github.com/zgsm/go-webserver/config"
 	"github.com/zgsm/go-webserver/i18n"
-	"github.com/zgsm/go-webserver/pkg/logger"
 
 	// "gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
@@ -21,7 +20,6 @@ var (
 
 // InitDB 初始化数据库连接
 func InitDB(cfg config.Database) error {
-	logger.Info(fmt.Sprintf("%v", cfg.Enabled))
 	if !cfg.Enabled {
 		return nil
 	}
