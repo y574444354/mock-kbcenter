@@ -25,7 +25,7 @@ func Success(c *gin.Context, data interface{}) {
 	}
 
 	c.JSON(http.StatusOK, Response{
-		Code:    http.StatusOK,
+		Code:    0,
 		Message: i18n.Translate("common.success", localeStr, nil),
 		Data:    data,
 	})
