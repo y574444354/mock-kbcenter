@@ -41,7 +41,7 @@ ARG ALPINE_MIRROR=https://mirrors.aliyun.com
 RUN sed -i "s|https://dl-cdn.alpinelinux.org|${ALPINE_MIRROR}|g" /etc/apk/repositories && \
     apk add --no-cache ca-certificates tzdata && \
     adduser -D -g '' appuser && \
-    mkdir -p /app/{logs,config,i18n/locales} && \
+    mkdir -p /app/{logs,config,bin} && \
     chown -R appuser:appuser /app
 
 # 设置时区和用户
