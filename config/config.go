@@ -1,10 +1,11 @@
 package config
 
 import (
+	"embed"
+	"fmt"
 	"os"
 	"path/filepath"
 	"reflect"
-	"runtime"
 	"sync"
 
 	"gopkg.in/yaml.v3"
@@ -116,6 +117,9 @@ type ServiceConfig struct {
 	ValidStatusCodes []int `yaml:"valid_status_codes"`
 }
 
+//go:embed config.yaml
+var defaultConfig embed.FS
+
 var (
 	config *Config
 	once   sync.Once
@@ -156,14 +160,23 @@ func LoadConfigWithDefault() error {
 	once.Do(func() {
 		config = &Config{}
 
-		// 读取默认配置文件
-		_, filename, _, _ := runtime.Caller(0)
-		basePath := filepath.Dir(filename)
-		defaultPath := filepath.Join(basePath, "config.yaml")
-		defaultData, readErr := os.ReadFile(defaultPath)
+		// 获取基础路径
+		basePath, err := os.Getwd()
+		if err != nil {
+			basePath = filepath.Dir(os.Args[0])
+		}
+		fmt.Println("Base path:", basePath)
+
+		// 读取嵌入的默认配置文件
+		defaultData, readErr := defaultConfig.ReadFile("config.yaml")
 		if readErr != nil {
-			err = readErr
-			return
+			// 如果嵌入文件读取失败，尝试从文件系统读取
+			defaultPath := filepath.Join(basePath, "config", "config.yaml")
+			defaultData, readErr = os.ReadFile(defaultPath)
+			if readErr != nil {
+				err = readErr
+				return
+			}
 		}
 
 		// 解析默认配置
@@ -173,10 +186,11 @@ func LoadConfigWithDefault() error {
 		}
 
 		// 尝试读取本地配置文件进行覆盖
-		localPath := filepath.Join(basePath, "config.local.yaml")
+		localPath := filepath.Join(basePath, "config", "config.local.yaml")
 		localData, readLocalErr := os.ReadFile(localPath)
 		if readLocalErr == nil {
 			// 本地配置文件存在，解析并合并到默认配置
+			fmt.Println("Using local config file:", localPath)
 			localConfig := &Config{}
 			if unmarshalErr := yaml.Unmarshal(localData, localConfig); unmarshalErr == nil {
 				mergeConfig(config, localConfig)

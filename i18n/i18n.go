@@ -1,6 +1,7 @@
 package i18n
 
 import (
+	"embed"
 	"fmt"
 	"log"
 	"os"
@@ -12,6 +13,9 @@ import (
 	"golang.org/x/text/language"
 	"gopkg.in/yaml.v3"
 )
+
+//go:embed locales/*.yaml
+var localesFS embed.FS
 
 var (
 	bundle       *i18n.Bundle
@@ -52,7 +56,39 @@ func InitI18n(cfg config.Config) error {
 
 // loadMessageFiles 加载指定目录下的所有语言文件
 func loadMessageFiles(dir string) error {
-	files, err := os.ReadDir(dir)
+	// 首先尝试从嵌入文件系统加载
+	files, err := localesFS.ReadDir("locales")
+	if err == nil {
+		for _, file := range files {
+			if file.IsDir() {
+				continue
+			}
+
+			// 只处理yaml文件
+			if !strings.HasSuffix(file.Name(), ".yaml") && !strings.HasSuffix(file.Name(), ".yml") {
+				continue
+			}
+
+			// 加载语言文件
+			path := filepath.Join("locales", file.Name())
+			data, err := localesFS.ReadFile(path)
+			if err != nil {
+				return fmt.Errorf("i18n.load.embed.file.failed: %s: %w", path, err)
+			}
+
+			// 使用内存中的内容加载
+			_, err = bundle.ParseMessageFileBytes(data, path)
+			if err != nil {
+				return fmt.Errorf("i18n.parse.embed.file.failed: %s: %w", path, err)
+			}
+
+			log.Printf("i18n.load.embed.file.success: file=%s", path)
+		}
+		return nil
+	}
+
+	// 如果嵌入文件加载失败，回退到文件系统
+	files, err = os.ReadDir(dir)
 	if err != nil {
 		return err
 	}
