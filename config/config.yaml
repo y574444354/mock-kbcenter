@@ -21,7 +21,7 @@ redis:
   port: 6379
   password: ""
   db: 0
-  enabled: false  # 是否启用Redis
+  enabled: true  # 是否启用Redis
 
 # 异步任务队列配置
 asynq:
