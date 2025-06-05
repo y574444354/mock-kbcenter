@@ -17,6 +17,12 @@ import (
 )
 
 func Run(cfg *config.Config) {
+	// 检查是否启用Asynq
+	if !cfg.Asynq.Enabled {
+		log.Println(i18n.Translate("asynq.server.disabled", "", nil))
+		return
+	}
+
 	// 初始化日志
 	if err := logger.InitLogger(cfg.Asynq.Log); err != nil {
 		log.Fatalln(i18n.Translate("asynq.server.init.failed", "", nil), "error", err)

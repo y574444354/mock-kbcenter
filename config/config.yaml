@@ -41,6 +41,7 @@ asynq:
     max_backups: 10
     max_age: 30
     compress: true
+  enabled: true  # 是否启用Asynq
 
 # 日志配置
 log:

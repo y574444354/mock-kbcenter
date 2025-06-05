@@ -59,6 +59,7 @@ type Config struct {
 		RedisPoolSize int            `yaml:"redis_pool_size"` // Redis连接池大小
 		Queues        map[string]int `yaml:"queues"`          // 队列优先级
 		Log           Log            `yaml:"log"`             // Asynq日志配置
+		Enabled       bool           `yaml:"enabled"`         // 是否启用Asynq
 	} `yaml:"asynq"`
 
 	Log Log `yaml:"log"`
@@ -200,6 +201,7 @@ func GetConfig() *Config {
 		config.Server.Mode = "debug"
 		config.Database.Enabled = true
 		config.Redis.Enabled = true
+		config.Asynq.Enabled = true
 	}
 	return config
 }

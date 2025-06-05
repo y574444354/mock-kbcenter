@@ -14,6 +14,11 @@ var client *asynq.Client
 
 // InitClient 初始化Asynq客户端
 func InitClient(cfg config.Config) error {
+	if !cfg.Asynq.Enabled {
+		logger.Info(i18n.Translate("asynq.client.disabled", "", nil))
+		return nil
+	}
+
 	redisOpt := &asynq.RedisClientOpt{
 		Addr:     fmt.Sprintf("%s:%d", cfg.Redis.Host, cfg.Redis.Port),
 		Password: cfg.Redis.Password,

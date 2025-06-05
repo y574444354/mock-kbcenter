@@ -27,11 +27,9 @@ import (
 )
 
 func Run(cfg *config.Config) {
-	locale := i18n.GetDefaultLocale()
-
 	// 初始化日志
 	if err := logger.InitLogger(cfg.Log); err != nil {
-		log.Fatalln(i18n.Translate("logger.init.failed", locale, nil), "error", err)
+		log.Fatalln(i18n.Translate("logger.init.failed", "", nil), "error", err)
 	}
 	defer logger.Sync()
 
@@ -44,26 +42,28 @@ func Run(cfg *config.Config) {
 
 	// 初始化数据库
 	if err := db.InitDB(cfg.Database); err != nil {
-		logger.Error(i18n.Translate("db.connection.init", locale, nil), "error", err)
+		logger.Error(i18n.Translate("db.connection.init", "", nil), "error", err)
 		os.Exit(1)
 	}
 
 	// 初始化Redis
 	if err := redis.InitRedis(*cfg); err != nil {
-		logger.Error(i18n.Translate("redis.connect.failed", locale, nil), "error", err)
+		logger.Error(i18n.Translate("redis.connect.failed", "", nil), "error", err)
 		os.Exit(1)
 	}
 
 	// 初始化HTTP客户端
 	if err := thirdPlatform.InitHTTPClient(); err != nil {
-		logger.Error(i18n.Translate("httpclient.init.failed", locale, nil), "error", err)
+		logger.Error(i18n.Translate("httpclient.init.failed", "", nil), "error", err)
 		os.Exit(1)
 	}
 
-	// 初始化Asynq客户端
-	if err := asynq.InitClient(*cfg); err != nil {
-		logger.Error(i18n.Translate("asynq.client.init.failed", locale, nil), "error", err)
-		os.Exit(1)
+	// 初始化Asynq客户端（如果启用）
+	if cfg.Asynq.Enabled {
+		if err := asynq.InitClient(*cfg); err != nil {
+			logger.Error(i18n.Translate("asynq.client.init.failed", "", nil), "error", err)
+			os.Exit(1)
+		}
 	}
 	defer asynq.Close()
 
@@ -98,10 +98,9 @@ func Run(cfg *config.Config) {
 
 	// 优雅关闭
 	go func() {
-		locale := i18n.GetDefaultLocale()
-		logger.Info(i18n.Translate("server.start.success", locale, nil), "port", cfg.Server.Port)
+		logger.Info(i18n.Translate("server.start.success", "", nil), "port", cfg.Server.Port)
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			logger.Fatal(i18n.Translate("server.start.failed", locale, nil), "error", err)
+			logger.Fatal(i18n.Translate("server.start.failed", "", nil), "error", err)
 		}
 	}()
 
@@ -110,14 +109,14 @@ func Run(cfg *config.Config) {
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 
-	logger.Info(i18n.Translate("server.shutdown.starting", locale, nil))
+	logger.Info(i18n.Translate("server.shutdown.starting", "", nil))
 
 	// 设置关闭超时
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	if err := srv.Shutdown(ctx); err != nil {
-		logger.Fatal(i18n.Translate("server.shutdown.forced", locale, nil), "error", err)
+		logger.Fatal(i18n.Translate("server.shutdown.forced", "", nil), "error", err)
 	}
 
-	logger.Info(i18n.Translate("server.shutdown.success", locale, nil))
+	logger.Info(i18n.Translate("server.shutdown.success", "", nil))
 }
