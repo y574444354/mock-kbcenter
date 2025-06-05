@@ -4,6 +4,8 @@ FROM golang:1.24-alpine AS builder
 # 定义构建参数
 ARG GOPROXY=https://goproxy.cn,direct
 ARG ALPINE_MIRROR=https://mirrors.aliyun.com
+ARG BUILD_DBTOOLS=true
+ARG BUILD_REDISTOOLS=true
 
 WORKDIR /app
 
@@ -20,7 +22,14 @@ RUN go mod download
 
 # 复制源代码并构建
 COPY . .
-RUN CGO_ENABLED=0 GOOS=linux go build -o go-webserver .
+RUN CGO_ENABLED=0 GOOS=linux go build -o go-webserver . && \
+    mkdir -p bin && \
+    if [ "$BUILD_DBTOOLS" = "true" ]; then \
+        go build -o bin/dbtools ./cmd/dbtools; \
+    fi && \
+    if [ "$BUILD_REDISTOOLS" = "true" ]; then \
+        go build -o bin/redistools ./cmd/redistools; \
+    fi
 
 # 运行阶段
 FROM alpine:latest
@@ -41,6 +50,7 @@ USER appuser
 WORKDIR /app
 # 复制构建产物
 COPY --from=builder --chown=appuser:appuser /app/go-webserver .
+COPY --from=builder --chown=appuser:appuser /app/bin ./bin
 
 
 # 暴露端口和健康检查

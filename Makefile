@@ -19,10 +19,13 @@ GOPATH := $(shell go env GOPATH)
 GOPROXY ?= https://goproxy.cn,direct
 # 默认Alpine镜像源设置
 ALPINE_MIRROR ?= https://mirrors.aliyun.com
+# 默认工具构建设置
+BUILD_DBTOOLS ?= true
+BUILD_REDISTOOLS ?= true
 
 # 默认目标
 .PHONY: all
-all: build build-worker
+all: build build-tools
 
 # 帮助信息
 .PHONY: env help
@@ -37,6 +40,9 @@ env:
 help:
 	@echo "Go Web服务器项目管理命令："
 	@echo "make build         - 构建主应用程序"
+	@echo "make build-tools   - 构建所有工具(dbtools, redistools)"
+	@echo "make build-dbtools - 构建数据库工具"
+	@echo "make build-redistools - 构建Redis工具"
 	@echo "make run           - 运行主应用程序"
 	@echo "make run-worker    - 运行worker进程"
 	@echo "make test          - 执行测试"
@@ -56,6 +62,30 @@ build:
 	@echo "构建主应用程序..."
 	@go build -o $(APP_NAME) $(MAIN_FILE)
 	@echo "主应用程序构建完成: $(APP_NAME)"
+
+# 构建工具
+.PHONY: build-tools
+build-tools:
+	@if [ "$(BUILD_DBTOOLS)" = "true" ]; then \
+		$(MAKE) build-dbtools; \
+	fi
+	@if [ "$(BUILD_REDISTOOLS)" = "true" ]; then \
+		$(MAKE) build-redistools; \
+	fi
+
+# 构建数据库工具
+.PHONY: build-dbtools
+build-dbtools:
+	@echo "构建数据库工具..."
+	@go build -o bin/dbtools ./cmd/dbtools
+	@echo "数据库工具构建完成: bin/dbtools"
+
+# 构建Redis工具
+.PHONY: build-redistools
+build-redistools:
+	@echo "构建Redis工具..."
+	@go build -o bin/redistools ./cmd/redistools
+	@echo "Redis工具构建完成: bin/redistools"
 
 # 运行主应用程序
 .PHONY: run
@@ -124,18 +154,26 @@ db-init:
 	@go run cmd/dbtools/*.go init
 	@echo "数据库初始化完成"
 
-# Docker相关命令
-.PHONY: docker-build
-docker-build:
-	@echo "构建Docker镜像..."
-	@echo "使用GOPROXY: $(GOPROXY)"
-	@echo "使用ALPINE_MIRROR: $(ALPINE_MIRROR)"
-	@docker build --build-arg GOPROXY=$(GOPROXY) --build-arg ALPINE_MIRROR=$(ALPINE_MIRROR) -t $(DOCKER_IMAGE) -f docker/Dockerfile .
-	@echo "Docker镜像构建完成: $(DOCKER_IMAGE)"
-
 # Redis相关命令
 .PHONY: redis-clear
 redis-clear:
 	@echo "清除Redis缓存..."
 	@go run cmd/redistools/*.go
 	@echo "Redis缓存清除完成"
+
+# Docker相关命令
+.PHONY: docker-build
+docker-build:
+	@echo "构建Docker镜像..."
+	@echo "使用GOPROXY: $(GOPROXY)"
+	@echo "使用ALPINE_MIRROR: $(ALPINE_MIRROR)"
+	@echo "构建数据库工具: $(BUILD_DBTOOLS)"
+	@echo "构建Redis工具: $(BUILD_REDISTOOLS)"
+	@docker build \
+		--build-arg GOPROXY=$(GOPROXY) \
+		--build-arg ALPINE_MIRROR=$(ALPINE_MIRROR) \
+		--build-arg BUILD_DBTOOLS=$(BUILD_DBTOOLS) \
+		--build-arg BUILD_REDISTOOLS=$(BUILD_REDISTOOLS) \
+		-t $(DOCKER_IMAGE) \
+		-f docker/Dockerfile .
+	@echo "Docker镜像构建完成: $(DOCKER_IMAGE)"

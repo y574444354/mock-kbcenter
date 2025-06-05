@@ -4,6 +4,9 @@
 # 排除开发工具目录
 .vscode/
 .idea/
+.roo/
+scripts/
+README.md
 
 # 排除依赖目录
 vendor/
@@ -41,3 +44,4 @@ swagger/swagger.yaml
 # 排除Docker相关文件
 docker-compose.*
 dockerfile.*
+docker/
