@@ -155,33 +155,32 @@ func mergeConfig(target, source interface{}) {
 }
 
 // LoadConfigWithDefault 加载默认配置文件，并尝试用本地配置覆盖
-func LoadConfigWithDefault() error {
-	var err error
+func LoadConfigWithDefault() (err error) {
 	once.Do(func() {
 		config = &Config{}
 
 		// 获取基础路径
-		basePath, err := os.Getwd()
+		var basePath string
+		basePath, err = os.Getwd()
 		if err != nil {
 			basePath = filepath.Dir(os.Args[0])
 		}
 		fmt.Println("Base path:", basePath)
 
 		// 读取嵌入的默认配置文件
-		defaultData, readErr := defaultConfig.ReadFile("config.yaml")
-		if readErr != nil {
+		var defaultData []byte
+		defaultData, err = defaultConfig.ReadFile("config.yaml")
+		if err != nil {
 			// 如果嵌入文件读取失败，尝试从文件系统读取
 			defaultPath := filepath.Join(basePath, "config", "config.yaml")
-			defaultData, readErr = os.ReadFile(defaultPath)
-			if readErr != nil {
-				err = readErr
+			defaultData, err = os.ReadFile(defaultPath)
+			if err != nil {
 				return
 			}
 		}
 
 		// 解析默认配置
-		if unmarshalErr := yaml.Unmarshal(defaultData, config); unmarshalErr != nil {
-			err = unmarshalErr
+		if err = yaml.Unmarshal(defaultData, config); err != nil {
 			return
 		}
 
