@@ -14,6 +14,9 @@ import (
 
 // GenerateRandomString 生成指定长度的随机字符串
 func GenerateRandomString(length int) (string, error) {
+	if length <= 0 {
+		return "", fmt.Errorf("length must be positive integer")
+	}
 	const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 	result := make([]byte, length)
 	for i := 0; i < length; i++ {
@@ -64,16 +67,25 @@ func ParseTime(timeStr, layout string) (time.Time, error) {
 
 // JSONMarshal JSON编码
 func JSONMarshal(v interface{}) ([]byte, error) {
+	if v == nil {
+		return nil, fmt.Errorf("nil value provided for JSON marshal")
+	}
 	return json.Marshal(v)
 }
 
 // JSONUnmarshal JSON解码
 func JSONUnmarshal(data []byte, v interface{}) error {
+	if len(data) == 0 || data == nil {
+		return fmt.Errorf("empty or nil data provided for JSON unmarshal")
+	}
 	return json.Unmarshal(data, v)
 }
 
 // TruncateString 截断字符串
 func TruncateString(s string, maxLen int) string {
+	if maxLen < 0 {
+		return ""
+	}
 	if len(s) <= maxLen {
 		return s
 	}

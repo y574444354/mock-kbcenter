@@ -23,7 +23,6 @@ var initCmd = &cobra.Command{
 		// 初始化数据库连接
 		if err := db.InitDB(config.GetConfig().Database); err != nil {
 			log.Fatalf("Failed to initialize database: %v", err)
-			os.Exit(1)
 		}
 
 		// 注册所有需要迁移的模型

@@ -32,8 +32,15 @@ func NewReviewTaskService() ReviewTaskService {
 }
 
 func (s *reviewTaskService) Create(clientID, workspace string, targets []types.Target) (string, error) {
+	id, err := idgen.GenerateString()
+	if err != nil {
+		return "", fmt.Errorf("%s", i18n.Translate("review_task.generate_id_failed", "", map[string]interface{}{
+			"error": err.Error(),
+		}))
+	}
+
 	reviewTask := &model.ReviewTask{
-		ID:        idgen.GenerateString(), // 使用雪花算法生成ID
+		ID:        id,
 		Status:    0,
 		ClientId:  clientID,
 		Workspace: workspace,

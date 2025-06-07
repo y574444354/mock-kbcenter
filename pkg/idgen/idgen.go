@@ -1,10 +1,13 @@
 package idgen
 
 import (
+	"errors"
 	"fmt"
 	"sync"
 	"time"
 )
+
+var ErrClockMovedBackwards = errors.New("clock moved backwards")
 
 const (
 	epoch         = int64(1577836800000) // 2020-01-01 00:00:00 UTC
@@ -44,13 +47,13 @@ func GetInstance() *Snowflake {
 	return instance
 }
 
-func (s *Snowflake) Generate() int64 {
+func (s *Snowflake) Generate() (int64, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
 	now := time.Now().UnixNano() / 1000000
 	if now < s.lastTime {
-		panic("clock moved backwards")
+		return 0, ErrClockMovedBackwards
 	}
 
 	if now == s.lastTime {
@@ -68,9 +71,13 @@ func (s *Snowflake) Generate() int64 {
 
 	return (now-epoch)<<(machineIDBits+sequenceBits) |
 		(s.machineID << sequenceBits) |
-		s.sequence
+		s.sequence, nil
 }
 
-func GenerateString() string {
-	return fmt.Sprintf("%d", GetInstance().Generate())
+func GenerateString() (string, error) {
+	id, err := GetInstance().Generate()
+	if err != nil {
+		return "", err
+	}
+	return fmt.Sprintf("%d", id), nil
 }

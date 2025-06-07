@@ -2,6 +2,7 @@ package httpclient
 
 import (
 	"bytes"
+	"errors"
 	"io"
 	"net/http"
 	"time"
@@ -43,18 +44,22 @@ func (m *StatusCodeMiddleware) ProcessResponse(resp *http.Response, err error) (
 			var bodyContent string
 			if resp.Body != nil {
 				bodyBytes, err := io.ReadAll(resp.Body)
-				if err == nil {
+				if err == nil && bodyBytes != nil {
 					bodyContent = string(bodyBytes)
 					// 重置响应体，以便后续处理
 					resp.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 				}
 			}
 
+			url := ""
+			if resp.Request != nil {
+				url = resp.Request.URL.String()
+			}
 			return nil, &StatusError{
 				StatusCode: resp.StatusCode,
 				Message: i18n.Translate("httpclient.error.invalid_status_code", "", map[string]interface{}{
 					"status": resp.StatusCode,
-					"url":    resp.Request.URL.String(),
+					"url":    url,
 					"body":   bodyContent,
 				}),
 			}
@@ -73,18 +78,22 @@ func (m *StatusCodeMiddleware) ProcessResponse(resp *http.Response, err error) (
 	var bodyContent string
 	if resp.Body != nil {
 		bodyBytes, err := io.ReadAll(resp.Body)
-		if err == nil {
+		if err == nil && bodyBytes != nil {
 			bodyContent = string(bodyBytes)
 			// 重置响应体，以便后续处理
 			resp.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 		}
 	}
 
+	url := ""
+	if resp.Request != nil {
+		url = resp.Request.URL.String()
+	}
 	return nil, &StatusError{
 		StatusCode: resp.StatusCode,
 		Message: i18n.Translate("httpclient.error.invalid_status_code", "", map[string]interface{}{
 			"status": resp.StatusCode,
-			"url":    resp.Request.URL.String(),
+			"url":    url,
 			"body":   bodyContent,
 		}),
 	}
@@ -153,15 +162,15 @@ func (m *LogMiddleware) ProcessResponse(resp *http.Response, err error) (*http.R
 	)
 
 	// 如果响应体不为空，记录响应体
-	if resp.Body != nil {
-		bodyBytes, err := io.ReadAll(resp.Body)
-		if err != nil {
-			return resp, err
-		}
-		// 重置响应体，以便后续处理
-		resp.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
-		logger.Debug(i18n.Translate("httpclient.log.response_body", "", nil), "body", string(bodyBytes))
-	}
+	// if resp.Body != nil {
+	// 	bodyBytes, err := io.ReadAll(resp.Body)
+	// 	if err != nil {
+	// 		return resp, err
+	// 	}
+	// 	// 重置响应体，以便后续处理
+	// 	resp.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
+	// 	logger.Debug(i18n.Translate("httpclient.log.response_body", "", nil), "body", string(bodyBytes))
+	// }
 
 	return resp, err
 }
@@ -219,6 +228,9 @@ type HeaderMiddleware struct {
 
 // ProcessRequest 添加请求头
 func (m *HeaderMiddleware) ProcessRequest(req *http.Request) error {
+	if req == nil {
+		return errors.New("http request cannot be nil")
+	}
 	for key, value := range m.Headers {
 		req.Header.Set(key, value)
 	}

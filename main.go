@@ -29,7 +29,7 @@ import (
 func main() {
 	// 加载配置
 	if err := config.LoadConfigWithDefault(); err != nil {
-		log.Fatalln("config.load.failed: %w", err)
+		log.Fatalf("failed to load config: %v", err)
 	}
 	// 初始化配置
 	cfg := config.GetConfig()

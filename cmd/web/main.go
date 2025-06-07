@@ -40,32 +40,52 @@ func Run(cfg *config.Config) {
 		gin.SetMode(gin.TestMode)
 	}
 
+	defer func() {
+		if r := recover(); r != nil {
+			if err, ok := r.(error); ok {
+				logger.Error("web server panic", "error", err)
+			}
+			logger.Sync()
+			os.Exit(1)
+		}
+	}()
+
 	// 初始化数据库
 	if err := db.InitDB(cfg.Database); err != nil {
 		logger.Error(i18n.Translate("db.connection.init", "", nil), "error", err)
-		os.Exit(1)
+		panic(err)
 	}
+	defer func() {
+		if err := db.CloseDB(); err != nil {
+			logger.Error(i18n.Translate("db.connection.close.failed", "", nil), "error", err)
+		}
+	}()
 
 	// 初始化Redis
 	if err := redis.InitRedis(*cfg); err != nil {
 		logger.Error(i18n.Translate("redis.connect.failed", "", nil), "error", err)
-		os.Exit(1)
+		panic(err)
 	}
+	defer func() {
+		if err := redis.Close(); err != nil {
+			logger.Error(i18n.Translate("redis.client.close.failed", "", nil), "error", err)
+		}
+	}()
 
 	// 初始化HTTP客户端
 	if err := thirdPlatform.InitHTTPClient(); err != nil {
 		logger.Error(i18n.Translate("httpclient.init.failed", "", nil), "error", err)
-		os.Exit(1)
+		panic(err)
 	}
 
 	// 初始化Asynq客户端（如果启用）
 	if cfg.Asynq.Enabled {
 		if err := asynq.InitClient(*cfg); err != nil {
 			logger.Error(i18n.Translate("asynq.client.init.failed", "", nil), "error", err)
-			os.Exit(1)
+			panic(err)
 		}
+		defer asynq.Close()
 	}
-	defer asynq.Close()
 
 	// 创建Gin引擎
 	r := gin.New()
@@ -105,9 +125,9 @@ func Run(cfg *config.Config) {
 	}()
 
 	// 等待中断信号
-	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-	<-quit
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
+	<-sigChan
 
 	logger.Info(i18n.Translate("server.shutdown.starting", "", nil))
 

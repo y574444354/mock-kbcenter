@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-	"os"
 
 	"github.com/spf13/cobra"
 	"github.com/zgsm/go-webserver/config"
@@ -23,7 +22,6 @@ var migrateCmd = &cobra.Command{
 		// 初始化数据库连接
 		if err := db.InitDB(config.GetConfig().Database); err != nil {
 			log.Fatalf("Failed to initialize database: %v", err)
-			os.Exit(1)
 		}
 
 		// 注册所有需要迁移的模型
@@ -33,7 +31,6 @@ var migrateCmd = &cobra.Command{
 			// 在这里添加其他模型
 		); err != nil {
 			log.Fatalf("Failed to migrate database: %v", err)
-			os.Exit(1)
 		}
 		log.Println("Database migration completed.")
 	},

@@ -38,6 +38,10 @@ func InitRedis(cfg config.Config) error {
 	// 测试连接
 	_, err := client.Ping(ctx).Result()
 	if err != nil {
+		// 连接失败时关闭client
+		if closeErr := client.Close(); closeErr != nil {
+			logger.Error(i18n.Translate("redis.client.close.failed", "", map[string]interface{}{"error": closeErr}))
+		}
 		return fmt.Errorf(i18n.Translate("redis.connect.failed", "", nil)+": %w", err)
 	}
 
@@ -46,11 +50,11 @@ func InitRedis(cfg config.Config) error {
 }
 
 // GetClient 获取Redis客户端
-func GetClient() *redis.Client {
+func GetClient() (*redis.Client, error) {
 	if client == nil {
-		panic("redis is not initialized or disabled")
+		return nil, fmt.Errorf("%s", i18n.Translate("redis.not_initialized_or_disabled", "", nil))
 	}
-	return client
+	return client, nil
 }
 
 // TryLock 尝试获取分布式锁

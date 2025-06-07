@@ -64,12 +64,16 @@ func InitDB(cfg config.Database) error {
 	// 连接数据库
 	DB, err = gorm.Open(dialector, gormConfig)
 	if err != nil {
+		_ = CloseDB()
 		return fmt.Errorf("%s: %w", i18n.Translate("db.connection.failed", "", nil), err)
 	}
 
 	// 配置连接池
 	sqlDB, err := DB.DB()
 	if err != nil {
+		if sqlDB != nil {
+			_ = sqlDB.Close()
+		}
 		return fmt.Errorf("%s: %w", i18n.Translate("db.connection.failed", "", nil), err)
 	}
 

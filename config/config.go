@@ -208,13 +208,15 @@ func LoadConfigWithDefault() (err error) {
 func GetConfig() *Config {
 	if config == nil {
 		// 如果配置未加载，使用默认配置
-		config = &Config{}
-		// 设置默认值
-		config.Server.Port = 8080
-		config.Server.Mode = "debug"
-		config.Database.Enabled = true
-		config.Redis.Enabled = true
-		config.Asynq.Enabled = true
+		once.Do(func() {
+			config = &Config{}
+			// 设置默认值
+			config.Server.Port = 8080
+			config.Server.Mode = "release"
+			config.Database.Enabled = true
+			config.Redis.Enabled = true
+			config.Asynq.Enabled = true
+		})
 	}
 	return config
 }

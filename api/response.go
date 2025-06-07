@@ -50,9 +50,26 @@ func Fail(c *gin.Context, code int, messageID string) {
 
 func Error(c *gin.Context, code int, err error) {
 	c.Errors = append(c.Errors, &gin.Error{Err: err})
+
+	locale, exists := c.Get("locale")
+	var localeStr string
+	if exists {
+		localeStr = locale.(string)
+	} else {
+		localeStr = i18n.GetDefaultLocale()
+	}
+
+	messageID := "common.internalServerError"
+	var message string
+	if err != nil {
+		message = err.Error()
+	} else {
+		message = i18n.Translate(messageID, localeStr, nil)
+	}
+
 	c.JSON(code, Response{
 		Code:    code,
-		Message: err.Error(),
+		Message: message,
 	})
 }
 

@@ -52,6 +52,7 @@ logger.init.failed: "Failed to initialize logger"
 middleware.recovery.broken_pipe: "Broken pipe detected"
 middleware.recovery.internal_error: "Internal server error: %v"
 middleware.recovery.recovered: "Recovered from panic"
+redis.client.close.failed: "Failed to close Redis client: {{.error}}"
 redis.connect.failed: "Failed to initialize Redis"
 redis.connect.success: "Redis connected successfully"
 redis.flushdb.failed: "Failed to flush Redis database"
@@ -72,6 +73,8 @@ worker.process.stop: "Worker process stopped"
 
 # custom
 review_task.empty_targets: "empty targets"
+review_task.generate_id_failed: "Failed to generate ID: {{.error}}"
 review_task.invalid_file_path: "Invalid file_path"
 review_task.invalid_line_range: "Invalid line range"
 review_task.invalid_target_type: "Invalid target type"
+

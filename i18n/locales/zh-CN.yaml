@@ -52,6 +52,7 @@ logger.init.failed: "初始化日志失败"
 middleware.recovery.broken_pipe: "检测到连接断开"
 middleware.recovery.internal_error: "服务器内部错误: %v"
 middleware.recovery.recovered: "恢复自panic"
+redis.client.close.failed: "关闭Redis客户端失败: {{.error}}"
 redis.connect.failed: "初始化Redis失败"
 redis.connect.success: "Redis连接成功"
 redis.flushdb.failed: "Redis数据库清空失败"
@@ -72,6 +73,8 @@ worker.process.stop: "Worker进程停止"
 
 # custom
 review_task.empty_targets: "targets 为空"
+review_task.generate_id_failed: "生成ID失败: {{.error}}"
 review_task.invalid_file_path: "无效的 file_path"
 review_task.invalid_line_range: "无效的 line range"
 review_task.invalid_target_type: "无效的 target type"
+

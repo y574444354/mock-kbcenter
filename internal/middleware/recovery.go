@@ -31,7 +31,10 @@ func Recovery() gin.HandlerFunc {
 				}
 
 				// 请求信息
-				httpRequest, _ := httputil.DumpRequest(c.Request, false)
+				httpRequest, err := httputil.DumpRequest(c.Request, false)
+				if err != nil {
+					httpRequest = []byte(fmt.Sprintf("failed to dump request: %v", err))
+				}
 				// 堆栈信息
 				stack := string(debug.Stack())
 

@@ -129,6 +129,9 @@ func NewClient(config *HttpServiceConfig) (*Client, error) {
 
 // AddMiddleware 添加中间件
 func (c *Client) AddMiddleware(middleware Middleware) {
+	if middleware == nil {
+		return
+	}
 	c.middlewares = append(c.middlewares, middleware)
 }
 
@@ -257,6 +260,11 @@ func (c *Client) Request(ctx context.Context, method, path string, body interfac
 				}
 			}
 		}
+	}
+
+	// 在返回前处理响应体
+	if resp != nil && resp.Body != nil {
+		defer resp.Body.Close()
 	}
 
 	return resp, respErr

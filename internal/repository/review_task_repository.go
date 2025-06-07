@@ -42,5 +42,8 @@ func (r *reviewTaskRepository) GetProgress(ctx context.Context, reviewTaskID, cl
 	if err != nil {
 		return 0, err
 	}
-	return float64(reviewTask.FinishedCount / reviewTask.TotalCount), nil
+	if reviewTask.TotalCount == 0 {
+		return 0, nil
+	}
+	return float64(reviewTask.FinishedCount) / float64(reviewTask.TotalCount), nil
 }
