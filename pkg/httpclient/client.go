@@ -262,11 +262,6 @@ func (c *Client) Request(ctx context.Context, method, path string, body interfac
 		}
 	}
 
-	// 在返回前处理响应体
-	if resp != nil && resp.Body != nil {
-		defer resp.Body.Close()
-	}
-
 	return resp, respErr
 }
 
