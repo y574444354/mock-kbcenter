@@ -26,7 +26,7 @@ func HandleRunReviewTask(ctx context.Context, t *asynq.Task) error {
 		return err
 	}
 
-	// 开始执行 review 任务
+	// Start executing review task
 	logger.Info("RunReviewTask", "payload", payload)
 
 	return nil

@@ -42,7 +42,7 @@ func New(machineID int64) *Snowflake {
 
 func GetInstance() *Snowflake {
 	once.Do(func() {
-		instance = New(1) // 默认使用机器ID 1
+		instance = New(1) // Use machine ID 1 by default
 	})
 	return instance
 }

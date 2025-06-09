@@ -19,7 +19,7 @@ var (
 )
 
 func init() {
-	// 添加子命令
+	// Add subcommands
 	if migrateCmd == nil {
 		log.Fatalf("migrateCmd is nil")
 	}
@@ -32,11 +32,11 @@ func init() {
 }
 
 func main() {
-	// 加载配置
+	// Load configuration
 	if err := config.LoadConfigWithDefault(); err != nil {
 		log.Fatalf("config.load.failed: %v", err)
 	}
-	// 初始化配置
+	// Initialize configuration
 	cfg := config.GetConfig()
 
 	if err := i18n.InitI18n(*cfg); err != nil {

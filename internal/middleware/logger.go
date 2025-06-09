@@ -8,36 +8,36 @@ import (
 	"github.com/zgsm/go-webserver/pkg/logger"
 )
 
-// Logger 日志中间件
+// Logger middleware for logging
 func Logger() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// 开始时间
+		// Start time
 		start := time.Now()
 		path := c.Request.URL.Path
 		raw := c.Request.URL.RawQuery
 
-		// 处理请求
+		// Process request
 		c.Next()
 
-		// 结束时间
+		// End time
 		end := time.Now()
 		latency := end.Sub(start)
 
-		// 请求方法
+		// Request method
 		method := c.Request.Method
-		// 状态码
+		// Status code
 		statusCode := c.Writer.Status()
-		// 客户端IP
+		// Client IP
 		clientIP := c.ClientIP()
-		// 错误信息
+		// Error message
 		errorMessage := c.Errors.String()
 
-		// 如果有查询参数，添加到路径
+		// If has query parameters, add to path
 		if raw != "" {
 			path = path + "?" + raw
 		}
 
-		// 记录日志
+		// Log the request
 		logger.Info(i18n.Translate("log.http.request", "", map[string]interface{}{
 			"method": method,
 			"path":   path,

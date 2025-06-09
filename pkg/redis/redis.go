@@ -16,7 +16,7 @@ var (
 	ctx    = context.Background()
 )
 
-// InitRedis 初始化Redis连接
+// InitRedis initialize Redis connection
 func InitRedis(cfg config.Config) error {
 	if !cfg.Redis.Enabled {
 		return nil
@@ -25,20 +25,20 @@ func InitRedis(cfg config.Config) error {
 		Addr:     fmt.Sprintf("%s:%d", cfg.Redis.Host, cfg.Redis.Port),
 		Password: cfg.Redis.Password,
 		DB:       cfg.Redis.DB,
-		// 连接池配置
+		// Connection pool configuration
 		PoolSize:     10,
 		MinIdleConns: 5,
-		// 超时配置
+		// Timeout configuration
 		DialTimeout:  5 * time.Second,
 		ReadTimeout:  3 * time.Second,
 		WriteTimeout: 3 * time.Second,
 		PoolTimeout:  4 * time.Second,
 	})
 
-	// 测试连接
+	// Test connection
 	_, err := client.Ping(ctx).Result()
 	if err != nil {
-		// 连接失败时关闭client
+		// Close client if connection failed
 		if closeErr := client.Close(); closeErr != nil {
 			logger.Error(i18n.Translate("redis.client.close.failed", "", map[string]interface{}{"error": closeErr}))
 		}
@@ -49,7 +49,7 @@ func InitRedis(cfg config.Config) error {
 	return nil
 }
 
-// GetClient 获取Redis客户端
+// GetClient get Redis client
 func GetClient() (*redis.Client, error) {
 	if client == nil {
 		return nil, fmt.Errorf("%s", i18n.Translate("redis.not_initialized_or_disabled", "", nil))
@@ -57,7 +57,7 @@ func GetClient() (*redis.Client, error) {
 	return client, nil
 }
 
-// TryLock 尝试获取分布式锁
+// TryLock attempt to acquire distributed lock
 func TryLock(key string, expiration time.Duration) (bool, error) {
 	if client == nil {
 		return false, fmt.Errorf("%s", i18n.Translate("redis.not_initialized_or_disabled", "", nil))
@@ -65,7 +65,7 @@ func TryLock(key string, expiration time.Duration) (bool, error) {
 	return client.SetNX(ctx, key, 1, expiration).Result()
 }
 
-// Unlock 释放分布式锁
+// Unlock release distributed lock
 func Unlock(key string) error {
 	if client == nil {
 		return fmt.Errorf("%s", i18n.Translate("redis.not_initialized_or_disabled", "", nil))
@@ -73,7 +73,7 @@ func Unlock(key string) error {
 	return client.Del(ctx, key).Err()
 }
 
-// Close 关闭Redis连接
+// Close close Redis connection
 func Close() error {
 	if client != nil {
 		return client.Close()
@@ -81,7 +81,7 @@ func Close() error {
 	return nil
 }
 
-// Set 设置键值对
+// Set set key-value pair
 func Set(key string, value interface{}, expiration time.Duration) error {
 	if client == nil {
 		return fmt.Errorf("%s", i18n.Translate("redis.not_initialized_or_disabled", "", nil))
@@ -89,7 +89,7 @@ func Set(key string, value interface{}, expiration time.Duration) error {
 	return client.Set(ctx, key, value, expiration).Err()
 }
 
-// Get 获取值
+// Get get value
 func Get(key string) (string, error) {
 	if client == nil {
 		return "", fmt.Errorf("%s", i18n.Translate("redis.not_initialized_or_disabled", "", nil))
@@ -97,7 +97,7 @@ func Get(key string) (string, error) {
 	return client.Get(ctx, key).Result()
 }
 
-// Del 删除键
+// Del delete keys
 func Del(keys ...string) error {
 	if client == nil {
 		return fmt.Errorf("%s", i18n.Translate("redis.not_initialized_or_disabled", "", nil))
@@ -105,7 +105,7 @@ func Del(keys ...string) error {
 	return client.Del(ctx, keys...).Err()
 }
 
-// Exists 检查键是否存在
+// Exists check if key exists
 func Exists(keys ...string) (bool, error) {
 	if client == nil {
 		return false, fmt.Errorf("%s", i18n.Translate("redis.not_initialized_or_disabled", "", nil))
@@ -114,7 +114,7 @@ func Exists(keys ...string) (bool, error) {
 	return result > 0, err
 }
 
-// Expire 设置过期时间
+// Expire set expiration time
 func Expire(key string, expiration time.Duration) error {
 	if client == nil {
 		return fmt.Errorf("%s", i18n.Translate("redis.not_initialized_or_disabled", "", nil))
@@ -122,7 +122,7 @@ func Expire(key string, expiration time.Duration) error {
 	return client.Expire(ctx, key, expiration).Err()
 }
 
-// TTL 获取剩余过期时间
+// TTL get time to live
 func TTL(key string) (time.Duration, error) {
 	if client == nil {
 		return 0, fmt.Errorf("%s", i18n.Translate("redis.not_initialized_or_disabled", "", nil))
@@ -130,7 +130,7 @@ func TTL(key string) (time.Duration, error) {
 	return client.TTL(ctx, key).Result()
 }
 
-// Incr 自增
+// Incr increment value
 func Incr(key string) (int64, error) {
 	if client == nil {
 		return 0, fmt.Errorf("%s", i18n.Translate("redis.not_initialized_or_disabled", "", nil))
@@ -138,7 +138,7 @@ func Incr(key string) (int64, error) {
 	return client.Incr(ctx, key).Result()
 }
 
-// HSet 设置哈希表字段值
+// HSet set hash field value
 func HSet(key string, field string, value interface{}) error {
 	if client == nil {
 		return fmt.Errorf("%s", i18n.Translate("redis.not_initialized_or_disabled", "", nil))
@@ -146,7 +146,7 @@ func HSet(key string, field string, value interface{}) error {
 	return client.HSet(ctx, key, field, value).Err()
 }
 
-// HGet 获取哈希表字段值
+// HGet get hash field value
 func HGet(key, field string) (string, error) {
 	if client == nil {
 		return "", fmt.Errorf("%s", i18n.Translate("redis.not_initialized_or_disabled", "", nil))
@@ -154,7 +154,7 @@ func HGet(key, field string) (string, error) {
 	return client.HGet(ctx, key, field).Result()
 }
 
-// HGetAll 获取哈希表所有字段和值
+// HGetAll get all hash fields and values
 func HGetAll(key string) (map[string]string, error) {
 	if client == nil {
 		return nil, fmt.Errorf("%s", i18n.Translate("redis.not_initialized_or_disabled", "", nil))
@@ -162,7 +162,7 @@ func HGetAll(key string) (map[string]string, error) {
 	return client.HGetAll(ctx, key).Result()
 }
 
-// HDel 删除哈希表字段
+// HDel delete hash fields
 func HDel(key string, fields ...string) error {
 	if client == nil {
 		return fmt.Errorf("%s", i18n.Translate("redis.not_initialized_or_disabled", "", nil))
@@ -170,7 +170,7 @@ func HDel(key string, fields ...string) error {
 	return client.HDel(ctx, key, fields...).Err()
 }
 
-// FlushDB 清空当前数据库
+// FlushDB flush current database
 func FlushDB() error {
 	if client == nil {
 		return fmt.Errorf("%s", i18n.Translate("redis.not_initialized_or_disabled", "", nil))

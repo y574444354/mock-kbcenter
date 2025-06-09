@@ -31,7 +31,7 @@ var (
 	server *asynq.Server
 )
 
-// InitServer 初始化Asynq服务器
+// InitServer initialize Asynq server
 func InitServer(cfg config.Config) error {
 	redisOpt := &asynq.RedisClientOpt{
 		Addr:     fmt.Sprintf("%s:%d", cfg.Redis.Host, cfg.Redis.Port),
@@ -40,13 +40,13 @@ func InitServer(cfg config.Config) error {
 		PoolSize: cfg.Asynq.RedisPoolSize,
 	}
 
-	// 创建Asynq日志记录器
-	// 初始化Asynq专用日志
+	// Create Asynq logger
+	// Initialize Asynq dedicated log
 	if err := logger.InitLogger(cfg.Asynq.Log); err != nil {
 		return err
 	}
 
-	// 创建Asynq服务器
+	// Create Asynq server
 	server = asynq.NewServer(
 		redisOpt,
 		asynq.Config{
@@ -66,12 +66,12 @@ func InitServer(cfg config.Config) error {
 	return nil
 }
 
-// NewServeMux 创建任务处理器路由器
+// NewServeMux create task handler router
 func NewServeMux() *asynq.ServeMux {
 	return asynq.NewServeMux()
 }
 
-// Start 启动任务处理器
+// Start start task handler
 func Start(mux *asynq.ServeMux) error {
 	if server == nil {
 		msg := i18n.Translate("asynq.server.not.initialized", "", nil)
@@ -80,14 +80,14 @@ func Start(mux *asynq.ServeMux) error {
 	return server.Run(mux)
 }
 
-// Shutdown 优雅关闭服务器
+// Shutdown graceful shutdown server
 func Shutdown() {
 	if server != nil {
 		server.Shutdown()
 	}
 }
 
-// GetAsynqLogger 获取Asynq日志记录器
+// GetAsynqLogger get Asynq logger
 func GetAsynqLogger() asynq.Logger {
 	return logger.GetAsynqLogger()
 }

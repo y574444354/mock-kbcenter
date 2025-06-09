@@ -11,42 +11,42 @@ import (
 	"github.com/zgsm/go-webserver/pkg/logger"
 )
 
-// Middleware 定义HTTP客户端中间件接口
+// Middleware defines HTTP client middleware interface
 type Middleware interface {
-	// ProcessRequest 处理请求，在请求发送前调用
+	// ProcessRequest process request, called before sending request
 	ProcessRequest(*http.Request) error
-	// ProcessResponse 处理响应，在响应接收后调用
+	// ProcessResponse process response, called after receiving response
 	ProcessResponse(*http.Response, error) (*http.Response, error)
 }
 
-// StatusCodeMiddleware 状态码校验中间件
+// StatusCodeMiddleware status code validation middleware
 type StatusCodeMiddleware struct {
-	// ValidStatusCodes 允许的状态码范围，如nil则使用默认规则
+	// ValidStatusCodes allowed status code ranges, if nil use default rules
 	ValidStatusCodes []int
 }
 
-// ProcessRequest 处理请求
+// ProcessRequest process request
 func (m *StatusCodeMiddleware) ProcessRequest(req *http.Request) error {
-	// 状态码中间件不处理请求
+	// Status code middleware doesn't process requests
 	return nil
 }
 
-// ProcessResponse 校验状态码
+// ProcessResponse validate status code
 func (m *StatusCodeMiddleware) ProcessResponse(resp *http.Response, err error) (*http.Response, error) {
 	if err != nil {
 		return resp, err
 	}
 
-	// 如果没有指定有效状态码，使用默认规则（2xx为有效状态码）
+	// If no valid status codes specified, use default rules (2xx is valid)
 	if len(m.ValidStatusCodes) == 0 {
 		if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-			// 读取响应体内容
+			// Read response body content
 			var bodyContent string
 			if resp.Body != nil {
 				bodyBytes, err := io.ReadAll(resp.Body)
 				if err == nil && bodyBytes != nil {
 					bodyContent = string(bodyBytes)
-					// 重置响应体，以便后续处理
+					// Reset response body for further processing
 					resp.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 				}
 			}
@@ -67,20 +67,20 @@ func (m *StatusCodeMiddleware) ProcessResponse(resp *http.Response, err error) (
 		return resp, nil
 	}
 
-	// 检查状态码是否在允许的范围内
+	// Check if status code is in allowed range
 	for _, code := range m.ValidStatusCodes {
 		if resp.StatusCode == code {
 			return resp, nil
 		}
 	}
 
-	// 读取响应体内容
+	// Read response body content
 	var bodyContent string
 	if resp.Body != nil {
 		bodyBytes, err := io.ReadAll(resp.Body)
 		if err == nil && bodyBytes != nil {
 			bodyContent = string(bodyBytes)
-			// 重置响应体，以便后续处理
+			// Reset response body for further processing
 			resp.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 		}
 	}
@@ -99,7 +99,7 @@ func (m *StatusCodeMiddleware) ProcessResponse(resp *http.Response, err error) (
 	}
 }
 
-// StatusError 状态码错误
+// StatusError status code error
 type StatusError struct {
 	StatusCode int
 	Message    string
@@ -109,32 +109,32 @@ func (e *StatusError) Error() string {
 	return e.Message
 }
 
-// LogMiddleware 日志中间件
+// LogMiddleware logging middleware
 type LogMiddleware struct {
 	EnableRequestLog  bool
 	EnableResponseLog bool
 }
 
-// ProcessRequest 记录请求日志
+// ProcessRequest log request
 func (m *LogMiddleware) ProcessRequest(req *http.Request) error {
 	if !m.EnableRequestLog {
 		return nil
 	}
 
-	// 记录请求信息
+	// Log request info
 	logger.Debug(i18n.Translate("httpclient.log.request", "", nil),
 		"method", req.Method,
 		"url", req.URL.String(),
 		"headers", req.Header,
 	)
 
-	// 如果请求体不为空，记录请求体
+	// If request body not empty, log request body
 	if req.Body != nil && req.Body != http.NoBody {
 		bodyBytes, err := io.ReadAll(req.Body)
 		if err != nil {
 			return err
 		}
-		// 重置请求体，以便后续处理
+		// Reset request body for further processing
 		req.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 		logger.Debug(i18n.Translate("httpclient.log.request_body", "", nil), "body", string(bodyBytes))
 	}
@@ -142,32 +142,32 @@ func (m *LogMiddleware) ProcessRequest(req *http.Request) error {
 	return nil
 }
 
-// ProcessResponse 记录响应日志
+// ProcessResponse log response
 func (m *LogMiddleware) ProcessResponse(resp *http.Response, err error) (*http.Response, error) {
 	if !m.EnableResponseLog || err != nil {
 		return resp, err
 	}
 
-	// 根据状态码选择日志级别
+	// Choose log level based on status code
 	logFunc := logger.Debug
 	if resp.StatusCode >= 400 {
 		logFunc = logger.Warn
 	}
 
-	// 记录响应信息
+	// Log response info
 	logFunc(i18n.Translate("httpclient.log.response", "", nil),
 		"status", resp.Status,
 		"url", resp.Request.URL.String(),
 		// "headers", resp.Header,
 	)
 
-	// 如果响应体不为空，记录响应体
+	// If response body not empty, log response body
 	// if resp.Body != nil {
 	// 	bodyBytes, err := io.ReadAll(resp.Body)
 	// 	if err != nil {
 	// 		return resp, err
 	// 	}
-	// 	// 重置响应体，以便后续处理
+	// 	// Reset response body for further processing
 	// 	resp.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 	// 	logger.Debug(i18n.Translate("httpclient.log.response_body", "", nil), "body", string(bodyBytes))
 	// }
@@ -175,7 +175,7 @@ func (m *LogMiddleware) ProcessResponse(resp *http.Response, err error) (*http.R
 	return resp, err
 }
 
-// AuthMiddleware 认证中间件
+// AuthMiddleware authentication middleware
 type AuthMiddleware struct {
 	AuthType   string
 	Username   string
@@ -184,7 +184,7 @@ type AuthMiddleware struct {
 	AuthHeader string
 }
 
-// ProcessRequest 添加认证信息
+// ProcessRequest add authentication info
 func (m *AuthMiddleware) ProcessRequest(req *http.Request) error {
 	switch m.AuthType {
 	case "basic":
@@ -197,36 +197,36 @@ func (m *AuthMiddleware) ProcessRequest(req *http.Request) error {
 	return nil
 }
 
-// ProcessResponse 处理响应
+// ProcessResponse process response
 func (m *AuthMiddleware) ProcessResponse(resp *http.Response, err error) (*http.Response, error) {
-	// 认证中间件不处理响应
+	// Auth middleware doesn't process response
 	return resp, err
 }
 
-// RetryMiddleware 重试中间件
+// RetryMiddleware retry middleware
 type RetryMiddleware struct {
 	MaxRetries int
 	RetryDelay time.Duration
 }
 
-// ProcessRequest 处理请求
+// ProcessRequest process request
 func (m *RetryMiddleware) ProcessRequest(req *http.Request) error {
-	// 重试中间件不处理请求
+	// Retry middleware doesn't process request
 	return nil
 }
 
-// ProcessResponse 处理响应，如果需要重试则返回错误
+// ProcessResponse process response, return error if retry needed
 func (m *RetryMiddleware) ProcessResponse(resp *http.Response, err error) (*http.Response, error) {
-	// 在Client中实现重试逻辑
+	// Retry logic implemented in Client
 	return resp, err
 }
 
-// HeaderMiddleware 请求头中间件
+// HeaderMiddleware header middleware
 type HeaderMiddleware struct {
 	Headers map[string]string
 }
 
-// ProcessRequest 添加请求头
+// ProcessRequest add headers
 func (m *HeaderMiddleware) ProcessRequest(req *http.Request) error {
 	if req == nil {
 		return errors.New("http request cannot be nil")
@@ -237,8 +237,8 @@ func (m *HeaderMiddleware) ProcessRequest(req *http.Request) error {
 	return nil
 }
 
-// ProcessResponse 处理响应
+// ProcessResponse process response
 func (m *HeaderMiddleware) ProcessResponse(resp *http.Response, err error) (*http.Response, error) {
-	// 请求头中间件不处理响应
+	// Header middleware doesn't process response
 	return resp, err
 }

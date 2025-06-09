@@ -27,13 +27,13 @@ import (
 )
 
 func Run(cfg *config.Config) {
-	// 初始化日志
+	// Initialize logger
 	if err := logger.InitLogger(cfg.Log); err != nil {
 		log.Fatalln(i18n.Translate("logger.init.failed", "", nil), "error", err)
 	}
 	defer logger.Sync()
 
-	// 设置Gin模式
+	// Set Gin mode
 	if cfg.Server.Mode == "release" {
 		gin.SetMode(gin.ReleaseMode)
 	} else if cfg.Server.Mode == "test" {
@@ -50,7 +50,7 @@ func Run(cfg *config.Config) {
 		}
 	}()
 
-	// 初始化数据库
+	// Initialize database
 	if err := db.InitDB(cfg.Database); err != nil {
 		logger.Error(i18n.Translate("db.connection.init", "", nil), "error", err)
 		panic(err)
@@ -61,7 +61,7 @@ func Run(cfg *config.Config) {
 		}
 	}()
 
-	// 初始化Redis
+	// Initialize Redis
 	if err := redis.InitRedis(*cfg); err != nil {
 		logger.Error(i18n.Translate("redis.connect.failed", "", nil), "error", err)
 		panic(err)
@@ -72,13 +72,13 @@ func Run(cfg *config.Config) {
 		}
 	}()
 
-	// 初始化HTTP客户端
+	// Initialize HTTP client
 	if err := thirdPlatform.InitHTTPClient(); err != nil {
 		logger.Error(i18n.Translate("httpclient.init.failed", "", nil), "error", err)
 		panic(err)
 	}
 
-	// 初始化Asynq客户端（如果启用）
+	// Initialize Asynq client (if enabled)
 	if cfg.Asynq.Enabled {
 		if err := asynq.InitClient(*cfg); err != nil {
 			logger.Error(i18n.Translate("asynq.client.init.failed", "", nil), "error", err)
@@ -87,36 +87,36 @@ func Run(cfg *config.Config) {
 		defer asynq.Close()
 	}
 
-	// 创建Gin引擎
+	// Create Gin engine
 	r := gin.New()
 
-	// 注册中间件
+	// Register middlewares
 	r.Use(middleware.Logger())
 	r.Use(middleware.Recovery())
 	r.Use(middleware.Cors())
 	r.Use(middleware.I18n())
 
-	// 健康检查
+	// Health check
 	r.GET("/health", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"status": "ok",
 		})
 	})
 
-	// Swagger文档
+	// Swagger documentation
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	// 注册API路由
+	// Register API routes
 	apiV1 := r.Group("/api/v1")
 	v1.RegisterRoutes(apiV1)
 
-	// 启动服务器
+	// Start server
 	srv := &http.Server{
 		Addr:    fmt.Sprintf(":%d", cfg.Server.Port),
 		Handler: r,
 	}
 
-	// 优雅关闭
+	// Graceful shutdown
 	go func() {
 		logger.Info(i18n.Translate("server.start.success", "", nil), "port", cfg.Server.Port)
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
@@ -124,14 +124,14 @@ func Run(cfg *config.Config) {
 		}
 	}()
 
-	// 等待中断信号
+	// Wait for interrupt signal
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
 	<-sigChan
 
 	logger.Info(i18n.Translate("server.shutdown.starting", "", nil))
 
-	// 设置关闭超时
+	// Set shutdown timeout
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	if err := srv.Shutdown(ctx); err != nil {

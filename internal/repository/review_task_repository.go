@@ -18,10 +18,10 @@ type reviewTaskRepository struct {
 	db *gorm.DB
 }
 
-// NewReviewTaskRepositoryFunc 定义创建ReviewTaskRepository的函数类型
+// NewReviewTaskRepositoryFunc defines function type for creating ReviewTaskRepository
 type NewReviewTaskRepositoryFunc func() ReviewTaskRepository
 
-// NewReviewTaskRepository 创建ReviewTaskRepository的函数变量
+// NewReviewTaskRepository function variable for creating ReviewTaskRepository
 var NewReviewTaskRepository NewReviewTaskRepositoryFunc = func() ReviewTaskRepository {
 	return &reviewTaskRepository{
 		db: db.GetDB(),

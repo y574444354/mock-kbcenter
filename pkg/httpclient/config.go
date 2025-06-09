@@ -4,46 +4,46 @@ import (
 	"time"
 )
 
-// HttpServiceConfig HTTP客户端配置
+// HttpServiceConfig HTTP client configuration
 type HttpServiceConfig struct {
-	// 基础URL，所有请求都会基于此URL
+	// Base URL, all requests will be based on this URL
 	BaseURL string `yaml:"base_url"`
 
-	// 超时设置
+	// Timeout settings
 	Timeout time.Duration `yaml:"timeout"`
 
-	// 重试设置
+	// Retry settings
 	MaxRetries int           `yaml:"max_retries"`
 	RetryDelay time.Duration `yaml:"retry_delay"`
 
-	// 鉴权设置
-	AuthType   string `yaml:"auth_type"` // 支持：none, basic, bearer, custom
-	Username   string `yaml:"username"`  // 用于basic认证
-	Password   string `yaml:"password"`  // 用于basic认证
-	Token      string `yaml:"token"`     // 用于bearer认证
+	// Authentication settings
+	AuthType   string `yaml:"auth_type"` // Supported: none, basic, bearer, custom
+	Username   string `yaml:"username"`  // For basic auth
+	Password   string `yaml:"password"`  // For basic auth
+	Token      string `yaml:"token"`     // For bearer auth
 	AuthHeader string `yaml:"auth_header"`
 
-	// 请求头设置
+	// Request headers
 	Headers map[string]string `yaml:"headers"`
 
-	// 代理设置
+	// Proxy settings
 	ProxyURL string `yaml:"proxy_url"`
 
-	// TLS设置
+	// TLS settings
 	InsecureSkipVerify bool   `yaml:"insecure_skip_verify"`
 	CertFile           string `yaml:"cert_file"`
 	KeyFile            string `yaml:"key_file"`
 	CAFile             string `yaml:"ca_file"`
 
-	// 日志设置
+	// Logging settings
 	EnableRequestLog  bool `yaml:"enable_request_log"`
 	EnableResponseLog bool `yaml:"enable_response_log"`
 
-	// 有效的状态码列表，为空则使用默认规则(2xx)
+	// Valid status codes, empty means use default rule (2xx)
 	ValidStatusCodes []int `yaml:"valid_status_codes"`
 }
 
-// DefaultHttpServiceConfig 返回默认配置
+// DefaultHttpServiceConfig returns default configuration
 func DefaultHttpServiceConfig() *HttpServiceConfig {
 	return &HttpServiceConfig{
 		Timeout:           30 * time.Second,

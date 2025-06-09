@@ -27,51 +27,51 @@ func Run(cfg *config.Config) {
 		}
 	}()
 
-	// 检查是否启用Asynq
+	// Check if Asynq is enabled
 	if !cfg.Asynq.Enabled {
 		log.Println(i18n.Translate("asynq.server.disabled", "", nil))
 		return
 	}
 
-	// 初始化日志
+	// Initialize logger
 	if err := logger.InitLogger(cfg.Asynq.Log); err != nil {
 		logger.Error(i18n.Translate("asynq.server.init.failed", "", nil), "error", err)
 		panic(err)
 	}
 	defer logger.Sync()
 
-	// 初始化数据库
+	// Initialize database
 	if err := db.InitDB(cfg.Database); err != nil {
 		logger.Error(i18n.Translate("db.init.failed", "", nil), "error", err)
 		panic(err)
 	}
 
-	// 初始化Redis
+	// Initialize Redis
 	if err := redis.InitRedis(*cfg); err != nil {
 		logger.Error(i18n.Translate("redis.init.failed", "", nil), "error", err)
 		panic(err)
 	}
 
-	// 初始化HTTP客户端
+	// Initialize HTTP client
 	if err := thirdPlatform.InitHTTPClient(); err != nil {
 		logger.Error(i18n.Translate("httpclient.init.failed", "", nil), "error", err)
 		panic(err)
 	}
 
-	// 初始化Asynq服务器
+	// Initialize Asynq server
 	if err := asynq.InitServer(*cfg); err != nil {
 		logger.Error(i18n.Translate("asynq.server.init.failed", "", nil), "error", err)
 		panic(err)
 	}
 
-	// 注册任务处理器
+	// Register task handlers
 	mux := asynq.NewServeMux()
 	mux.HandleFunc(tasks.TypeRunReviewTask, tasks.HandleRunReviewTask)
 
-	// 启动worker
+	// Start worker
 	logger.Info(i18n.Translate("worker.process.start", "", nil), "pid", os.Getpid())
 
-	// 优雅退出
+	// Graceful shutdown
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 
@@ -85,7 +85,7 @@ func Run(cfg *config.Config) {
 	<-quit
 	logger.Info(i18n.Translate("worker.process.stop", "", nil))
 
-	// 资源清理
+	// Resource cleanup
 	asynq.Shutdown()
 
 	if err := redis.Close(); err != nil {

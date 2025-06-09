@@ -7,16 +7,16 @@ import (
 	"github.com/zgsm/go-webserver/i18n"
 )
 
-// I18n 国际化中间件
+// I18n internationalization middleware
 func I18n() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// 从请求中获取语言信息
+		// Get language information from request
 		locale := getLocaleFromRequest(c)
 
-		// 将语言信息设置到上下文中
+		// Set language information to context
 		c.Set("locale", locale)
 
-		// 添加翻译函数到上下文
+		// Add translation function to context
 		c.Set("translate", func(messageID string, templateData map[string]interface{}) string {
 			return i18n.Translate(messageID, locale, templateData)
 		})
@@ -25,30 +25,30 @@ func I18n() gin.HandlerFunc {
 	}
 }
 
-// getLocaleFromRequest 从请求中获取语言信息
+// getLocaleFromRequest gets language information from request
 func getLocaleFromRequest(c *gin.Context) string {
-	// 优先从查询参数中获取
+	// First try to get from query parameters
 	locale := c.Query("locale")
 	if locale != "" {
 		return locale
 	}
 
-	// 从Cookie中获取
+	// Then try to get from Cookie
 	localeCookie, err := c.Cookie("locale")
 	if err == nil && localeCookie != "" {
 		return localeCookie
 	}
 
-	// 从Accept-Language头中获取
+	// Then try to get from Accept-Language header
 	acceptLanguage := c.GetHeader("Accept-Language")
 	if acceptLanguage != "" {
-		// 解析Accept-Language头
-		// 格式如：zh-CN,zh;q=0.9,en;q=0.8
+		// Parse Accept-Language header
+		// Format like: zh-CN,zh;q=0.9,en;q=0.8
 		langs := strings.Split(acceptLanguage, ",")
 		if len(langs) > 0 {
-			// 取第一个语言
+			// Get the first language
 			lang := strings.TrimSpace(langs[0])
-			// 如果有权重，去掉权重部分
+			// If has weight, remove the weight part
 			if idx := strings.Index(lang, ";"); idx != -1 {
 				lang = lang[:idx]
 			}
@@ -56,11 +56,11 @@ func getLocaleFromRequest(c *gin.Context) string {
 		}
 	}
 
-	// 默认使用配置中的默认语言
+	// Finally use default locale from config
 	return i18n.GetDefaultLocale()
 }
 
-// SetLocale 设置语言的处理器
+// SetLocale handler for setting language
 func SetLocale(c *gin.Context) {
 	locale := c.Query("locale")
 	if locale == "" {
@@ -71,7 +71,7 @@ func SetLocale(c *gin.Context) {
 		return
 	}
 
-	// 设置Cookie
+	// Set Cookie
 	c.SetCookie("locale", locale, 3600*24*30, "/", "", false, true)
 
 	c.JSON(200, gin.H{

@@ -59,7 +59,7 @@ func (s *reviewTaskService) Run(clientID, workspace string, targets []types.Targ
 		return "", fmt.Errorf("%s", i18n.Translate("review_task.empty_targets", "", nil))
 	}
 
-	// 验证每个target
+	// Validate each target
 	for _, target := range targets {
 		if err := target.Validate(); err != nil {
 			return "", err
@@ -68,13 +68,13 @@ func (s *reviewTaskService) Run(clientID, workspace string, targets []types.Targ
 
 	logger.Info(fmt.Sprintf("review task targets: %v", targets))
 
-	// 创建reviewTask
+	// Create reviewTask
 	reviewTaskID, err := s.Create(clientID, workspace, targets)
 	if err != nil {
 		return "", err
 	}
 
-	// 创建异步任务
+	// Create async task
 	task, err := tasks.NewRunReviewTaskPayload(tasks.RunReviewTaskPayload{
 		ReviewTaskID: reviewTaskID,
 	}, tasks.QueueCritical)
@@ -82,13 +82,13 @@ func (s *reviewTaskService) Run(clientID, workspace string, targets []types.Targ
 		return "", err
 	}
 
-	// 将任务加入队列并获取任务ID
+	// Enqueue task and get task ID
 	taskID, err := asynq.EnqueueTask(task, tasks.QueueCritical)
 	if err != nil {
 		return "", err
 	}
 
-	// 更新reviewTask记录保存任务ID
+	// Update reviewTask record to save task ID
 	reviewTask := &model.ReviewTask{
 		ID:        reviewTaskID,
 		RunTaskID: taskID,
@@ -101,10 +101,10 @@ func (s *reviewTaskService) Run(clientID, workspace string, targets []types.Targ
 }
 
 func (s *reviewTaskService) IssueIncrement(reviewTaskID, clientID string, offset int) (*types.IssueIncrementReviewTaskResult, error) {
-	// 获取issues
+	// Get issues
 	var issues []types.Issue
 
-	// 获取总数
+	// Get total count
 	progress, err := s.reviewTaskRepo.GetProgress(context.Background(), reviewTaskID, clientID)
 	if err != nil {
 		return nil, err

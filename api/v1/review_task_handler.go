@@ -20,23 +20,23 @@ func NewReviewTaskHandler() *ReviewTaskHandler {
 }
 
 type CreateReviewTaskRequest struct {
-	ClientID  string         `json:"client_id" binding:"required" example:"client123"`  // 客户端ID
-	Workspace string         `json:"workspace" binding:"required" example:"workspace1"` // 工作空间名称
-	Targets   []types.Target `json:"targets" binding:"required"`                        // 评审目标列表
+	ClientID  string         `json:"client_id" binding:"required" example:"client123"`  // Client ID
+	Workspace string         `json:"workspace" binding:"required" example:"workspace1"` // Workspace name
+	Targets   []types.Target `json:"targets" binding:"required"`                        // List of review targets
 }
 
-// CreateReviewTaskResponse 创建评审任务响应
+// CreateReviewTaskResponse represents the response for creating a review task
 type CreateReviewTaskResponse struct {
-	ReviewTaskID string `json:"review_task_id" example:"task-123"` // 评审任务ID
+	ReviewTaskID string `json:"review_task_id" example:"task-123"` // Review task ID
 }
 
-// Create 创建评审任务
-// @Summary 创建新的评审任务
-// @Description 创建一个新的代码评审任务
+// Create creates a new review task
+// @Summary Create a new review task
+// @Description Create a new code review task
 // @Tags review_tasks
 // @Accept json
 // @Produce json
-// @Param request body CreateReviewTaskRequest true "创建评审任务请求参数"
+// @Param request body CreateReviewTaskRequest true "Request parameters for creating a review task"
 // @Success 200 {object} CreateReviewTaskResponse
 // @Failure 400 {object} api.Response
 // @Failure 500 {object} api.Response
@@ -60,24 +60,24 @@ func (h *ReviewTaskHandler) Create(c *gin.Context) {
 }
 
 type IssueIncrementReviewTaskRequest struct {
-	ClientId string `form:"client_id" binding:"required" example:"client123"` // 客户端ID
-	Offset   int    `form:"offset" binding:"required,min=0" example:"0"`      // 偏移量
+	ClientId string `form:"client_id" binding:"required" example:"client123"` // Client ID
+	Offset   int    `form:"offset" binding:"required,min=0" example:"0"`      // Offset
 }
 
-// IssueIncrementReviewTaskResponse 增量问题响应
+// IssueIncrementReviewTaskResponse represents the response for incremental issues
 type IssueIncrementReviewTaskResponse struct {
 	types.IssueIncrementReviewTaskResult
 }
 
-// IssueIncrement 获取增量问题
-// @Summary 获取评审任务的增量问题
-// @Description 获取指定评审任务从某个偏移量开始的增量问题
+// IssueIncrement get incremental issues
+// @Summary Get incremental issues for a review task
+// @Description Get incremental issues starting from a specified offset for a review task
 // @Tags review_tasks
 // @Accept json
 // @Produce json
-// @Param review_task_id path string true "评审任务ID"
-// @Param client_id query string true "客户端ID"
-// @Param offset query int true "偏移量" minimum(0)
+// @Param review_task_id path string true "Review task ID"
+// @Param client_id query string true "Client ID"
+// @Param offset query int true "Offset" minimum(0)
 // @Success 200 {object} IssueIncrementReviewTaskResponse
 // @Failure 400 {object} api.Response
 // @Failure 500 {object} api.Response

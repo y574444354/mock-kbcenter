@@ -18,7 +18,7 @@ import (
 )
 
 func init() {
-	// 初始化i18n用于测试
+	// Initialize i18n for testing
 	cfg := config.Config{}
 	cfg.I18n.DefaultLocale = "zh-CN"
 	cfg.I18n.BundlePath = "i18n/locales"
@@ -55,7 +55,7 @@ func (m *mockReviewTaskService) IssueIncrement(reviewTaskID, clientID string, of
 }
 
 func setReviewTaskService(handler *v1.ReviewTaskHandler, svc service.ReviewTaskService) {
-	// 使用 unsafe 设置未导出字段
+	// Use unsafe to set unexported field
 	handlerPtr := (*struct {
 		reviewTaskService service.ReviewTaskService
 	})(unsafe.Pointer(handler))

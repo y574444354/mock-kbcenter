@@ -18,7 +18,7 @@ var (
 	DB *gorm.DB
 )
 
-// InitDB 初始化数据库连接
+// InitDB initialize database connection
 func InitDB(cfg config.Database) error {
 	if !cfg.Enabled {
 		return nil
@@ -53,22 +53,22 @@ func InitDB(cfg config.Database) error {
 		return fmt.Errorf("%s", i18n.Translate("db.unsupported_type", "", map[string]interface{}{"type": cfg.Type}))
 	}
 
-	// 配置GORM
+	// Configure GORM
 	gormConfig := &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
-			SingularTable: true, // 使用单数表名
+			SingularTable: true, // Use singular table names
 		},
-		DisableForeignKeyConstraintWhenMigrating: true, // 禁用外键约束
+		DisableForeignKeyConstraintWhenMigrating: true, // Disable foreign key constraints
 	}
 
-	// 连接数据库
+	// Connect to database
 	DB, err = gorm.Open(dialector, gormConfig)
 	if err != nil {
 		_ = CloseDB()
 		return fmt.Errorf("%s: %w", i18n.Translate("db.connection.failed", "", nil), err)
 	}
 
-	// 配置连接池
+	// Configure connection pool
 	sqlDB, err := DB.DB()
 	if err != nil {
 		if sqlDB != nil {
@@ -77,16 +77,16 @@ func InitDB(cfg config.Database) error {
 		return fmt.Errorf("%s: %w", i18n.Translate("db.connection.failed", "", nil), err)
 	}
 
-	// 设置最大空闲连接数
+	// Set max idle connections
 	sqlDB.SetMaxIdleConns(10)
-	// 设置最大打开连接数
+	// Set max open connections
 	sqlDB.SetMaxOpenConns(100)
-	// 设置连接最大生命周期
+	// Set connection max lifetime
 	sqlDB.SetConnMaxLifetime(time.Hour)
 	return nil
 }
 
-// GetDB 获取数据库连接
+// GetDB get database connection
 func GetDB() *gorm.DB {
 	if DB == nil {
 		panic("database is not initialized or disabled")
@@ -94,7 +94,7 @@ func GetDB() *gorm.DB {
 	return DB
 }
 
-// CloseDB 关闭数据库连接
+// CloseDB close database connection
 func CloseDB() error {
 	if DB == nil {
 		return nil
@@ -108,7 +108,7 @@ func CloseDB() error {
 	return sqlDB.Close()
 }
 
-// AutoMigrate 自动迁移模型
+// AutoMigrate auto migrate models
 func AutoMigrate(models ...interface{}) error {
 	if DB == nil {
 		return fmt.Errorf("%s", i18n.Translate("db.not_initialized_or_disabled", "", nil))
