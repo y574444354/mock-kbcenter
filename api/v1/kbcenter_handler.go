@@ -90,11 +90,11 @@ func (h *KBCenterMockHandler) GetFileStructure(c *gin.Context) {
 	}
 
 	for _, f := range funcs {
-		funcName, err := language.GetFunctionName(lang, f.Code)
-		if err != nil {
-			api.Error(c, http.StatusInternalServerError, err)
-			return
-		}
+		funcName, _ := language.GetFunctionName(lang, f.Code)
+		// if err != nil {
+		// 	api.Error(c, http.StatusInternalServerError, err)
+		// 	return
+		// }
 
 		fd := FunctionDefinition{
 			Type: "function_definition",

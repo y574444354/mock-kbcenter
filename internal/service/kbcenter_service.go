@@ -1,6 +1,7 @@
 package service
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"os"
@@ -20,6 +21,7 @@ func NewKBCenterMockService(baseDir string) *KBCenterMockService {
 	}
 }
 
+// GetFileContent reads file content and returns lines between startLine and endLine (inclusive)
 func (s *KBCenterMockService) GetFileContent(ctx context.Context, filePath string, startLine, endLine int) ([]byte, error) {
 	fullPath := filepath.Join(s.baseDir, filePath)
 
@@ -31,7 +33,37 @@ func (s *KBCenterMockService) GetFileContent(ctx context.Context, filePath strin
 		return nil, fmt.Errorf("%s", i18n.Translate("kbcenter.read_file_failed", "", map[string]interface{}{"error": err.Error()}))
 	}
 
-	return content, nil
+	// Split content into lines
+	lines := bytes.Split(content, []byte{'\n'})
+
+	// Validate line numbers
+	if startLine < 1 || startLine > len(lines) {
+		return nil, fmt.Errorf("%s", i18n.Translate("kbcenter.invalid_start_line", "", map[string]interface{}{
+			"startLine": startLine,
+			"maxLine":   len(lines),
+		}))
+	}
+	if endLine < 1 || endLine > len(lines) {
+		return nil, fmt.Errorf("%s", i18n.Translate("kbcenter.invalid_end_line", "", map[string]interface{}{
+			"endLine": endLine,
+			"maxLine": len(lines),
+		}))
+	}
+	if startLine > endLine {
+		return nil, fmt.Errorf("%s", i18n.Translate("kbcenter.invalid_line_range", "", map[string]interface{}{
+			"startLine": startLine,
+			"endLine":   endLine,
+		}))
+	}
+
+	// Extract requested lines
+	var result [][]byte
+	for i := startLine - 1; i < endLine; i++ {
+		result = append(result, lines[i])
+	}
+
+	// Join lines with newlines
+	return bytes.Join(result, []byte{'\n'}), nil
 }
 
 type DirectoryNode struct {
