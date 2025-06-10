@@ -43,11 +43,14 @@ func (s *KBCenterMockService) GetFileContent(ctx context.Context, filePath strin
 			"maxLine":   len(lines),
 		}))
 	}
-	if endLine < 1 || endLine > len(lines) {
+	if endLine > len(lines) {
 		return nil, fmt.Errorf("%s", i18n.Translate("kbcenter.invalid_end_line", "", map[string]interface{}{
 			"endLine": endLine,
 			"maxLine": len(lines),
 		}))
+	}
+	if endLine < 1 {
+		endLine = len(lines)
 	}
 	if startLine > endLine {
 		return nil, fmt.Errorf("%s", i18n.Translate("kbcenter.invalid_line_range", "", map[string]interface{}{
