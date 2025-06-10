@@ -28,7 +28,7 @@ import (
 
 func Run(cfg *config.Config, workDir string) {
 
-	// 初始化日志
+	// Initialize logger
 	if err := logger.InitLogger(cfg.Log); err != nil {
 		log.Fatalln(i18n.Translate("logger.init.failed", "", nil), "error", err)
 	}

@@ -3,6 +3,53 @@ server:
   port: 8080
   mode: release  # debug, release, test
 
+# 语言相关配置
+# 语言查询模式配置
+language_queries:
+  go: |
+    (function_declaration) @func
+    (method_declaration) @func
+  javascript: |
+    (function_declaration) @func
+    (arrow_function) @func
+  typescript: |
+    (function_declaration) @func
+    (arrow_function) @func
+  tsx: |
+    (function_declaration) @func
+    (arrow_function) @func
+  python: |
+    (function_definition) @func
+  java: |
+    (method_declaration) @func
+  php: |
+    (function_definition) @func
+  ruby: |
+    (method) @func
+  c: |
+    (function_definition) @func
+  cpp: |
+    (function_definition) @func
+
+# HTTP客户端配置
+# 语言映射配置
+language_mapping:
+  ".go": "go"
+  ".js": "javascript"
+  ".jsx": "javascript"
+  ".ts": "typescript"
+  ".tsx": "typescript"
+  ".py": "python"
+  ".java": "java"
+  ".php": "php"
+  ".rb": "ruby"
+  ".c": "c"
+  ".h": "c"
+  ".cpp": "cpp"
+  ".hpp": "cpp"
+  ".cc": "cpp"
+  ".cxx": "cpp"
+
 # 数据库配置
 database:
   type: postgres  # mysql, postgres, sqlite
@@ -13,7 +60,7 @@ database:
   dbname: go_webserver
   sslmode: disable
   timezone: Asia/Shanghai
-  enabled: true  # 是否启用数据库
+  enabled: false  # 是否启用数据库
 
 # Redis配置
 redis:
@@ -21,7 +68,7 @@ redis:
   port: 6379
   password: ""
   db: 0
-  enabled: true  # 是否启用Redis
+  enabled: false  # 是否启用Redis
 
 # 异步任务队列配置
 asynq:
@@ -41,7 +88,7 @@ asynq:
     max_backups: 10
     max_age: 30
     compress: true
-  enabled: true  # 是否启用Asynq
+  enabled: false  # 是否启用Asynq
 
 # 日志配置
 log:

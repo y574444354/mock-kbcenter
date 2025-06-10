@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 
 	"github.com/zgsm/mock-kbcenter/i18n"
+	"github.com/zgsm/mock-kbcenter/pkg/language"
 )
 
 type KBCenterMockService struct {
@@ -57,7 +58,7 @@ func (s *KBCenterMockService) buildDirectoryTree(basePath, relativePath string, 
 	}
 
 	for _, entry := range entries {
-		// 忽略以"."开头的文件和目录
+		// Skip files and directories starting with '.'
 		if entry.Name()[0] == '.' {
 			continue
 		}
@@ -81,6 +82,28 @@ func (s *KBCenterMockService) buildDirectoryTree(basePath, relativePath string, 
 	}
 
 	return node, nil
+}
+
+func (s *KBCenterMockService) GetFileStructure(ctx context.Context, filePath string) ([]language.FunctionInfo, error) {
+	fullPath := filepath.Join(s.baseDir, filePath)
+
+	content, err := os.ReadFile(fullPath)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil, fmt.Errorf("%s", i18n.Translate("kbcenter.file_not_found", "", map[string]interface{}{"path": fullPath}))
+		}
+		return nil, fmt.Errorf("%s", i18n.Translate("kbcenter.read_file_failed", "", map[string]interface{}{"error": err.Error()}))
+	}
+
+	// Detect language from file extension
+	lang, err := language.Detect(filePath)
+	if err != nil {
+		return nil, fmt.Errorf("%s", i18n.Translate("language.unsupported_file_type", "", map[string]interface{}{
+			"file": filePath,
+		}))
+	}
+
+	return language.ExtractFunctions(lang, string(content))
 }
 
 func (s *KBCenterMockService) GetDirectoryTree(ctx context.Context, clientId, projectPath, subDir string, depth int, includeFiles bool) (interface{}, error) {

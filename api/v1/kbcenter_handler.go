@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/zgsm/mock-kbcenter/api"
 	"github.com/zgsm/mock-kbcenter/internal/service"
+	"github.com/zgsm/mock-kbcenter/pkg/language"
 )
 
 type KBCenterMockHandler struct {
@@ -49,7 +50,78 @@ func (h *KBCenterMockHandler) GetDirectoryTree(c *gin.Context) {
 	api.Success(c, result)
 }
 
+type FileStructureRequest struct {
+	ClientId     string `form:"clientId" binding:"required"`
+	CodebasePath string `form:"codebasePath" binding:"required"`
+	FilePath     string `form:"filePath"`
+}
+
+type FunctionDefinition struct {
+	Type     string `json:"type"`
+	Name     string `json:"name"`
+	Position struct {
+		StartLine   int `json:"startLine"`
+		StartColumn int `json:"startColumn"`
+		EndLine     int `json:"endLine"`
+		EndColumn   int `json:"endColumn"`
+	} `json:"position"`
+	Content string `json:"content"`
+}
+
+func (h *KBCenterMockHandler) GetFileStructure(c *gin.Context) {
+	var req FileStructureRequest
+	if err := c.ShouldBindQuery(&req); err != nil {
+		api.BadRequest(c, "common.invalidParams")
+		return
+	}
+
+	funcs, err := h.service.GetFileStructure(c.Request.Context(), req.FilePath)
+	if err != nil {
+		api.Error(c, http.StatusInternalServerError, err)
+		return
+	}
+
+	var list []FunctionDefinition
+	// Get language from file extension
+	lang, err := language.Detect(req.FilePath)
+	if err != nil {
+		api.Error(c, http.StatusInternalServerError, err)
+		return
+	}
+
+	for _, f := range funcs {
+		funcName, err := language.GetFunctionName(lang, f.Code)
+		if err != nil {
+			api.Error(c, http.StatusInternalServerError, err)
+			return
+		}
+
+		fd := FunctionDefinition{
+			Type: "function_definition",
+			Name: funcName,
+			Position: struct {
+				StartLine   int `json:"startLine"`
+				StartColumn int `json:"startColumn"`
+				EndLine     int `json:"endLine"`
+				EndColumn   int `json:"endColumn"`
+			}{
+				StartLine:   f.StartLine,
+				StartColumn: 0, // Default to 0 for now
+				EndLine:     f.EndLine,
+				EndColumn:   0, // Default to 1 for now
+			},
+			Content: f.Code,
+		}
+		list = append(list, fd)
+	}
+
+	api.Success(c, gin.H{
+		"list": list,
+	})
+}
+
 func (h *KBCenterMockHandler) RegisterRoutes(router *gin.RouterGroup) {
-	router.GET("/codebase-indexer/api/v1/files/content", h.GetFileContent)
-	router.GET("/codebase-indexer/api/v1/codebases/directory", h.GetDirectoryTree)
+	router.GET("/files/content", h.GetFileContent)
+	router.GET("/codebases/directory", h.GetDirectoryTree)
+	router.GET("/files/structure", h.GetFileStructure)
 }

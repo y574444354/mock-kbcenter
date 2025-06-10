@@ -70,6 +70,12 @@ type Config struct {
 		BundlePath    string `yaml:"bundle_path"`
 	} `yaml:"i18n"`
 
+	// Language mapping configuration
+	LanguageMapping map[string]string `yaml:"language_mapping"`
+
+	// Language query mode configuration
+	LanguageQueries map[string]string `yaml:"language_queries"`
+
 	// HTTPClient HTTP client configuration
 	HTTPClient struct {
 		// Default timeout in seconds
