@@ -14,12 +14,12 @@ import (
 	"github.com/zgsm/mock-kbcenter/pkg/logger"
 )
 
-// Recovery 从panic中恢复的中间件
+// Recovery middleware for recovering from panics
 func Recovery() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		defer func() {
 			if err := recover(); err != nil {
-				// 检查连接是否已断开
+				// Check if connection is broken
 				var brokenPipe bool
 				if ne, ok := err.(*net.OpError); ok {
 					if se, ok := ne.Err.(*os.SyscallError); ok {
@@ -30,9 +30,12 @@ func Recovery() gin.HandlerFunc {
 					}
 				}
 
-				// 请求信息
-				httpRequest, _ := httputil.DumpRequest(c.Request, false)
-				// 堆栈信息
+				// Request information
+				httpRequest, err := httputil.DumpRequest(c.Request, false)
+				if err != nil {
+					httpRequest = []byte(fmt.Sprintf("failed to dump request: %v", err))
+				}
+				// Stack trace
 				stack := string(debug.Stack())
 
 				if brokenPipe {
@@ -40,19 +43,19 @@ func Recovery() gin.HandlerFunc {
 						"error", err,
 						"request", string(httpRequest),
 					)
-					// 如果连接已断开，我们无法向客户端写入状态
+					// If connection is broken, we can't write status to client
 					c.Abort()
 					return
 				}
 
-				// 记录错误日志
+				// Log error
 				logger.Error(i18n.Translate("middleware.recovery.recovered", "", nil),
 					"error", err,
 					"request", string(httpRequest),
 					"stack", stack,
 				)
 
-				// 返回500错误
+				// Return 500 error
 				c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 					"code":    http.StatusInternalServerError,
 					"message": fmt.Sprintf(i18n.Translate("middleware.recovery.internal_error", "", nil), err),

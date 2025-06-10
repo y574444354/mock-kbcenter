@@ -19,21 +19,28 @@ var (
 )
 
 func init() {
-	// 添加子命令
+	// Add subcommands
+	if migrateCmd == nil {
+		log.Fatalf("migrateCmd is nil")
+	}
 	rootCmd.AddCommand(migrateCmd)
+
+	if initCmd == nil {
+		log.Fatalf("initCmd is nil")
+	}
 	rootCmd.AddCommand(initCmd)
 }
 
 func main() {
-	// 加载配置
+	// Load configuration
 	if err := config.LoadConfigWithDefault(); err != nil {
-		log.Fatalln("config.load.failed: %w", err)
+		log.Fatalf("config.load.failed: %v", err)
 	}
-	// 初始化配置
+	// Initialize configuration
 	cfg := config.GetConfig()
 
 	if err := i18n.InitI18n(*cfg); err != nil {
-		fmt.Println("i18n.init.failed: %w", err)
+		fmt.Printf("i18n.init.failed: %v\n", err)
 	}
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)

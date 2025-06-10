@@ -1,64 +1,62 @@
+# 构建阶段
 FROM golang:1.24-alpine AS builder
 
 # 定义构建参数
 ARG GOPROXY=https://goproxy.cn,direct
-ARG ALPINE_MIRROR=mirrors.aliyun.com
+ARG ALPINE_MIRROR=https://mirrors.aliyun.com
+ARG BUILD_DBTOOLS=true
+ARG BUILD_REDISTOOLS=true
 
-# 设置工作目录
 WORKDIR /app
 
-# 安装依赖
-RUN sed -i "s#dl-cdn.alpinelinux.org#${ALPINE_MIRROR}#g" /etc/apk/repositories && \
-   apk update && apk add --no-cache gcc musl-dev
+# 设置构建环境
+RUN sed -i "s|https://dl-cdn.alpinelinux.org|${ALPINE_MIRROR}|g" /etc/apk/repositories && \
+    apk add --no-cache gcc musl-dev && \
+    go env -w GO111MODULE=on && \
+    go env -w GOPROXY=${GOPROXY} && \
+    go env -w GOSUMDB=off
 
-# 复制go.mod和go.sum
-COPY go.mod ./
-# COPY go.sum ./
-RUN go env -w GO111MODULE=on && go env -w GOPROXY=${GOPROXY} && go env -w GOSUMDB=off && go mod download
+# 复制依赖文件并下载
+COPY go.mod go.sum ./
+RUN go mod download
 
-# 复制源代码
+# 复制源代码并构建
 COPY . .
+RUN CGO_ENABLED=0 GOOS=linux go build -o mock-kbcenter . && \
+    mkdir -p bin && \
+    if [ "$BUILD_DBTOOLS" = "true" ]; then \
+        go build -o bin/dbtools ./cmd/dbtools; \
+    fi && \
+    if [ "$BUILD_REDISTOOLS" = "true" ]; then \
+        go build -o bin/redistools ./cmd/redistools; \
+    fi
 
-# 构建应用
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o mock-kbcenter .
-
-# 使用轻量级的alpine镜像
+# 运行阶段
 FROM alpine:latest
 
-# 定义构建参数（第二阶段）
-ARG ALPINE_MIRROR=mirrors.aliyun.com
+# 定义构建参数
+ARG ALPINE_MIRROR=https://mirrors.aliyun.com
 
-# 安装必要的运行时依赖
-RUN sed -i "s#dl-cdn.alpinelinux.org#${ALPINE_MIRROR}#g" /etc/apk/repositories && \
-    apk --no-cache add ca-certificates tzdata
+# 设置运行时环境
+RUN sed -i "s|https://dl-cdn.alpinelinux.org|${ALPINE_MIRROR}|g" /etc/apk/repositories && \
+    apk add --no-cache ca-certificates tzdata && \
+    adduser -D -g '' appuser && \
+    mkdir -p /app/logs && \
+    mkdir -p /app/config && \
+    mkdir -p /app/bin && \
+    chown -R appuser:appuser /app
 
-# 设置时区
+# 设置时区和用户
 ENV TZ=Asia/Shanghai
-
-# 创建非root用户
-RUN adduser -D -g '' appuser
-
-# 创建必要的目录
-RUN mkdir -p /app/logs /app/config /app/i18n/locales
-
-# 复制二进制文件
-COPY --from=builder /app/mock-kbcenter /app/
-# 复制配置文件
-COPY --from=builder /app/config/config.yaml /app/config/
-# 复制国际化文件
-COPY --from=builder /app/i18n/locales/ /app/i18n/locales/
-
-# 设置工作目录
-WORKDIR /app
-
-# 设置权限
-RUN chown -R appuser:appuser /app
 USER appuser
+WORKDIR /app
+# 复制构建产物
+COPY --from=builder --chown=appuser:appuser /app/mock-kbcenter .
+COPY --from=builder --chown=appuser:appuser /app/bin ./bin
 
-# 暴露端口
+
+# 暴露端口和健康检查
 EXPOSE 8080
-
-# 设置健康检查
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD wget -q -O- http://localhost:8080/health || exit 1
 

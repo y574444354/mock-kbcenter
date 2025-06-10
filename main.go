@@ -1,5 +1,20 @@
 package main
 
+// @title Go WebServer API
+// @version 1.0
+// @description This is the API documentation for Go WebServer
+// @termsOfService http://swagger.io/terms/
+
+// @contact.name API Support
+// @contact.url http://www.example.com/support
+// @contact.email support@example.com
+
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host localhost:8080
+// @BasePath /api/v1
+
 import (
 	"fmt"
 	"log"
@@ -12,11 +27,11 @@ import (
 )
 
 func main() {
-	// 加载配置
+	// Load configuration
 	if err := config.LoadConfigWithDefault(); err != nil {
-		log.Fatalln("config.load.failed: %w", err)
+		log.Fatalf("failed to load config: %v", err)
 	}
-	// 初始化配置
+	// Initialize configuration
 	cfg := config.GetConfig()
 
 	if err := i18n.InitI18n(*cfg); err != nil {

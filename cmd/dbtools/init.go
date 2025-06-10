@@ -16,21 +16,20 @@ var initCmd = &cobra.Command{
 	Short: "Initialize database",
 	Long:  "Initialize database, create tables and add initial data",
 	Run: func(cmd *cobra.Command, args []string) {
-		// 加载配置
+		// Load configuration
 		if err := config.LoadConfigWithDefault(); err != nil {
 			log.Fatalf("Failed to load config: %v", err)
 		}
 
-		// 初始化数据库连接
+		// Initialize database connection
 		if err := db.InitDB(config.GetConfig().Database); err != nil {
 			log.Fatalf("Failed to initialize database: %v", err)
-			os.Exit(1)
 		}
 
-		// 注册所有需要迁移的模型
+		// Register all models that need migration
 		log.Println("Migrating database...")
 		if err := db.AutoMigrate(
-		// 在这里添加其他模型
+		// Add other models here
 		); err != nil {
 			log.Fatalf("Failed to migrate database: %v", err)
 			os.Exit(1)

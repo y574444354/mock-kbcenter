@@ -7,14 +7,14 @@ import (
 	"github.com/zgsm/mock-kbcenter/i18n"
 )
 
-// Response API响应结构
+// Response API response structure
 type Response struct {
 	Code    int         `json:"code"`
 	Message string      `json:"message"`
 	Data    interface{} `json:"data,omitempty"`
 }
 
-// Success 成功响应
+// Success success response
 func Success(c *gin.Context, data interface{}) {
 	locale, exists := c.Get("locale")
 	var localeStr string
@@ -31,7 +31,7 @@ func Success(c *gin.Context, data interface{}) {
 	})
 }
 
-// Fail 失败响应
+// Fail failure response
 func Fail(c *gin.Context, code int, messageID string) {
 	locale, exists := c.Get("locale")
 	var localeStr string
@@ -50,13 +50,30 @@ func Fail(c *gin.Context, code int, messageID string) {
 
 func Error(c *gin.Context, code int, err error) {
 	c.Errors = append(c.Errors, &gin.Error{Err: err})
+
+	locale, exists := c.Get("locale")
+	var localeStr string
+	if exists {
+		localeStr = locale.(string)
+	} else {
+		localeStr = i18n.GetDefaultLocale()
+	}
+
+	messageID := "common.internalServerError"
+	var message string
+	if err != nil {
+		message = err.Error()
+	} else {
+		message = i18n.Translate(messageID, localeStr, nil)
+	}
+
 	c.JSON(code, Response{
 		Code:    code,
-		Message: err.Error(),
+		Message: message,
 	})
 }
 
-// BadRequest 400错误响应
+// BadRequest 400 bad request response
 func BadRequest(c *gin.Context, messageID string) {
 	if messageID == "" {
 		messageID = "common.badRequest"
@@ -64,7 +81,7 @@ func BadRequest(c *gin.Context, messageID string) {
 	Fail(c, http.StatusBadRequest, messageID)
 }
 
-// Unauthorized 401错误响应
+// Unauthorized 401 unauthorized response
 func Unauthorized(c *gin.Context, messageID string) {
 	if messageID == "" {
 		messageID = "common.unauthorized"
@@ -72,7 +89,7 @@ func Unauthorized(c *gin.Context, messageID string) {
 	Fail(c, http.StatusUnauthorized, messageID)
 }
 
-// Forbidden 403错误响应
+// Forbidden 403 forbidden response
 func Forbidden(c *gin.Context, messageID string) {
 	if messageID == "" {
 		messageID = "common.forbidden"
@@ -80,7 +97,7 @@ func Forbidden(c *gin.Context, messageID string) {
 	Fail(c, http.StatusForbidden, messageID)
 }
 
-// NotFound 404错误响应
+// NotFound 404 not found response
 func NotFound(c *gin.Context, messageID string) {
 	if messageID == "" {
 		messageID = "common.notFound"
@@ -88,7 +105,7 @@ func NotFound(c *gin.Context, messageID string) {
 	Fail(c, http.StatusNotFound, messageID)
 }
 
-// ServerError 500错误响应
+// ServerError 500 server error response
 func ServerError(c *gin.Context, messageID string) {
 	if messageID == "" {
 		messageID = "common.serverError"
@@ -96,7 +113,7 @@ func ServerError(c *gin.Context, messageID string) {
 	Fail(c, http.StatusInternalServerError, messageID)
 }
 
-// PageResult 分页结果
+// PageResult pagination result
 type PageResult struct {
 	List     interface{} `json:"list"`
 	Total    int64       `json:"total"`
@@ -104,7 +121,7 @@ type PageResult struct {
 	PageSize int         `json:"page_size"`
 }
 
-// NewPageResult 创建分页结果
+// NewPageResult create pagination result
 func NewPageResult(list interface{}, total int64, page, pageSize int) *PageResult {
 	return &PageResult{
 		List:     list,

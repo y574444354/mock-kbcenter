@@ -1,10 +1,10 @@
 package tasks
 
 const (
-	// 任务类型常量
+	// Task type constants
 	TypeRunReviewTask = "review:run"
 
-	// 任务队列常量
+	// Task queue constants
 	QueueDefault  = "default"
 	QueueCritical = "critical"
 )

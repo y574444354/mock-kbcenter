@@ -8,7 +8,7 @@ import (
 	"github.com/zgsm/mock-kbcenter/pkg/logger"
 )
 
-// ExampleUserProfile 用户资料
+// ExampleUserProfile user profile
 type ExampleUserProfile struct {
 	ID        string `json:"id"`
 	Username  string `json:"username"`
@@ -25,7 +25,7 @@ type ExampleUserProfile struct {
 	UpdatedAt string `json:"updated_at"`
 }
 
-// ExampleUserSearchResult 用户搜索结果
+// ExampleUserSearchResult user search result
 type ExampleUserSearchResult struct {
 	Total int                  `json:"total"`
 	Page  int                  `json:"page"`
@@ -33,12 +33,12 @@ type ExampleUserSearchResult struct {
 	Users []ExampleUserProfile `json:"users"`
 }
 
-// ExampleService 示例服务
+// ExampleService example service
 type ExampleService struct {
 	*Service
 }
 
-// NewExampleService 创建示例服务
+// NewExampleService create example service
 func NewExampleService(clientConfig *httpclient.HttpServiceConfig) (*ExampleService, error) {
 	client, err := httpclient.NewClient(clientConfig)
 	if err != nil {
@@ -54,7 +54,7 @@ func NewExampleService(clientConfig *httpclient.HttpServiceConfig) (*ExampleServ
 	return service, nil
 }
 
-// GetUserProfile 获取用户资料
+// GetUserProfile get user profile
 func (s *ExampleService) GetUserProfile(ctx context.Context, userID string) (*ExampleUserProfile, error) {
 	var response struct {
 		Code    int                `json:"code"`
@@ -62,46 +62,46 @@ func (s *ExampleService) GetUserProfile(ctx context.Context, userID string) (*Ex
 		Data    ExampleUserProfile `json:"data"`
 	}
 
-	// 发送请求并解析响应
+	// Send request and parse response
 	err := s.client.GetJSON(ctx, fmt.Sprintf("/users/%s/profile", userID), nil, &response)
 	if err != nil {
-		logger.Error("获取用户资料失败", "error", err, "user_id", userID)
-		return nil, fmt.Errorf("获取用户资料失败: %w", err)
+		logger.Error("Failed to get user profile", "error", err, "user_id", userID)
+		return nil, fmt.Errorf("failed to get user profile: %w", err)
 	}
 
-	// 检查API响应状态
+	// Check API response status
 	if response.Code != 0 {
-		logger.Error("API返回错误", "code", response.Code, "message", response.Message, "user_id", userID)
-		return nil, fmt.Errorf("API错误: %s", response.Message)
+		logger.Error("API returned error", "code", response.Code, "message", response.Message, "user_id", userID)
+		return nil, fmt.Errorf("API error: %s", response.Message)
 	}
 
 	return &response.Data, nil
 }
 
-// UpdateUserProfile 更新用户资料
+// UpdateUserProfile update user profile
 func (s *ExampleService) UpdateUserProfile(ctx context.Context, userID string, profile *ExampleUserProfile) error {
 	var response struct {
 		Code    int    `json:"code"`
 		Message string `json:"message"`
 	}
 
-	// 发送请求并解析响应
+	// Send request and parse response
 	err := s.client.PutJSON(ctx, fmt.Sprintf("/users/%s/profile", userID), profile, nil, &response)
 	if err != nil {
-		logger.Error("更新用户资料失败", "error", err, "user_id", userID)
-		return fmt.Errorf("更新用户资料失败: %w", err)
+		logger.Error("Failed to update user profile", "error", err, "user_id", userID)
+		return fmt.Errorf("failed to update user profile: %w", err)
 	}
 
-	// 检查API响应状态
+	// Check API response status
 	if response.Code != 0 {
-		logger.Error("API返回错误", "code", response.Code, "message", response.Message, "user_id", userID)
-		return fmt.Errorf("API错误: %s", response.Message)
+		logger.Error("API returned error", "code", response.Code, "message", response.Message, "user_id", userID)
+		return fmt.Errorf("API error: %s", response.Message)
 	}
 
 	return nil
 }
 
-// SearchUsers 搜索用户
+// SearchUsers search users
 func (s *ExampleService) SearchUsers(ctx context.Context, query string, page, pageSize int) (*ExampleUserSearchResult, error) {
 	var response struct {
 		Code    int                     `json:"code"`
@@ -109,14 +109,14 @@ func (s *ExampleService) SearchUsers(ctx context.Context, query string, page, pa
 		Data    ExampleUserSearchResult `json:"data"`
 	}
 
-	// 构建查询参数
+	// Build query parameters
 	params := map[string]string{
 		"q":         query,
 		"page":      fmt.Sprintf("%d", page),
 		"page_size": fmt.Sprintf("%d", pageSize),
 	}
 
-	// 将查询参数转换为URL查询字符串
+	// Convert query parameters to URL query string
 	queryString := ""
 	for k, v := range params {
 		if queryString == "" {
@@ -127,17 +127,17 @@ func (s *ExampleService) SearchUsers(ctx context.Context, query string, page, pa
 		queryString += k + "=" + v
 	}
 
-	// 发送请求并解析响应
+	// Send request and parse response
 	err := s.client.GetJSON(ctx, "/users/search"+queryString, nil, &response)
 	if err != nil {
-		logger.Error("搜索用户失败", "error", err, "query", query)
-		return nil, fmt.Errorf("搜索用户失败: %w", err)
+		logger.Error("Failed to search users", "error", err, "query", query)
+		return nil, fmt.Errorf("failed to search users: %w", err)
 	}
 
-	// 检查API响应状态
+	// Check API response status
 	if response.Code != 0 {
-		logger.Error("API返回错误", "code", response.Code, "message", response.Message, "query", query)
-		return nil, fmt.Errorf("API错误: %s", response.Message)
+		logger.Error("API returned error", "code", response.Code, "message", response.Message, "query", query)
+		return nil, fmt.Errorf("API error: %s", response.Message)
 	}
 
 	return &response.Data, nil

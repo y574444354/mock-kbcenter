@@ -3,12 +3,32 @@
 # 定义语言文件目录和项目根目录
 LOCALES_DIR="i18n/locales"
 PROJECT_ROOT="."
+CHECK_PUBLIC=false
+
+# 解析命令行参数
+while getopts "p" opt; do
+    case $opt in
+        p) CHECK_PUBLIC=true ;;
+        *) echo "Usage: $0 [-p]" >&2
+           exit 1 ;;
+    esac
+done
 
 # 获取所有custom段的i18n key
 get_custom_keys() {
     local file="$1"
     grep -A 1000 "^# custom" "$file" | \
     grep -v "^# custom" | \
+    grep -v "^$" | \
+    cut -d: -f1 | \
+    sed 's/^[[:space:]]*//;s/[[:space:]]*$//'
+}
+
+# 获取所有public段的i18n key
+get_public_keys() {
+    local file="$1"
+    grep -A 1000 "^# public" "$file" | \
+    grep -v "^# public" | \
     grep -v "^$" | \
     cut -d: -f1 | \
     sed 's/^[[:space:]]*//;s/[[:space:]]*$//'
@@ -26,14 +46,25 @@ check_key_usage() {
 for file in "$LOCALES_DIR"/*.yaml; do
     echo "Checking $file..."
     
-    # 检查文件是否有custom段
-    if ! grep -q "^# custom" "$file"; then
-        echo "No custom section found in $file, skipping..."
+    # 根据参数决定检查哪个段
+    if $CHECK_PUBLIC; then
+        section="# public"
+        section_name="public"
+        get_keys_func=get_public_keys
+    else
+        section="# custom"
+        section_name="custom"
+        get_keys_func=get_custom_keys
+    fi
+    
+    # 检查文件是否有对应段
+    if ! grep -q "$section" "$file"; then
+        echo "No $section_name section found in $file, skipping..."
         continue
     fi
     
-    # 获取所有custom key
-    keys=$(get_custom_keys "$file")
+    # 获取所有key
+    keys=$($get_keys_func "$file")
     
     # 检查每个key是否被使用
     unused_keys=()
@@ -45,9 +76,9 @@ for file in "$LOCALES_DIR"/*.yaml; do
     
     # 输出结果
     if [ ${#unused_keys[@]} -eq 0 ]; then
-        echo "All custom i18n keys are in use."
+        echo "All $section_name i18n keys are in use."
     else
-        echo "Unused custom i18n keys:"
+        echo "Unused $section_name i18n keys:"
         printf "  - %s\n" "${unused_keys[@]}"
     fi
 done

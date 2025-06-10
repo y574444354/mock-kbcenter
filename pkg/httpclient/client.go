@@ -19,27 +19,27 @@ import (
 	"github.com/zgsm/mock-kbcenter/pkg/logger"
 )
 
-// Client HTTP客户端
+// Client HTTP client
 type Client struct {
 	config      *HttpServiceConfig
 	httpClient  *http.Client
 	middlewares []Middleware
 }
 
-// NewClient 创建新的HTTP客户端
+// NewClient create new HTTP client
 func NewClient(config *HttpServiceConfig) (*Client, error) {
 	if config == nil {
 		config = DefaultHttpServiceConfig()
 	}
 
-	// 创建Transport
+	// Create Transport
 	transport := &http.Transport{
 		MaxIdleConns:        100,
 		MaxIdleConnsPerHost: 10,
 		IdleConnTimeout:     90 * time.Second,
 	}
 
-	// 配置代理
+	// Configure proxy
 	if config.ProxyURL != "" {
 		proxyURL, err := url.Parse(config.ProxyURL)
 		if err != nil {
@@ -48,13 +48,13 @@ func NewClient(config *HttpServiceConfig) (*Client, error) {
 		transport.Proxy = http.ProxyURL(proxyURL)
 	}
 
-	// 配置TLS
+	// Configure TLS
 	if config.InsecureSkipVerify || config.CertFile != "" || config.CAFile != "" {
 		tlsConfig := &tls.Config{
 			InsecureSkipVerify: config.InsecureSkipVerify,
 		}
 
-		// 加载客户端证书
+		// Load client certificate
 		if config.CertFile != "" && config.KeyFile != "" {
 			cert, err := tls.LoadX509KeyPair(config.CertFile, config.KeyFile)
 			if err != nil {
@@ -63,7 +63,7 @@ func NewClient(config *HttpServiceConfig) (*Client, error) {
 			tlsConfig.Certificates = []tls.Certificate{cert}
 		}
 
-		// 加载CA证书
+		// Load CA certificate
 		if config.CAFile != "" {
 			caCert, err := os.ReadFile(config.CAFile)
 			if err != nil {
@@ -77,20 +77,20 @@ func NewClient(config *HttpServiceConfig) (*Client, error) {
 		transport.TLSClientConfig = tlsConfig
 	}
 
-	// 创建HTTP客户端
+	// Create HTTP client
 	httpClient := &http.Client{
 		Timeout:   config.Timeout,
 		Transport: transport,
 	}
 
-	// 创建客户端实例
+	// Create client instance
 	client := &Client{
 		config:      config,
 		httpClient:  httpClient,
 		middlewares: make([]Middleware, 0),
 	}
 
-	// 添加默认中间件
+	// Add default middlewares
 	client.AddMiddleware(&LogMiddleware{
 		EnableRequestLog:  config.EnableRequestLog,
 		EnableResponseLog: config.EnableResponseLog,
@@ -100,12 +100,12 @@ func NewClient(config *HttpServiceConfig) (*Client, error) {
 		Headers: config.Headers,
 	})
 
-	// 添加状态码校验中间件
+	// Add status code validation middleware
 	client.AddMiddleware(&StatusCodeMiddleware{
 		ValidStatusCodes: config.ValidStatusCodes,
 	})
 
-	// 添加认证中间件
+	// Add authentication middleware
 	if config.AuthType != "none" {
 		client.AddMiddleware(&AuthMiddleware{
 			AuthType:   config.AuthType,
@@ -116,7 +116,7 @@ func NewClient(config *HttpServiceConfig) (*Client, error) {
 		})
 	}
 
-	// 添加重试中间件
+	// Add retry middleware
 	if config.MaxRetries > 0 {
 		client.AddMiddleware(&RetryMiddleware{
 			MaxRetries: config.MaxRetries,
@@ -127,20 +127,23 @@ func NewClient(config *HttpServiceConfig) (*Client, error) {
 	return client, nil
 }
 
-// AddMiddleware 添加中间件
+// AddMiddleware add middleware
 func (c *Client) AddMiddleware(middleware Middleware) {
+	if middleware == nil {
+		return
+	}
 	c.middlewares = append(c.middlewares, middleware)
 }
 
-// Request 发送HTTP请求
+// Request send HTTP request
 func (c *Client) Request(ctx context.Context, method, path string, body interface{}, headers map[string]string) (*http.Response, error) {
-	// 构建完整URL
+	// Build full URL
 	fullURL := path
 	if !strings.HasPrefix(path, "http") && c.config.BaseURL != "" {
 		fullURL = c.config.BaseURL + path
 	}
 
-	// 准备请求体
+	// Prepare request body
 	var reqBody io.Reader
 	if body != nil {
 		switch v := body.(type) {
@@ -151,13 +154,13 @@ func (c *Client) Request(ctx context.Context, method, path string, body interfac
 		case io.Reader:
 			reqBody = v
 		default:
-			// 默认将对象序列化为JSON
+			// Default to serialize object to JSON
 			jsonData, err := json.Marshal(body)
 			if err != nil {
 				return nil, fmt.Errorf("%s: %w", i18n.Translate("httpclient.request.serialize_failed", "", nil), err)
 			}
 			reqBody = bytes.NewReader(jsonData)
-			// 如果没有指定Content-Type，则设置为application/json
+			// If Content-Type not specified, set to application/json
 			if headers == nil {
 				headers = make(map[string]string)
 			}
@@ -167,46 +170,46 @@ func (c *Client) Request(ctx context.Context, method, path string, body interfac
 		}
 	}
 
-	// 创建请求
+	// Create request
 	req, err := http.NewRequestWithContext(ctx, method, fullURL, reqBody)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", i18n.Translate("httpclient.request.create_failed", "", nil), err)
 	}
 
-	// 添加自定义请求头
+	// Add custom headers
 	for key, value := range headers {
 		req.Header.Set(key, value)
 	}
 
-	// 应用请求中间件
+	// Apply request middlewares
 	for _, middleware := range c.middlewares {
 		if err := middleware.ProcessRequest(req); err != nil {
 			return nil, fmt.Errorf("%s: %w", i18n.Translate("httpclient.middleware.process_failed", "", nil), err)
 		}
 	}
 
-	// 发送请求
+	// Send request
 	var resp *http.Response
 	var respErr error
 
-	// 实现重试逻辑
+	// Implement retry logic
 	retries := 0
 	for {
 		resp, respErr = c.httpClient.Do(req)
 
-		// 应用响应中间件
+		// Apply response middlewares
 		for i := len(c.middlewares) - 1; i >= 0; i-- {
 			resp, respErr = c.middlewares[i].ProcessResponse(resp, respErr)
 		}
 
-		// 检查是否需要重试
+		// Check if retry needed
 		shouldRetry := false
 		if c.config.MaxRetries > retries {
 			if respErr != nil {
-				// 网络错误重试
+				// Retry on network error
 				shouldRetry = true
 			} else if resp.StatusCode >= 500 {
-				// 服务器错误重试
+				// Retry on server error
 				shouldRetry = true
 			}
 		}
@@ -215,7 +218,7 @@ func (c *Client) Request(ctx context.Context, method, path string, body interfac
 			break
 		}
 
-		// 关闭响应体，准备重试
+		// Close response body and prepare for retry
 		if resp != nil && resp.Body != nil {
 			resp.Body.Close()
 		}
@@ -227,7 +230,7 @@ func (c *Client) Request(ctx context.Context, method, path string, body interfac
 		}))
 		time.Sleep(c.config.RetryDelay)
 
-		// 重新创建请求体
+		// Recreate request body
 		if body != nil {
 			switch v := body.(type) {
 			case string:
@@ -235,10 +238,10 @@ func (c *Client) Request(ctx context.Context, method, path string, body interfac
 			case []byte:
 				reqBody = bytes.NewReader(v)
 			case io.Reader:
-				// 无法重置io.Reader，这是一个限制
+				// Cannot reset io.Reader, this is a limitation
 				return nil, errors.New(i18n.Translate("httpclient.retry.reader_unsupported", "", nil))
 			default:
-				// 重新序列化JSON
+				// Reserialize JSON
 				jsonData, _ := json.Marshal(body)
 				reqBody = bytes.NewReader(jsonData)
 			}
@@ -246,11 +249,11 @@ func (c *Client) Request(ctx context.Context, method, path string, body interfac
 			if err != nil {
 				return nil, fmt.Errorf("%s: %w", i18n.Translate("httpclient.retry.request_failed", "", nil), err)
 			}
-			// 重新添加请求头
+			// Re-add headers
 			for key, value := range headers {
 				req.Header.Set(key, value)
 			}
-			// 重新应用请求中间件
+			// Re-apply request middlewares
 			for _, middleware := range c.middlewares {
 				if err := middleware.ProcessRequest(req); err != nil {
 					return nil, fmt.Errorf("%s: %w", i18n.Translate("httpclient.retry.middleware_failed", "", nil), err)
@@ -262,32 +265,32 @@ func (c *Client) Request(ctx context.Context, method, path string, body interfac
 	return resp, respErr
 }
 
-// Get 发送GET请求
+// Get send GET request
 func (c *Client) Get(ctx context.Context, path string, headers map[string]string) (*http.Response, error) {
 	return c.Request(ctx, http.MethodGet, path, nil, headers)
 }
 
-// Post 发送POST请求
+// Post send POST request
 func (c *Client) Post(ctx context.Context, path string, body interface{}, headers map[string]string) (*http.Response, error) {
 	return c.Request(ctx, http.MethodPost, path, body, headers)
 }
 
-// Put 发送PUT请求
+// Put send PUT request
 func (c *Client) Put(ctx context.Context, path string, body interface{}, headers map[string]string) (*http.Response, error) {
 	return c.Request(ctx, http.MethodPut, path, body, headers)
 }
 
-// Delete 发送DELETE请求
+// Delete send DELETE request
 func (c *Client) Delete(ctx context.Context, path string, headers map[string]string) (*http.Response, error) {
 	return c.Request(ctx, http.MethodDelete, path, nil, headers)
 }
 
-// Patch 发送PATCH请求
+// Patch send PATCH request
 func (c *Client) Patch(ctx context.Context, path string, body interface{}, headers map[string]string) (*http.Response, error) {
 	return c.Request(ctx, http.MethodPatch, path, body, headers)
 }
 
-// GetJSON 发送GET请求并解析JSON响应
+// GetJSON send GET request and parse JSON response
 func (c *Client) GetJSON(ctx context.Context, path string, headers map[string]string, v interface{}) error {
 	resp, err := c.Get(ctx, path, headers)
 	if err != nil {
@@ -298,7 +301,7 @@ func (c *Client) GetJSON(ctx context.Context, path string, headers map[string]st
 	return c.parseJSONResponse(resp, v)
 }
 
-// PostJSON 发送POST请求并解析JSON响应
+// PostJSON send POST request and parse JSON response
 func (c *Client) PostJSON(ctx context.Context, path string, body interface{}, headers map[string]string, v interface{}) error {
 	resp, err := c.Post(ctx, path, body, headers)
 	if err != nil {
@@ -309,7 +312,7 @@ func (c *Client) PostJSON(ctx context.Context, path string, body interface{}, he
 	return c.parseJSONResponse(resp, v)
 }
 
-// PutJSON 发送PUT请求并解析JSON响应
+// PutJSON send PUT request and parse JSON response
 func (c *Client) PutJSON(ctx context.Context, path string, body interface{}, headers map[string]string, v interface{}) error {
 	resp, err := c.Put(ctx, path, body, headers)
 	if err != nil {
@@ -320,7 +323,7 @@ func (c *Client) PutJSON(ctx context.Context, path string, body interface{}, hea
 	return c.parseJSONResponse(resp, v)
 }
 
-// DeleteJSON 发送DELETE请求并解析JSON响应
+// DeleteJSON send DELETE request and parse JSON response
 func (c *Client) DeleteJSON(ctx context.Context, path string, headers map[string]string, v interface{}) error {
 	resp, err := c.Delete(ctx, path, headers)
 	if err != nil {
@@ -331,7 +334,7 @@ func (c *Client) DeleteJSON(ctx context.Context, path string, headers map[string
 	return c.parseJSONResponse(resp, v)
 }
 
-// PatchJSON 发送PATCH请求并解析JSON响应
+// PatchJSON send PATCH request and parse JSON response
 func (c *Client) PatchJSON(ctx context.Context, path string, body interface{}, headers map[string]string, v interface{}) error {
 	resp, err := c.Patch(ctx, path, body, headers)
 	if err != nil {
@@ -342,9 +345,9 @@ func (c *Client) PatchJSON(ctx context.Context, path string, body interface{}, h
 	return c.parseJSONResponse(resp, v)
 }
 
-// parseJSONResponse 解析JSON响应
+// parseJSONResponse parse JSON response
 func (c *Client) parseJSONResponse(resp *http.Response, v interface{}) error {
-	// 检查状态码
+	// Check status code
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		bodyBytes, err := io.ReadAll(resp.Body)
 		if err != nil {
@@ -356,7 +359,7 @@ func (c *Client) parseJSONResponse(resp *http.Response, v interface{}) error {
 		}))
 	}
 
-	// 解析JSON响应
+	// Parse JSON response
 	if v != nil {
 		if err := json.NewDecoder(resp.Body).Decode(v); err != nil {
 			return fmt.Errorf("%s: %w", i18n.Translate("httpclient.json.parse_failed", "", nil), err)

@@ -18,9 +18,9 @@ var (
 	asynqLogger asynq.Logger
 )
 
-// InitLogger 初始化日志系统
+// InitLogger initialize logging system
 func InitLogger(cfg config.Log) error {
-	// 确保日志目录存在
+	// Ensure log directory exists
 	if cfg.OutputPath != "" {
 		dir := filepath.Dir(cfg.OutputPath)
 		if err := os.MkdirAll(dir, 0755); err != nil {
@@ -34,7 +34,7 @@ func InitLogger(cfg config.Log) error {
 		}
 	}
 
-	// 设置日志级别
+	// Set log level
 	var level zapcore.Level
 	switch cfg.Level {
 	case "debug":
@@ -55,7 +55,7 @@ func InitLogger(cfg config.Log) error {
 		level = zapcore.InfoLevel
 	}
 
-	// 配置编码器
+	// Configure encoder
 	encoderConfig := zapcore.EncoderConfig{
 		TimeKey:        "time",
 		LevelKey:       "level",
@@ -71,7 +71,7 @@ func InitLogger(cfg config.Log) error {
 		EncodeCaller:   zapcore.ShortCallerEncoder,
 	}
 
-	// 配置输出
+	// Configure output
 	var encoder zapcore.Encoder
 	if cfg.Format == "json" {
 		encoder = zapcore.NewJSONEncoder(encoderConfig)
@@ -79,11 +79,11 @@ func InitLogger(cfg config.Log) error {
 		encoder = zapcore.NewConsoleEncoder(encoderConfig)
 	}
 
-	// 配置主日志轮转
+	// Configure main log rotation
 	var writeSyncer zapcore.WriteSyncer
 	if cfg.OutputPath != "" {
-		// 替换日志文件名中的日期占位符
-		// Go语言使用"2006-01-02"作为日期格式模板，代表YYYY-MM-DD格式
+		// Replace date placeholder in log filename
+		// Go uses "2006-01-02" as date format template, representing YYYY-MM-DD format
 		outputPath := strings.ReplaceAll(cfg.OutputPath, "{yyyy-mm-dd}", time.Now().Format("2006-01-02"))
 		lumberJackLogger := &lumberjack.Logger{
 			Filename:   outputPath,
@@ -91,21 +91,21 @@ func InitLogger(cfg config.Log) error {
 			MaxBackups: cfg.MaxBackups,
 			MaxAge:     cfg.MaxAge,
 			Compress:   cfg.Compress,
-			LocalTime:  true, // 使用本地时间
+			LocalTime:  true, // Use local time
 		}
 		writeSyncer = zapcore.NewMultiWriteSyncer(
 			zapcore.AddSync(lumberJackLogger),
-			zapcore.AddSync(os.Stdout), // 保持控制台日志输出
+			zapcore.AddSync(os.Stdout), // Keep console log output
 		)
 	} else {
 		writeSyncer = zapcore.AddSync(os.Stdout)
 	}
 
-	// 配置错误日志轮转
+	// Configure error log rotation
 	var errorWriteSyncer zapcore.WriteSyncer
 	if cfg.ErrorPath != "" {
-		// 替换错误日志文件名中的日期占位符
-		// Go语言使用"2006-01-02"作为日期格式模板，代表YYYY-MM-DD格式
+		// Replace date placeholder in error log filename
+		// Go uses "2006-01-02" as date format template, representing YYYY-MM-DD format
 		errorPath := strings.ReplaceAll(cfg.ErrorPath, "{yyyy-mm-dd}", time.Now().Format("2006-01-02"))
 		errorLogger := &lumberjack.Logger{
 			Filename:   errorPath,
@@ -113,15 +113,15 @@ func InitLogger(cfg config.Log) error {
 			MaxBackups: cfg.MaxBackups,
 			MaxAge:     cfg.MaxAge,
 			Compress:   cfg.Compress,
-			LocalTime:  true, // 使用本地时间
+			LocalTime:  true, // Use local time
 		}
 		errorWriteSyncer = zapcore.AddSync(errorLogger)
 	}
 
-	// 创建主日志核心
+	// Create main log core
 	core := zapcore.NewCore(encoder, writeSyncer, level)
 
-	// 创建错误日志核心
+	// Create error log core
 	var cores []zapcore.Core
 	cores = append(cores, core)
 
@@ -133,10 +133,10 @@ func InitLogger(cfg config.Log) error {
 		cores = append(cores, errorCore)
 	}
 
-	// 创建日志记录器
+	// Create logger
 	logger = zap.New(zapcore.NewTee(cores...), zap.AddCaller(), zap.AddCallerSkip(1))
 
-	// 创建asynq日志适配器
+	// Create asynq logger adapter
 	asynqLogger = &zapAsynqLogger{
 		logger: logger,
 	}
@@ -144,7 +144,7 @@ func InitLogger(cfg config.Log) error {
 	return nil
 }
 
-// Debug 记录调试级别日志
+// Debug log debug level message
 func Debug(msg string, keysAndValues ...interface{}) {
 	if logger == nil {
 		return
@@ -153,7 +153,7 @@ func Debug(msg string, keysAndValues ...interface{}) {
 	sugar.Debugw(msg, keysAndValues...)
 }
 
-// Info 记录信息级别日志
+// Info log info level message
 func Info(msg string, keysAndValues ...interface{}) {
 	if logger == nil {
 		return
@@ -162,7 +162,7 @@ func Info(msg string, keysAndValues ...interface{}) {
 	sugar.Infow(msg, keysAndValues...)
 }
 
-// Warn 记录警告级别日志
+// Warn log warning level message
 func Warn(msg string, keysAndValues ...interface{}) {
 	if logger == nil {
 		return
@@ -171,7 +171,7 @@ func Warn(msg string, keysAndValues ...interface{}) {
 	sugar.Warnw(msg, keysAndValues...)
 }
 
-// Error 记录错误级别日志
+// Error log error level message
 func Error(msg string, keysAndValues ...interface{}) {
 	if logger == nil {
 		return
@@ -180,7 +180,7 @@ func Error(msg string, keysAndValues ...interface{}) {
 	sugar.Errorw(msg, keysAndValues...)
 }
 
-// DPanic 记录开发环境恐慌级别日志
+// DPanic log development panic level message
 func DPanic(msg string, keysAndValues ...interface{}) {
 	if logger == nil {
 		return
@@ -189,7 +189,7 @@ func DPanic(msg string, keysAndValues ...interface{}) {
 	sugar.DPanicw(msg, keysAndValues...)
 }
 
-// Panic 记录恐慌级别日志
+// Panic log panic level message
 func Panic(msg string, keysAndValues ...interface{}) {
 	if logger == nil {
 		return
@@ -198,7 +198,7 @@ func Panic(msg string, keysAndValues ...interface{}) {
 	sugar.Panicw(msg, keysAndValues...)
 }
 
-// Fatal 记录致命级别日志
+// Fatal log fatal level message
 func Fatal(msg string, keysAndValues ...interface{}) {
 	if logger == nil {
 		return
@@ -207,19 +207,19 @@ func Fatal(msg string, keysAndValues ...interface{}) {
 	sugar.Fatalw(msg, keysAndValues...)
 }
 
-// Sync 同步日志
+// Sync flush log buffer
 func Sync() {
 	if logger != nil {
 		_ = logger.Sync()
 	}
 }
 
-// GetAsynqLogger 获取Asynq日志记录器
+// GetAsynqLogger get asynq logger
 func GetAsynqLogger() asynq.Logger {
 	return asynqLogger
 }
 
-// zapAsynqLogger 实现asynq.Logger接口
+// zapAsynqLogger implements asynq.Logger interface
 type zapAsynqLogger struct {
 	logger *zap.Logger
 }

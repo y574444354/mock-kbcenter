@@ -6,9 +6,10 @@ import (
 
 	"github.com/zgsm/mock-kbcenter/config"
 	"github.com/zgsm/mock-kbcenter/i18n"
-	"gorm.io/driver/mysql"
+
+	// "gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
-	"gorm.io/driver/sqlite"
+	// "gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
 )
@@ -17,21 +18,25 @@ var (
 	DB *gorm.DB
 )
 
-// InitDB 初始化数据库连接
+// InitDB initialize database connection
 func InitDB(cfg config.Database) error {
+	if !cfg.Enabled {
+		return nil
+	}
+
 	var err error
 	var dialector gorm.Dialector
 
 	switch cfg.Type {
-	case "mysql":
-		dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=%s",
-			cfg.User,
-			cfg.Password,
-			cfg.Host,
-			cfg.Port,
-			cfg.DBName,
-			cfg.TimeZone)
-		dialector = mysql.Open(dsn)
+	// case "mysql":
+	// 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=%s",
+	// 		cfg.User,
+	// 		cfg.Password,
+	// 		cfg.Host,
+	// 		cfg.Port,
+	// 		cfg.DBName,
+	// 		cfg.TimeZone)
+	// 	dialector = mysql.Open(dsn)
 	case "postgres":
 		dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=%s TimeZone=%s",
 			cfg.Host,
@@ -42,47 +47,54 @@ func InitDB(cfg config.Database) error {
 			cfg.SSLMode,
 			cfg.TimeZone)
 		dialector = postgres.Open(dsn)
-	case "sqlite":
-		dialector = sqlite.Open(cfg.DBName)
+	// case "sqlite":
+	// 	dialector = sqlite.Open(cfg.DBName)
 	default:
 		return fmt.Errorf("%s", i18n.Translate("db.unsupported_type", "", map[string]interface{}{"type": cfg.Type}))
 	}
 
-	// 配置GORM
+	// Configure GORM
 	gormConfig := &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
-			SingularTable: true, // 使用单数表名
+			SingularTable: true, // Use singular table names
 		},
-		DisableForeignKeyConstraintWhenMigrating: true, // 禁用外键约束
+		DisableForeignKeyConstraintWhenMigrating: true, // Disable foreign key constraints
 	}
 
-	// 连接数据库
+	// Connect to database
 	DB, err = gorm.Open(dialector, gormConfig)
 	if err != nil {
+		_ = CloseDB()
 		return fmt.Errorf("%s: %w", i18n.Translate("db.connection.failed", "", nil), err)
 	}
 
-	// 配置连接池
+	// Configure connection pool
 	sqlDB, err := DB.DB()
 	if err != nil {
+		if sqlDB != nil {
+			_ = sqlDB.Close()
+		}
 		return fmt.Errorf("%s: %w", i18n.Translate("db.connection.failed", "", nil), err)
 	}
 
-	// 设置最大空闲连接数
+	// Set max idle connections
 	sqlDB.SetMaxIdleConns(10)
-	// 设置最大打开连接数
+	// Set max open connections
 	sqlDB.SetMaxOpenConns(100)
-	// 设置连接最大生命周期
+	// Set connection max lifetime
 	sqlDB.SetConnMaxLifetime(time.Hour)
 	return nil
 }
 
-// GetDB 获取数据库连接
+// GetDB get database connection
 func GetDB() *gorm.DB {
+	if DB == nil {
+		panic("database is not initialized or disabled")
+	}
 	return DB
 }
 
-// CloseDB 关闭数据库连接
+// CloseDB close database connection
 func CloseDB() error {
 	if DB == nil {
 		return nil
@@ -96,10 +108,10 @@ func CloseDB() error {
 	return sqlDB.Close()
 }
 
-// AutoMigrate 自动迁移模型
+// AutoMigrate auto migrate models
 func AutoMigrate(models ...interface{}) error {
 	if DB == nil {
-		return fmt.Errorf("%s", i18n.Translate("db.not_initialized", "", nil))
+		return fmt.Errorf("%s", i18n.Translate("db.not_initialized_or_disabled", "", nil))
 	}
 
 	return DB.AutoMigrate(models...)

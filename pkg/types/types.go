@@ -6,7 +6,7 @@ import (
 	"github.com/zgsm/mock-kbcenter/i18n"
 )
 
-// Issue 表示代码审查发现的问题
+// Issue represents a code review finding
 type Issue struct {
 	IssueID    string   `json:"issue_id"`
 	FilePath   string   `json:"file_path"`
@@ -34,21 +34,21 @@ type IssueIncrementReviewTaskResult struct {
 
 type Target struct {
 	Type      string `json:"type"`                 // file | folder | code
-	FilePath  string `json:"file_path"`            // 文件路径
-	LineRange []int  `json:"line_range,omitempty"` // 可选的行范围 [start, end]
+	FilePath  string `json:"file_path"`            // File path
+	LineRange []int  `json:"line_range,omitempty"` // Optional line range [start, end]
 }
 
 func (t *Target) Validate() error {
-	// 验证type
+	// Validate type
 	if t.Type != "file" && t.Type != "folder" && t.Type != "code" {
 		return fmt.Errorf("%s", i18n.Translate("review_task.invalid_target_type", "", nil))
 	}
-	// 验证file_path
+	// Validate file_path
 	if t.FilePath == "" && t.Type != "folder" {
 		return fmt.Errorf("%s", i18n.Translate("review_task.invalid_file_path", "", nil))
 	}
-	// 验证line_range
-	if len(t.LineRange) == 2 && t.LineRange[0] > t.LineRange[1] {
+	// Validate line_range
+	if t.LineRange != nil && len(t.LineRange) == 2 && t.LineRange[0] > t.LineRange[1] {
 		return fmt.Errorf("%s", i18n.Translate("review_task.invalid_line_range", "", nil))
 	}
 	return nil

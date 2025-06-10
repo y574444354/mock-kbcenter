@@ -9,7 +9,7 @@ import (
 	"github.com/zgsm/mock-kbcenter/pkg/httpclient"
 )
 
-// Service 定义
+// Service definition
 type Service struct {
 	client *httpclient.Client
 }
@@ -20,7 +20,7 @@ type HttpServices struct {
 
 var serverManager *HttpServices
 
-// InitHTTPClient 初始化HTTP客户端
+// InitHTTPClient initialize HTTP client
 func InitHTTPClient() error {
 	issueManagerService, err := NewIssueManagerService()
 	if err != nil {
@@ -29,7 +29,7 @@ func InitHTTPClient() error {
 
 	serverManager = &HttpServices{
 		IssueManager: *issueManagerService,
-		// 添加其他服务
+		// Add other services
 	}
 
 	return nil
@@ -42,18 +42,18 @@ func GetServerManager() (*HttpServices, error) {
 	return serverManager, nil
 }
 
-// GetServiceConfig 从应用配置中获取服务配置并转换为HTTP客户端配置
+// GetServiceConfig get service config from app config and convert to HTTP client config
 func GetServiceConfig(serviceName string) (*httpclient.HttpServiceConfig, error) {
-	// 获取应用配置
+	// Get application config
 	cfg := config.GetConfig()
 
-	// 获取服务配置
+	// Get service config
 	serviceCfg, ok := cfg.HTTPClient.Services[serviceName]
 	if !ok {
 		return nil, fmt.Errorf("%s", i18n.Translate("httpclient.service.config_not_found", "", map[string]interface{}{"service": serviceName}))
 	}
 
-	// 创建HTTP客户端配置
+	// Create HTTP client config
 	clientConfig := &httpclient.HttpServiceConfig{
 		BaseURL:            serviceCfg.BaseURL,
 		Timeout:            time.Duration(serviceCfg.Timeout) * time.Second,
@@ -71,23 +71,23 @@ func GetServiceConfig(serviceName string) (*httpclient.HttpServiceConfig, error)
 		EnableResponseLog:  cfg.HTTPClient.EnableResponseLog,
 	}
 
-	// 合并默认请求头
+	// Merge default headers
 	if clientConfig.Headers == nil {
 		clientConfig.Headers = make(map[string]string)
 	}
 	for k, v := range cfg.HTTPClient.Headers {
-		// 只有当服务配置中没有同名请求头时，才使用默认请求头
+		// Only use default header when service config doesn't have same header
 		if _, exists := clientConfig.Headers[k]; !exists {
 			clientConfig.Headers[k] = v
 		}
 	}
 
-	// 如果服务配置中没有指定超时时间，使用默认超时时间
+	// Use default timeout if not specified in service config
 	if serviceCfg.Timeout <= 0 {
 		clientConfig.Timeout = time.Duration(cfg.HTTPClient.Timeout) * time.Second
 	}
 
-	// 如果服务配置中没有指定重试次数，使用默认重试次数
+	// Use default retry count if not specified in service config
 	if serviceCfg.MaxRetries <= 0 {
 		clientConfig.MaxRetries = cfg.HTTPClient.MaxRetries
 	}
