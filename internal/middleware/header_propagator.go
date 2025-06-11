@@ -22,7 +22,7 @@ func HeaderPropagator() gin.HandlerFunc {
 		cfg := config.GetConfig()
 		for _, header := range cfg.HeaderPropagation.Headers {
 			if value := c.GetHeader(header); value != "" {
-				ctx := context.WithValue(c.Request.Context(), headerpropagation.ContextKeyPrefix+header, value)
+				ctx := context.WithValue(c.Request.Context(), headerpropagation.ContextKeyPrefix+headerpropagation.ContextKey(header), value)
 				c.Request = c.Request.WithContext(ctx)
 			}
 		}

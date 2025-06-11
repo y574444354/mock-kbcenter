@@ -6,14 +6,16 @@ import (
 	"github.com/zgsm/go-webserver/config"
 )
 
+type ContextKey string
+
 const (
 	// ContextKeyPrefix is the prefix for context keys
-	ContextKeyPrefix = "header."
+	ContextKeyPrefix ContextKey = "header."
 )
 
 // GetHeaderValue gets propagated header value from context
 func GetHeaderValue(ctx context.Context, header string) string {
-	if val := ctx.Value(ContextKeyPrefix + header); val != nil {
+	if val := ctx.Value(ContextKeyPrefix + ContextKey(header)); val != nil {
 		if str, ok := val.(string); ok {
 			return str
 		}
@@ -37,7 +39,7 @@ func GetAllPropagatedHeaders(ctx context.Context) map[string]string {
 // WithContext injects headers into a new context
 func WithContext(ctx context.Context, headers map[string]string) context.Context {
 	for k, v := range headers {
-		ctx = context.WithValue(ctx, ContextKeyPrefix+k, v)
+		ctx = context.WithValue(ctx, ContextKeyPrefix+ContextKey(k), v)
 	}
 	return ctx
 }
