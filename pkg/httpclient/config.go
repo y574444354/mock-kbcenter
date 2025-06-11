@@ -2,6 +2,8 @@ package httpclient
 
 import (
 	"time"
+
+	"github.com/zgsm/go-webserver/config"
 )
 
 // HttpServiceConfig HTTP client configuration
@@ -45,14 +47,17 @@ type HttpServiceConfig struct {
 
 // DefaultHttpServiceConfig returns default configuration
 func DefaultHttpServiceConfig() *HttpServiceConfig {
+	cfg := config.GetConfig()
+	httpCfg := cfg.HTTPClient
+
 	return &HttpServiceConfig{
-		Timeout:           30 * time.Second,
-		MaxRetries:        3,
-		RetryDelay:        1 * time.Second,
+		Timeout:           time.Duration(httpCfg.Timeout) * time.Second,
+		MaxRetries:        httpCfg.MaxRetries,
+		RetryDelay:        time.Duration(httpCfg.RetryDelay) * time.Second,
 		AuthType:          "none",
-		Headers:           make(map[string]string),
-		EnableRequestLog:  true,
-		EnableResponseLog: true,
+		Headers:           httpCfg.Headers,
+		EnableRequestLog:  httpCfg.EnableRequestLog,
+		EnableResponseLog: httpCfg.EnableResponseLog,
 		ValidStatusCodes:  []int{},
 	}
 }

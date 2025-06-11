@@ -48,7 +48,7 @@ func (t *Target) Validate() error {
 		return fmt.Errorf("%s", i18n.Translate("review_task.invalid_file_path", "", nil))
 	}
 	// Validate line_range
-	if t.LineRange != nil && len(t.LineRange) == 2 && t.LineRange[0] > t.LineRange[1] {
+	if len(t.LineRange) == 2 && t.LineRange[0] > t.LineRange[1] {
 		return fmt.Errorf("%s", i18n.Translate("review_task.invalid_line_range", "", nil))
 	}
 	return nil

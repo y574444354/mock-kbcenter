@@ -101,6 +101,13 @@ log:
   max_age: 30  # days
   compress: true
 
+# 请求头透传配置
+header_propagation:
+  headers:
+    - "X-Request-ID"
+    - "X-User-ID"
+    - "X-Trace-ID"
+
 # 国际化配置
 i18n:
   default_locale: zh-CN
@@ -116,6 +123,7 @@ http_client:
   headers:  # 默认请求头
     User-Agent: "mock-kbcenter/1.0"
     Accept: "application/json"
+    x-caller: "go-webserver"
   proxy_url: ""  # 代理URL，为空则不使用代理
   insecure_skip_verify: false  # 是否跳过TLS证书验证
   services:  # 依赖服务配置

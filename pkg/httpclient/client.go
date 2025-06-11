@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"github.com/zgsm/mock-kbcenter/i18n"
+	"github.com/zgsm/mock-kbcenter/pkg/headerpropagation"
 	"github.com/zgsm/mock-kbcenter/pkg/logger"
 )
 
@@ -137,6 +138,18 @@ func (c *Client) AddMiddleware(middleware Middleware) {
 
 // Request send HTTP request
 func (c *Client) Request(ctx context.Context, method, path string, body interface{}, headers map[string]string) (*http.Response, error) {
+	// Merge propagated headers from context
+	propagatedHeaders := headerpropagation.GetAllPropagatedHeaders(ctx)
+	if headers == nil {
+		headers = propagatedHeaders
+	} else {
+		for k, v := range propagatedHeaders {
+			if _, exists := headers[k]; !exists {
+				headers[k] = v
+			}
+		}
+	}
+
 	// Build full URL
 	fullURL := path
 	if !strings.HasPrefix(path, "http") && c.config.BaseURL != "" {

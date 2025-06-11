@@ -93,6 +93,7 @@ func Run(cfg *config.Config, workDir string) {
 
 	// Register middlewares
 	r.Use(middleware.Logger())
+	r.Use(middleware.HeaderPropagator())
 	r.Use(middleware.Recovery())
 	r.Use(middleware.Cors())
 	r.Use(middleware.I18n())

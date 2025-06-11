@@ -65,6 +65,12 @@ type Config struct {
 
 	Log Log `yaml:"log"`
 
+	// HeaderPropagation configuration for propagating headers to context
+	HeaderPropagation struct {
+		// Headers to propagate from request to context
+		Headers []string `yaml:"headers"`
+	} `yaml:"header_propagation"`
+
 	I18n struct {
 		DefaultLocale string `yaml:"default_locale"`
 		BundlePath    string `yaml:"bundle_path"`
