@@ -3,7 +3,7 @@ package headerpropagation
 import (
 	"context"
 
-	"github.com/zgsm/go-webserver/config"
+	"github.com/zgsm/mock-kbcenter/config"
 )
 
 type ContextKey string

@@ -107,6 +107,8 @@ header_propagation:
     - "X-Request-ID"
     - "X-User-ID"
     - "X-Trace-ID"
+    - "x-quota-identity"
+    - "Authorization"
 
 # 国际化配置
 i18n:
@@ -123,7 +125,7 @@ http_client:
   headers:  # 默认请求头
     User-Agent: "mock-kbcenter/1.0"
     Accept: "application/json"
-    x-caller: "go-webserver"
+    x-caller: "mock-kbcenter"
   proxy_url: ""  # 代理URL，为空则不使用代理
   insecure_skip_verify: false  # 是否跳过TLS证书验证
   services:  # 依赖服务配置

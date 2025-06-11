@@ -1,5 +1,5 @@
 这是一个 go 项目
-项目名为: github.com/zgsm/go-webserver
+项目名为: github.com/zgsm/mock-kbcenter
 
 项目规范：
 1、业务过程中涉及的常用结构体优先在 pkg/types/types.go 中定义，除非是非常少用的场景

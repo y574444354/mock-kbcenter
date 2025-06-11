@@ -3,7 +3,7 @@ package httpclient
 import (
 	"time"
 
-	"github.com/zgsm/go-webserver/config"
+	"github.com/zgsm/mock-kbcenter/config"
 )
 
 // HttpServiceConfig HTTP client configuration

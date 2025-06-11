@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/gin-gonic/gin"
-	"github.com/zgsm/go-webserver/config"
-	"github.com/zgsm/go-webserver/pkg/headerpropagation"
+	"github.com/zgsm/mock-kbcenter/config"
+	"github.com/zgsm/mock-kbcenter/pkg/headerpropagation"
 )
 
 // HeaderPropagator middleware propagates specified headers to context
