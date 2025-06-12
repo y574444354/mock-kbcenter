@@ -98,6 +98,11 @@ func (s *KBCenterMockService) buildDirectoryTree(basePath, relativePath string, 
 			continue
 		}
 
+		// Skip node_models directory
+		if entry.IsDir() && entry.Name() == "node_modules" {
+			continue
+		}
+
 		entryPath := filepath.Join(basePath, entry.Name())
 		entryRelativePath := filepath.Join(relativePath, entry.Name())
 

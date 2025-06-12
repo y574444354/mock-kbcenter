@@ -20,7 +20,9 @@ import (
 	"log"
 	"os"
 
+	proxy "github.com/zgsm/mock-kbcenter/cmd/proxy"
 	web "github.com/zgsm/mock-kbcenter/cmd/web"
+
 	// worker "github.com/zgsm/mock-kbcenter/cmd/worker"
 	"github.com/zgsm/mock-kbcenter/config"
 	"github.com/zgsm/mock-kbcenter/i18n"
@@ -50,5 +52,10 @@ func main() {
 		}
 	}
 	fmt.Println(i18n.Translate("kbcenter.workdir", "", map[string]interface{}{"workdir": workDir}))
-	web.Run(cfg, workDir)
+
+	if len(os.Args) > 2 && os.Args[2] == "proxy" {
+		proxy.Run(cfg, workDir)
+	} else {
+		web.Run(cfg, workDir)
+	}
 }

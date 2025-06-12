@@ -144,3 +144,7 @@ http_client:
       timeout: 10  # 覆盖默认超时时间
       max_retries: 2  # 覆盖默认重试次数
       # 不配置valid_status_codes则使用默认规则(2xx)
+
+# 代理服务配置
+proxy:
+  port: 8081  # 代理服务端口

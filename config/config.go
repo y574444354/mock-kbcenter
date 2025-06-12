@@ -42,6 +42,10 @@ type Config struct {
 		Mode string `yaml:"mode"` // debug, release, test
 	} `yaml:"server"`
 
+	Proxy struct {
+		Port int `yaml:"port"` // Proxy service port
+	} `yaml:"proxy"`
+
 	Database Database `yaml:"database"`
 
 	Redis struct {
