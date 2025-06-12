@@ -42,7 +42,7 @@ func (s *reviewTaskService) Create(clientID, workspace string, targets []types.T
 	reviewTask := &model.ReviewTask{
 		ID:        id,
 		Status:    0,
-		ClientId:  clientID,
+		ClientID:  clientID,
 		Workspace: workspace,
 		Targets:   targets,
 	}

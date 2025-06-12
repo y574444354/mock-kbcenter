@@ -60,7 +60,7 @@ func (h *ReviewTaskHandler) Create(c *gin.Context) {
 }
 
 type IssueIncrementReviewTaskRequest struct {
-	ClientId string `form:"client_id" binding:"required" example:"client123"` // Client ID
+	ClientID string `form:"client_id" binding:"required" example:"client123"` // Client ID
 	Offset   int    `form:"offset" binding:"required,min=0" example:"0"`      // Offset
 }
 
@@ -91,7 +91,7 @@ func (h *ReviewTaskHandler) IssueIncrement(c *gin.Context) {
 		return
 	}
 
-	result, err := h.reviewTaskService.IssueIncrement(reviewTaskID, req.ClientId, req.Offset)
+	result, err := h.reviewTaskService.IssueIncrement(reviewTaskID, req.ClientID, req.Offset)
 	if err != nil {
 		api.Error(c, http.StatusInternalServerError, err)
 		return
