@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -21,7 +22,7 @@ func Logger() gin.HandlerFunc {
 
 		// End time
 		end := time.Now()
-		latency := end.Sub(start)
+		latency := fmt.Sprintf("%.2fms", end.Sub(start).Seconds()*1000)
 
 		// Request method
 		method := c.Request.Method
@@ -43,8 +44,6 @@ func Logger() gin.HandlerFunc {
 			"path":   path,
 		}),
 			"status", statusCode,
-			"method", method,
-			"path", path,
 			"ip", clientIP,
 			"latency", latency,
 			"error", errorMessage,
