@@ -54,6 +54,7 @@ help:
 	@echo "make db-init       - 初始化数据库"
 	@echo "make redis-clear   - 清除Redis缓存"
 	@echo "make docker-build  - 构建Docker镜像"
+	@echo "make docker-tag-push - 打git tag并推送Docker镜像(需指定VERSION参数)"
 	@echo "make env           - 显示当前环境变量设置"
 
 # 构建主应用程序
@@ -177,3 +178,21 @@ docker-build:
 		-t $(DOCKER_IMAGE) \
 		-f docker/Dockerfile .
 	@echo "Docker镜像构建完成: $(DOCKER_IMAGE)"
+
+# 打git tag并推送Docker镜像
+.PHONY: docker-tag-push
+docker-tag-push:
+	@if [ -z "$(VERSION)" ]; then \
+		echo "错误：必须指定VERSION参数，例如: make docker-tag-push VERSION=v1.0.0"; \
+		exit 1; \
+	fi
+	@if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then \
+		echo "错误：当前目录不是git仓库"; \
+		exit 1; \
+	fi
+	@echo "创建git tag $(VERSION)..."
+	@git tag -a $(VERSION) -m "Release $(VERSION)"
+	@git push origin $(VERSION)
+	@echo "执行docker-build-push.sh..."
+	@./scripts/docker-build-push.sh $(VERSION)
+	@echo "Docker镜像已打标签并推送完成"
