@@ -44,8 +44,6 @@ func Logger() gin.HandlerFunc {
 			"path":   path,
 		}),
 			"status", statusCode,
-			"method", method,
-			"path", path,
 			"ip", clientIP,
 			"latency", latency,
 			"error", errorMessage,
