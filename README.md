@@ -2,6 +2,9 @@
 
 基于Gin框架的Go Web服务器脚手架，具有完整的分层设计和丰富的功能。
 
+## 集成
+![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/y574444354/mock-kbcenter?utm_source=oss&utm_medium=github&utm_campaign=y574444354%2Fmock-kbcenter&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
+
 ## 功能特性
 
 - 使用 [Gin](https://github.com/gin-gonic/gin) 框架构建高性能Web服务
